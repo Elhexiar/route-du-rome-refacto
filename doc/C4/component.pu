@@ -1,0 +1,55 @@
+@startuml
+
+package "Route du Rome" {
+
+    class DialogueController{
+        note "Le DialogueController gère les dialogues\n entre les utilisateurs et les PNJ" as N1
+    }
+
+    class VideoService{
+        note "Le VideoService gère la récupération et l'affichage\n des vidéos de présentation des héros et des PNJ" as N1
+    }
+
+    interface VideoRepository
+
+    class YoutubeVideoRepository implements VideoRepository
+
+    class HeroesController{
+        note "Le HeroesController gère les données des héros\n, y compris leurs noms, rôles, descriptions,\n biographies, lignes de présentation,\n portraits et vidéos de présentation." as N1
+    }
+
+    class NPCController{
+        note "Le NPCController gère les données des PNJ\n, y compris leurs coordonnées, icônes, noms,\n couleurs, portraits et reference de video de présentation." as N1
+    }
+
+    class NPCDataService {
+        note "Le NPCDataService gère la récupérationet  l'edition \n des données des PNJ, y compris leurs coordonnées,\n icônes, noms, couleurs, portraits et vidéos de présentation." as N1
+    }
+
+    interface MapController
+
+    class OpenStreetMapController implements MapController
+    
+    class ExperienceController implements ExperiencePublisher
+
+    interface ExperienceObserver
+    interface ExperiencePublisher
+
+    class BadgeService implements ExperienceObserver
+
+    class QuestService implements ExperienceObserver
+
+
+}
+
+component "OpenStreetMap" as OpenStreetMap {
+}
+
+MapController --> OpenStreetMap : "Récupération des données de localisation"
+
+
+
+
+
+@enduml
+
