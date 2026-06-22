@@ -1,0 +1,26 @@
+@startuml
+
+person "Utilisateur" as user
+person "Administrateur" as admin
+
+usecase "Consulter un metier" as UC_ConsulterMetier
+usecase "Gagner de l'experience" as UC_Experience
+usecase "Collecter des badges" as UC_Badges
+usecase "Voir plus de details concernant un metier" as UC_DetailsMetier
+usecase "Poser et recevoir des réponse concernant un metier" as UC_QuestionsMetier
+usecase "Rajouter de nouveau metiers" as UC_AddMetier
+usecase "Rajouter de nouveau badges" as UC_AddBadges
+usecase "Acceder a l'application en ligne et hor ligne" as UC_AccesApplication
+
+user --> UC_ConsulterMetier
+UC_ConsulterMetier --> UC_DetailsMetier
+UC_ConsulterMetier --> UC_QuestionsMetier
+user --> UC_Experience
+UC_Experience --> UC_Badges
+
+user --> UC_AccesApplication
+admin --> UC_AccesApplication
+admin --> UC_AddMetier
+admin --> UC_AddBadges
+
+@enduml

@@ -1,0 +1,36 @@
+@startuml
+allow_mixing
+
+
+
+package "Context" {
+
+    person "Utilisateur" as user
+    person "Administrateur" as admin
+
+    component "             Application                " as Application {
+    
+
+
+    }
+
+    component "OpenStreetMap" as OpenStreetMap {
+    }
+
+    component "Youtube API" as YoutubeAPI {
+    }
+
+    user -right-> Application
+    admin -right-> Application
+
+    user -[hidden]down-> admin
+
+    Application -right-> OpenStreetMap : "Récupération des données de localisation"
+    Application -right-> YoutubeAPI : "Récupération et affichage des vidéos de présentation"
+
+    OpenStreetMap -[hidden]down-> YoutubeAPI
+
+}
+
+
+@enduml

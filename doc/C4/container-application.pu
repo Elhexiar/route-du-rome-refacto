@@ -1,0 +1,22 @@
+@startuml
+
+
+    person "Utilisateur" as user
+    person "Administrateur" as admin
+
+package "Application" {
+
+
+    component "Single Monolithic Application" as SingleMonolithicApplication {
+    
+      note "l'application est une app monolithique en TS, HTML et CSS native" as N1
+    }
+}
+
+user -[hidden]down-> admin
+
+user -right-> SingleMonolithicApplication : "Accéder à l'application en ligne et hors ligne"
+admin -right-> SingleMonolithicApplication : "Accéder à l'application en ligne et hors ligne"
+
+
+@enduml
