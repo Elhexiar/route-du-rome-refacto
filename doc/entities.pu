@@ -1,0 +1,76 @@
+@startuml
+
+class Heroes
+{
+    + id : string
+    + name : string
+    + role : string
+    + description : string
+    + bio : string
+    + presentationDialogue : Dialogue
+    + portrait : string
+    + presentationVideo : string
+}
+
+class Badge
+{
+    + id : string
+    + name : string
+    + description : string
+    + icon : string
+    + checkUnlockConditions() : boolean
+    + Unlock() : void
+    + onUnlock() : void : callback
+    + Reward() : void
+}
+
+struct NPC
+{
+    + id : string
+    + lattitude : number
+    + longitude : number
+    + icon : string
+    + name : string
+    + color : string
+    + portrait : string
+    + presentationVideo : string
+    + presentationDialogue : Dialogue
+}
+
+package "Dialogue" {
+
+    struct Dialogue
+    {
+        + id : string
+        + npcId : string
+        + heroId : string
+        + currentLineIndex : number
+        + currentChoicesIndex : { choiceId: string, choiceIndex: number }[]
+        + lines : DialogueLine[]
+    }
+
+    struct DialogueLine
+    {
+        + id : string
+        + text : string
+        + hasChoices : boolean
+        + choices : Choice[]
+        + onBeginDisplayLine() : void : callback
+        + onEndDisplayLine() : void : callback
+    }
+
+    struct Choice
+    {
+        + id : string
+        + text : string
+        + onChoiceMade() : void : callback
+    }
+
+    Dialogue *-- DialogueLine : "Contient des lignes de dialogue"
+    DialogueLine *-- Choice : "potentiellement contient des choix"
+
+
+
+}
+
+@enduml

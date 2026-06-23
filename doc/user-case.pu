@@ -10,7 +10,7 @@ usecase "Voir plus de details concernant un metier" as UC_DetailsMetier
 usecase "Poser et recevoir des réponse concernant un metier" as UC_QuestionsMetier
 usecase "Rajouter de nouveau metiers" as UC_AddMetier
 usecase "Rajouter de nouveau badges" as UC_AddBadges
-usecase "Acceder a l'application en ligne et hor ligne" as UC_AccesApplication
+usecase "Acceder a l'application en ligne et hors ligne" as UC_AccesApplication
 
 user --> UC_ConsulterMetier
 UC_ConsulterMetier --> UC_DetailsMetier

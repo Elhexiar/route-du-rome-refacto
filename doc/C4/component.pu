@@ -2,43 +2,135 @@
 
 package "Route du Rome" {
 
-    class DialogueController{
-        note "Le DialogueController gère les dialogues\n entre les utilisateurs et les PNJ" as N1
-    }
-
-    class VideoService{
-        note "Le VideoService gère la récupération et l'affichage\n des vidéos de présentation des héros et des PNJ" as N1
-    }
-
-    interface VideoRepository
-
-    class YoutubeVideoRepository implements VideoRepository
-
-    class HeroesController{
-        note "Le HeroesController gère les données des héros\n, y compris leurs noms, rôles, descriptions,\n biographies, lignes de présentation,\n portraits et vidéos de présentation." as N1
-    }
-
-    class NPCController{
-        note "Le NPCController gère les données des PNJ\n, y compris leurs coordonnées, icônes, noms,\n couleurs, portraits et reference de video de présentation." as N1
-    }
-
-    class NPCDataService {
-        note "Le NPCDataService gère la récupérationet  l'edition \n des données des PNJ, y compris leurs coordonnées,\n icônes, noms, couleurs, portraits et vidéos de présentation." as N1
-    }
-
-    interface MapController
-
-    class OpenStreetMapController implements MapController
+    package  "Dialogue" {
     
-    class ExperienceController implements ExperiencePublisher
 
-    interface ExperienceObserver
-    interface ExperiencePublisher
+    interface IDialogueController{
+        "L'interface IDialogueController définit les méthodes\n pour gérer les dialogues entre les utilisateurs et les PNJ."
+        + loadDialogue(dialogueData: DialogueData): Dialogue
+        + startDialogue(): Dialogue
+        + getCurrentChoices(): List<Choice>
+        + makeChoice(choice: Choice): Dialogue
+        + makeChoice(choiceId: String): Dialogue
+        + getCurrentDialogueState(): DialogueState
+        + abortDialogue(): void    
+    
+    }
 
-    class BadgeService implements ExperienceObserver
+    class DialogueController implements IDialogueController{
+    }
 
-    class QuestService implements ExperienceObserver
+    interface IVideoService{
+        "L'interface IVideoService définit les méthodes\n pour gérer la récupération et l'affichage\n des vidéos de présentation des héros et des PNJ."
+        + getVideoById(videoId: String): Video
+        + getVideoByHero(heroId: String): List<Video>
+        + getVideoByNPC(npcId: String): List<Video>
+        + getAllVideos(): List<Video>
+        + addVideo(video: Video): void
+        + addVideoToHero(videoId: String, heroId: String): void
+        + addVideoToNPC(videoId: String, npcId: String): void
 
+    }
+
+    class VideoService implements IVideoService {
+    }
+
+    interface IVideoRepository
+
+    class YoutubeVideoRepository implements IVideoRepository
+
+    IVideoService *-- IVideoRepository : "Récupération des vidéos de présentation"
+    IDialogueController *-- IVideoService : "Affichage des vidéos de présentation"
+
+    }
+
+
+    package "NPC" {
+
+        interface INPCController{
+            "L'interface INPCController définit les méthodes\n pour gérer les données des PNJ."
+        }
+
+        interface INPCDataService {
+            "L'interface INPCDataService définit les méthodes\n pour gérer la récupération et l'édition\n des données des PNJ."
+        }
+
+        
+        class NPCController implements INPCController {
+        }
+
+        class NPCDataService implements INPCDataService {
+        }
+
+        INPCController *-- INPCDataService : "Récupération et édition des données des PNJ"
+    }
+
+
+    package "Map" {
+
+        interface IMapController{
+            "Le MapController gère les interactions avec la carte"
+        }
+
+        class MapController implements IMapController {
+        }
+
+        interface IMapService {
+            "Le MapService gère la récupération des données de localisation\n et l'affichage de la carte."
+        }
+
+        class OpenStreetMapService implements IMapService {
+        }
+
+        MapController --> IMapService : "Récupération des données de localisation"
+
+    }
+
+    
+    package "Heroes"{
+    
+        interface IHeroesController{
+            "L'interface IHeroesController définit les méthodes\n pour gérer les données des héros."
+        }
+        class HeroesController implements IHeroesController{
+
+        }
+
+        interface IExperienceController {
+            "L'interface IExperienceController définit les méthodes\n pour gérer l'expérience de l'utilisateur."
+        }
+
+        class ExperienceController implements IExperienceController, IExperiencePublisher {
+        }
+
+        interface IExperienceObserver{
+            "L'interface IExperienceObserver définit la méthode\n updateExperience() qui est appelée par le\n ExperiencePublisher pour notifier les observateurs\n de changement dans l'xp de l'utilisateur."
+        }
+
+        interface IExperiencePublisher{
+            "L'interface IExperiencePublisher définit les méthodes\n pour ajouter, supprimer et notifier les observateurs\n de changement dans l'xp de l'utilisateur."
+        }
+
+        interface IBadgeService {
+            "L'interface IBadgeService définit les méthodes\n pour gérer les badges de l'utilisateur."
+        }
+
+        interface IQuestService {
+            "L'interface IQuestService définit les méthodes\n pour gérer les quêtes de l'utilisateur."
+        }
+
+        class BadgeService implements IExperienceObserver, IBadgeService
+
+        class QuestService implements IExperienceObserver, IQuestService
+
+        IHeroesController *-- IExperienceController : "Gère l'expérience de l'utilisateur"
+
+        IExperienceController *-- IQuestService : "Gère les quêtes de l'utilisateur"
+        IExperienceController *-- IBadgeService : "Gère les badges de l'utilisateur"
+
+        IExperiencePublisher *-- IExperienceObserver : "Notifie les observateurs\n des nouvelles expériences"
+
+}
 
 }
 
