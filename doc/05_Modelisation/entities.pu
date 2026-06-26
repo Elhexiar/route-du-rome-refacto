@@ -31,6 +31,8 @@ struct NPC
     + longitude : number
     + icon : string
     + name : string
+    + job : string
+    + description : string
     + color : string
     + portrait : string
     + presentationVideo : string
@@ -65,6 +67,8 @@ package "Dialogue" {
         + text : string
         + onChoiceMade() : void : callback
     }
+
+    
 
     Dialogue *-- DialogueLine : "Contient des lignes de dialogue"
     DialogueLine *-- Choice : "potentiellement contient des choix"

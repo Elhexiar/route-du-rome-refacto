@@ -11,12 +11,15 @@ usecase "Poser et recevoir des réponse concernant un metier" as UC_QuestionsMet
 usecase "Rajouter de nouveau metiers" as UC_AddMetier
 usecase "Rajouter de nouveau badges" as UC_AddBadges
 usecase "Acceder a l'application en ligne et hors ligne" as UC_AccesApplication
+usecase "Se deplacer sur la carte" as UC_SeDeplacerCarte
+
 
 user --> UC_ConsulterMetier
 UC_ConsulterMetier --> UC_DetailsMetier
 UC_ConsulterMetier --> UC_QuestionsMetier
 user --> UC_Experience
 UC_Experience --> UC_Badges
+user --> UC_SeDeplacerCarte
 
 user --> UC_AccesApplication
 admin --> UC_AccesApplication

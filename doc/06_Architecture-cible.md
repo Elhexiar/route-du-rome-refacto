@@ -1,7 +1,7 @@
 ﻿
 ## Architecture
 
-### Choix architectural
+### Choix architectural : Proposition 1
 
 
 
@@ -19,3 +19,20 @@ Ce choix garantit que la logique métier reste strictement isolée des dépendan
 - **OpenStreetMap**, bien qu'européen et open source, est principalement basé au Royaume-Uni, donc hors Union Européenne
 
 La Clean Architecture simplifie ce type de substitution et encourage une meilleure discipline dans la gestion des dépendances.
+
+### Choix architectural : Proposition 2
+
+Le projet étnat relativement restraint dans son scope, avec une application realitvement simple, n'utilisant que peux de dépendance éxterne et composé d'un seul component.
+
+La majorité des architectures habituel serait superflus et une complexification inutile du projet.
+
+Ici l'objectif de l'architecture sera simple et clair.
+
+Séparer la logique metier et les dépendance de la partie HTML.
+
+Séparer la logique metier des dépendance externes (Youtube, OpenStreetMap) pour permettre de facilement changer de dépendance si nescessaire.
+
+Permetre de faire des tests unitaire sur l'intégralité des logiques metier, et entitées.
+
+Une gestion simple mais organisée et efficace de la data et des assets.
+
