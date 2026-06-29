@@ -1,5 +1,6 @@
 ```mermaid
 classDiagram
+
     %% Dialogue Package
     class IDialogueController {
         <<interface>>
@@ -20,7 +21,7 @@ classDiagram
     class IVideoService {
         <<interface>>
         +getVideoById(videoId: String): Video
-        +getVideoByHero(heroId: String): List~Video~
+        +getVideoByHero(heroId: Strinvg): List~Video~
         +getVideoByNPC(npcId: String): List~Video~
         +getAllVideos(): List~Video~
         +addVideo(video: Video): void

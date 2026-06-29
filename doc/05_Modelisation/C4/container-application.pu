@@ -1,6 +1,7 @@
 @startuml
 
 
+
     person "Utilisateur" as user
     person "Administrateur" as admin
 

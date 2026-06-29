@@ -1,4 +1,4 @@
-@startuml
+@startuml 
 
 class Heroes
 {
@@ -21,6 +21,18 @@ class Badge
     + checkUnlockConditions() : boolean
     + Unlock() : void
     + onUnlock() : void : callback
+    + Reward() : void
+}
+
+class Quest {
+    
+    + id : string
+    + name : string
+    + description : string
+    + isCompleted : boolean
+    + checkCompletionConditions() : boolean
+    + Complete() : void
+    + onComplete() : void : callback
     + Reward() : void
 }
 

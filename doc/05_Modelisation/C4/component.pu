@@ -132,6 +132,86 @@ package "Route du Rome" {
 
 }
 
+package "Audio" {
+
+    interface IAudioController {
+        "Singleton ?"
+    }
+
+    class AudioController implements IAudioController {
+    }
+
+    interface IAudioService {
+        "L'interface IAudioService définit les méthodes\n pour gérer la lecture des sons et de la musique."
+    }
+
+    class NativeAudioService implements IAudioService {
+    }
+    
+    IAudioController *-- IAudioService : "Gère la lecture des sons et de la musique"
+
+}
+
+package "UI" {
+
+    interface IUIController {
+        "L'interface IUIController définit les méthodes\n pour gérer l'affichage des vues de l'application."
+    }
+
+    class UIController implements IUIController {
+    }
+
+    interface IHeroeSelectionView {
+        "L'interface IHeroeSelectionView définit les méthodes\n pour gérer la vue de sélection du héros."
+    }
+
+    class HeroeSelectionView implements IHeroeSelectionView {
+    }
+
+    interface IMapView {
+        "L'interface IMapView définit les méthodes\n pour gérer la vue de la carte."
+    }
+
+    class MapView implements IMapView {
+    }
+
+    
+
+    interface IDialogueView {
+        "L'interface IDialogueView définit les méthodes\n pour gérer la vue des dialogues."
+    }
+
+    class DialogueView implements IDialogueView {
+    }
+
+    interface IQuestView {
+        "L'interface IQuestView définit les méthodes\n pour gérer la vue des quêtes."
+    }
+
+    class QuestView implements IQuestView {
+    }
+
+    interface IBadgeView {
+        "L'interface IBadgeView définit les méthodes\n pour gérer la vue des badges."
+    }
+
+    class BadgeView implements IBadgeView {
+    }
+
+    interface ITutorialView {
+        "L'interface ITutorialView définit les méthodes\n pour gérer la vue du tutoriel."
+    }
+
+    class TutorialView implements ITutorialView {
+    }
+
+    IUIController *-- IHeroeSelectionView : "Gère la vue de sélection du héros"
+    IUIController *-- IMapView : "Gère la vue de la carte"
+    IUIController *-- IDialogueView : "Gère la vue des dialogues"
+    IUIController *-- IQuestView : "Gère la vue des quêtes"
+    IUIController *-- IBadgeView : "Gère la vue des badges"
+    IUIController *-- ITutorialView : "Gère la vue du tutoriel"
+
 }
 
 component "OpenStreetMap" as OpenStreetMap {

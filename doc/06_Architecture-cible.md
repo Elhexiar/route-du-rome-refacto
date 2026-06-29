@@ -16,7 +16,7 @@ Le périmètre du projet est relativement restreint : peu de dépendances extern
 Ce choix garantit que la logique métier reste strictement isolée des dépendances externes. Or, les deux dépendances actuelles, OpenStreetMap et YouTube, pourraient un jour devoir être remplacées, notamment pour des raisons de souveraineté numérique :
 
 - **YouTube** est rattaché à Google, société américaine
-- **OpenStreetMap**, bien qu'européen et open source, est principalement basé au Royaume-Uni, donc hors Union Européenne
+- **OpenStreetMap**, bien qu'européen et open source, est principalement basé au Royaume-Uni, donc hors Union Européenne ( Ici il sera surement remplacé par Leaflet  ou MapLibreJS )
 
 La Clean Architecture simplifie ce type de substitution et encourage une meilleure discipline dans la gestion des dépendances.
 

@@ -12,7 +12,7 @@
 
 #### - Performance initial
 
-![alt text](image.png)
+![alt text](assets/image.png)
 
 #### - Performance Livrable
 
