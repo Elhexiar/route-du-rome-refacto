@@ -1,28 +1,25 @@
-﻿
-## Architecture
+﻿## Architecture
 
 ### Choix architectural : Proposition 1
 
-
-
 Le projet s'appuie sur une **Clean Architecture**, avec une séparation stricte entre chaque couche via des interfaces.
 
-![Introduction à la Clean Architecture](https://cdn-media-1.freecodecamp.org/images/YsN6twE3-4Q4OYpgxoModmx29I8zthQ3f0OR)  
+![Introduction à la Clean Architecture](https://cdn-media-1.freecodecamp.org/images/YsN6twE3-4Q4OYpgxoModmx29I8zthQ3f0OR)
 
-Le périmètre du projet est relativement restreint : peu de dépendances externes et un seul composant applicatif, *La Route du Rome*. Des architectures comme l'Hexagonale, l'Onion ou l'Event-Driven ne sont donc pas nécessaires,  le projet n'atteindra pas un niveau de complexité qui les justifierait.
+Le périmètre du projet est relativement restreint : peu de dépendances externes et un seul composant applicatif, _La Route du Rome_. Des architectures comme l'Hexagonale, l'Onion ou l'Event-Driven ne sont donc pas nécessaires, le projet n'atteindra pas un niveau de complexité qui les justifierait.
 
 **Pourquoi la Clean Architecture plutôt qu'une architecture en couches (Layered) ?**
 
 Ce choix garantit que la logique métier reste strictement isolée des dépendances externes. Or, les deux dépendances actuelles, OpenStreetMap et YouTube, pourraient un jour devoir être remplacées, notamment pour des raisons de souveraineté numérique :
 
 - **YouTube** est rattaché à Google, société américaine
-- **OpenStreetMap**, bien qu'européen et open source, est principalement basé au Royaume-Uni, donc hors Union Européenne ( Ici il sera surement remplacé par Leaflet  ou MapLibreJS )
+- **OpenStreetMap**, bien qu'européen et open source, est principalement basé au Royaume-Uni, donc hors Union Européenne ( Ici il sera surement remplacé par Leaflet ou MapLibreJS )
 
 La Clean Architecture simplifie ce type de substitution et encourage une meilleure discipline dans la gestion des dépendances.
 
 ### Choix architectural : Proposition 2
 
-Le projet étnat relativement restraint dans son scope, avec une application realitvement simple, n'utilisant que peux de dépendance éxterne et composé d'un seul component.
+Le projet étant relativement restraint dans son scope, avec une application realitvement simple, n'utilisant que peux de dépendance éxterne et composé d'un seul component.
 
 La majorité des architectures habituel serait superflus et une complexification inutile du projet.
 
@@ -36,3 +33,8 @@ Permetre de faire des tests unitaire sur l'intégralité des logiques metier, et
 
 Une gestion simple mais organisée et efficace de la data et des assets.
 
+On restera donc sur une architecture a couche basique.
+
+## Choix retenue
+
+Proposition 1

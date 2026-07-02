@@ -89,12 +89,21 @@ package "Route du Rome" {
     
     package "Heroes"{
     
-        interface IHeroesController{
-            "L'interface IHeroesController définit les méthodes\n pour gérer les données des héros."
-        }
-        class HeroesController implements IHeroesController{
+        interface IHeroController{
+            "L'interface IHeroController définit les méthodes\n pour gérer les données des héros."
+        
+            + IHeroController( \nselectedHero: Hero, \nheroService: IHeroService, \nexperienceController: IExperienceController \n)
 
+            + selectHero(hero: Hero): void
+            + getSelectedHero(): Hero
+
+            - selectedHero: Hero
+            - heroService: IHeroService
+            - experienceController: IExperienceController
+        
         }
+        class HeroController implements IHeroController{
+
 
         interface IExperienceController {
             "L'interface IExperienceController définit les méthodes\n pour gérer l'expérience de l'utilisateur."
@@ -123,7 +132,7 @@ package "Route du Rome" {
 
         class QuestService implements IExperienceObserver, IQuestService
 
-        IHeroesController *-- IExperienceController : "Gère l'expérience de l'utilisateur"
+        IHeroController *-- IExperienceController : "Gère l'expérience de l'utilisateur"
 
         IExperienceController *-- IQuestService : "Gère les quêtes de l'utilisateur"
         IExperienceController *-- IBadgeService : "Gère les badges de l'utilisateur"
