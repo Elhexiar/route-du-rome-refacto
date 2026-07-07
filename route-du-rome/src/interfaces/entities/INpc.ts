@@ -1,5 +1,5 @@
-import type { IDialogue } from "./dialogues/IDialogue";
-import type { IDialogueOwner } from "./dialogues/IDialogueOwner";
+import type { IDialogue } from "./dialogue/IDialogue";
+import type { IDialogueOwner } from "./dialogue/IDialogueOwner";
 
 export interface INpc extends IDialogueOwner {
   id: string;

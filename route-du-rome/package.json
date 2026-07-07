@@ -6,13 +6,45 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:run": "vitest run"
   },
   "devDependencies": {
     "typescript": "~6.0.2",
-    "vite": "^8.1.1"
+    "vite": "^8.1.1",
+    "vitest": "^4.1.10"
   },
   "dependencies": {
     "lit-html": "^3.3.3"
+  },
+  "imports": {
+    "#src/*": [
+      "./src/*"
+    ],
+    "#Entities/*": [
+      "./src/entities/*"
+    ],
+    "#IEntities/*": [
+      "./src/interfaces/entities/*"
+    ],
+    "#Controllers/*": [
+      "./src/controllers/*"
+    ],
+    "#IControllers/*": [
+      "./src/interfaces/controllers/*"
+    ],
+    "#Services/*": [
+      "./src/services/*"
+    ],
+    "#IServices/*": [
+      "./src/interfaces/services/*"
+    ],
+    "#Repositories/*": [
+      "./src/repositories/*"
+    ],
+    "#IRepositories/*": [
+      "./src/interfaces/repositories/*"
+    ]
   }
 }

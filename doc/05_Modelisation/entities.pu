@@ -1,90 +1,124 @@
 @startuml 
 
-class Hero
-{
-    + id : string
-    + name : string
-    + role : string
-    + description : string
-    + bio : string
-    + presentationDialogue : Dialogue
-    + portrait : string
-    + presentationVideo : string
-}
 
-class Badge
-{
-    + id : string
-    + name : string
-    + description : string
-    + icon : string
-    + checkUnlockConditions() : boolean
-    + Unlock() : void
-    + onUnlock() : void : callback
-    + Reward() : void
-}
 
-class Quest {
-    
-    + id : string
-    + name : string
-    + description : string
-    + isCompleted : boolean
-    + checkCompletionConditions() : boolean
-    + Complete() : void
-    + onComplete() : void : callback
-    + Reward() : void
-}
 
-struct NPC
-{
-    + id : string
-    + lattitude : number
-    + longitude : number
-    + icon : string
-    + name : string
-    + job : string
-    + description : string
-    + color : string
-    + portrait : string
-    + presentationVideo : string
-    + presentationDialogue : Dialogue
-}
 
-package "Dialogue" {
+    interface IDialogueOwner {
+        dialogues: IDialogue[];
+        currentActiveDialogue: IDialogue | null;
+
+        addDialogue(dialogue: IDialogue): void;
+        addDialogueLine(line: IDialogueLine, dialogueId?: string): void;
+        getDialogueById(dialogueId: string): IDialogue | undefined;
+  
+    }
+
+    class DialogueOwnerBehaviour {
+        addDialogue(dialogue: IDialogue): void;
+        addDialogueLine(line: IDialogueLine, dialogueId?: string): void;
+        getDialogueById(dialogueId: string): IDialogue | undefined;
+    }
 
     struct Dialogue
     {
-        + id : string
-        + npcId : string
-        + heroId : string
-        + currentLineIndex : number
-        + currentChoicesIndex : { choiceId: string, choiceIndex: number }[]
-        + lines : DialogueLine[]
+        id: string;
+        owner: IDialogueOwner;
+        isCompleted: boolean;
+        isActive: boolean;
+        currentLineIndex: number;
+        currentChoiceIndex: number;
+        lines: IDialogueLine[];
+
+        GetCurrentLine(): IDialogueLine | undefined;
+        GetCurrentChoice(): IChoice | undefined;
+        Start(): void;
+        Continue(): void;
+        Choose(choiceIndex: number): void;
+        onDialogueCompleted: () => void;
     }
 
     struct DialogueLine
     {
-        + id : string
-        + text : string
-        + hasChoices : boolean
-        + choices : Choice[]
-        + onBeginDisplayLine() : void : callback
-        + onEndDisplayLine() : void : callback
+        id: string;
+        text: string;
+        hasChoice: boolean;
+        choices: IChoice[];
+        onBeginDisplayLine: () => void;
+        onEndDisplayLine: () => void;
     }
 
     struct Choice
     {
-        + id : string
-        + text : string
-        + onChoiceMade() : void : callback
+        id: string;
+        text: string;
+        onChoiceNextDialogueLine: IDialogueLine | null;
+
+        onChoiceMade: () => void;
     }
 
     
 
+
+    IDialogueOwner *-- Dialogue : "Contient des dialogues"
     Dialogue *-- DialogueLine : "Contient des lignes de dialogue"
     DialogueLine *-- Choice : "potentiellement contient des choix"
 
+
+    class Hero implements IDialogueOwner
+    {
+        + id : string
+        + name : string
+        + role : string
+        + description : string
+        + bio : string
+        + presentationDialogue : Dialogue
+        + portrait : string
+        + presentationVideo : string
+    }
+
+    class Badge
+    {
+        + id : string
+        + name : string
+        + description : string
+        + icon : string
+        + checkUnlockConditions() : boolean
+        + Unlock() : void
+        + onUnlock() : void : callback
+        + Reward() : void
+    }
+
+    class Quest {
+        
+        + id : string
+        + name : string
+        + description : string
+        + isCompleted : boolean
+        + checkCompletionConditions() : boolean
+        + Complete() : void
+        + onComplete() : void : callback
+        + Reward() : void
+    }
+
+    struct NPC implements IDialogueOwner
+    {
+        + id : string
+        + lattitude : number
+        + longitude : number
+        + icon : string
+        + name : string
+        + job : string
+        + description : string
+        + color : string
+        + portrait : string
+        + presentationVideo : string
+        + presentationDialogue : Dialogue
+    }
+
+    
+    Hero --> DialogueOwnerBehaviour : "utilise ses methodes pour interagir avec les dialogues"
+    NPC --> DialogueOwnerBehaviour
 
 
 }

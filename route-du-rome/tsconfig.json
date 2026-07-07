@@ -18,7 +18,20 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    /* Aliases */
+    "paths": {
+      "#src/*": ["./src/*"],
+      "#Entities/*": ["./src/entities/*"],
+      "#IEntities/*": ["./src/interfaces/entities/*"],
+      "#Controllers/*": ["./src/controllers/*"],
+      "#IControllers/*": ["./src/interfaces/controllers/*"],
+      "#Services/*": ["./src/services/*"],
+      "#IServices/*": ["./src/interfaces/services/*"],
+      "#Repositories/*": ["./src/repositories/*"],
+      "#IRepositories/*": ["./src/interfaces/repositories/*"]
+    }
   },
   "include": ["src", "src/entities/.ts"]
 }
