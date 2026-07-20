@@ -1,7 +1,7 @@
 import type { IHero } from "#IEntities/IHero";
 import type { IDialogue } from "#IEntities/dialogue/IDialogue";
 import { createDialogueOwnerBehavior } from "#src/interfaces/entities/dialogue/IDialogueFactory.ts";
-import type { IDialogueLine } from "#src/interfaces/entities/dialogue/IDialogueLine.ts";
+import type { IDialogueLine } from "#src/interfaces/entities/dialogue/IDialogueNode.ts";
 
 /**
  * @param id : string : Identifiant unique du héros

@@ -1,6 +1,5 @@
 import type { IDialogue } from "#IEntities/dialogue/IDialogue";
-import type { IChoice } from "#src/interfaces/entities/dialogue/IChoice.ts";
-import type { IDialogueLine } from "#src/interfaces/entities/dialogue/IDialogueLine.ts";
+import type { DialogueNodeJSON } from "#src/interfaces/entities/dialogue/IDialogueNode.ts";
 import type { IDialogueOwner } from "#src/interfaces/entities/dialogue/IDialogueOwner.ts";
 
 /**
@@ -14,39 +13,104 @@ import type { IDialogueOwner } from "#src/interfaces/entities/dialogue/IDialogue
  * @param currentChoiceIndex? : number : Index du choix actuel
  * @param lines? : IDialogueLine[] : Liste des lignes de dialogue
  *
- * @function GetCurrentLine : IDialogueLine | undefined : Retourne la ligne de dialogue actuelle
- * @function GetCurrentChoice : IChoice | undefined : Retourne le choix actuel
  * @function Continue : void : Passe à la ligne de dialogue suivante
  * @function Choose : void : Sélectionne un choix et passe à la ligne de dialogue suivante
  * @function onDialogueCompleted : () => void : Callback appelé lorsque le dialogue est terminé
  *
  */
 export class Dialogue implements IDialogue {
-  id: string;
-  owner: IDialogueOwner | undefined;
-  isCompleted: boolean;
-  isActive: boolean;
-  currentLineLevelIndex: number;
-  currentChoiceIndex: number;
-  lines: IDialogueLine[] | undefined;
-  onDialogueCompleted: () => void;
+  private _id: string;
+  private _owner: IDialogueOwner | undefined;
+  private _isCompleted: boolean;
+  private _isActive: boolean;
+  private _currentLineDepth: number;
+  private _currentChoiceDepth: number;
+  private _rootNode: DialogueNodeJSON | undefined;
+  private _currentNode: DialogueNodeJSON | undefined;
+  private _OnDialogueCompleted: () => void;
 
+  get id(): string {
+    return this._id;
+  }
+
+  get owner(): IDialogueOwner | undefined {
+    return this._owner;
+  }
+
+  get isCompleted(): boolean {
+    return this._isCompleted;
+  }
+
+  get isActive(): boolean {
+    return this._isActive;
+  }
+
+  get currentLineDepth(): number {
+    return this._currentLineDepth;
+  }
+
+  get currentChoiceDepth(): number {
+    return this._currentChoiceDepth;
+  }
+
+  get rootNode(): DialogueNodeJSON | undefined {
+    return this._rootNode;
+  }
+
+  get currentNode(): DialogueNodeJSON | undefined {
+    return this._currentNode;
+  }
+
+  get OnDialogueCompleted(): () => void {
+    return this._OnDialogueCompleted;
+  }
+
+  /**
+   *
+   * @param owner : IDialogueOwner : Propriétaire du dialogue (Héros ou PNJ)
+   * @param id? : string : Identifiant unique du dialogue
+   * @param json : unknown : Données JSON importées pour initialiser le dialogue
+   */
   constructor(
     owner: IDialogueOwner | undefined,
-    isCompleted?: boolean,
-    isActive?: boolean,
-    currentLineIndex?: number,
-    currentChoiceIndex?: number,
-    lines?: IDialogueLine[],
     id?: string,
+    json: unknown = undefined,
+    OnDialogueCompletionCallback: () => void = () => {},
   ) {
-    this.id = id ?? crypto.randomUUID();
-    this.owner = owner;
-    this.isCompleted = isCompleted ?? false;
-    this.isActive = isActive ?? false;
-    this.currentLineLevelIndex = currentLineIndex ?? 0;
-    this.currentChoiceIndex = currentChoiceIndex ?? 0;
-    this.lines = lines ?? [];
-    this.onDialogueCompleted = () => {};
+    this._id = id ?? crypto.randomUUID();
+    this._owner = owner;
+    this._isCompleted = false;
+    this._isActive = false;
+    this._currentLineDepth = 0;
+    this._currentChoiceDepth = 0;
+    this._OnDialogueCompleted = OnDialogueCompletionCallback;
+
+    this.ImportDialogueFromJSON(json);
+  }
+
+  ImportDialogueFromJSON(json: unknown): IDialogue | null {
+    if (!json || typeof json !== "object") {
+      console.error("Invalid JSON data for dialogue import.");
+      return null;
+    }
+
+    const parsedData = json as DialogueNodeJSON;
+
+    this._rootNode = parsedData;
+    this._currentNode = this._rootNode;
+
+    return this;
+  }
+
+  AddAction(actionID: string, actionType: "OnStartText" | "OnEndText"): void {
+    throw new Error("Method not implemented.");
+  }
+
+  Continue(): void {
+    throw new Error("Method not implemented.");
+  }
+
+  Choose(choiceID?: string, choiceIndex?: number): void {
+    throw new Error("Method not implemented.");
   }
 }
