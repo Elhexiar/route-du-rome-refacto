@@ -15,7 +15,7 @@ export function createDialogueOwnerBehavior(state: IDialogueOwner) {
         : state.dialogues[state.dialogues.length - 1];
 
       if (targetDialogue) {
-        targetDialogue.lines.push(line);
+        // targetDialogue.lines.push(line);
       }
 
       return this;
