@@ -45,18 +45,23 @@ def import_tiles(max_zoom, min_zoom, x_width, y_width, import_path, output_path,
     skipped = 0
     failed = 0
 
+    zoom_index = 0
+
     for zoom in range(min_zoom, max_zoom + 1):
+        zoom_index += 1
+        tile_count = (2**zoom) * zoom_index
+
         if lat is not None and lng is not None:
             center_x, center_y = lat_lng_to_tile(lat, lng, zoom)
-            start_x = max(0, center_x - tile_range)
-            end_x = center_x + tile_range
-            start_y = max(0, center_y - tile_range)
-            end_y = center_y + tile_range
+            start_x = max(0, center_x - tile_range*zoom_index)
+            end_x = min(tile_count - 1, center_x + tile_range*zoom_index)
+            start_y = max(0, center_y - tile_range*zoom_index)
+            end_y = min(tile_count - 1, center_y + tile_range*zoom_index)
             x_values = range(start_x, end_x + 1)
             y_values = range(start_y, end_y + 1)
         else:
-            x_values = range(x_width)
-            y_values = range(y_width)
+            x_values = range(min(x_width*zoom_index, tile_count*zoom_index))
+            y_values = range(min(y_width*zoom_index, tile_count*zoom_index))
 
         for x in x_values:
             for y in y_values:

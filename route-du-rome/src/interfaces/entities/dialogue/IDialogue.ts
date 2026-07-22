@@ -1,6 +1,5 @@
 import type { IDialogueOwner } from "./IDialogueOwner";
 import type { IDialogueLine } from "./IDialogueLine";
-import type { IChoice } from "./IChoice";
 
 /***
  *

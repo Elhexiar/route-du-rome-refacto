@@ -1,5 +1,4 @@
 import type { IDialogue } from "#IEntities/dialogue/IDialogue";
-import type { IChoice } from "#src/interfaces/entities/dialogue/IChoice.ts";
 import type { IDialogueLine } from "#src/interfaces/entities/dialogue/IDialogueLine.ts";
 import type { IDialogueOwner } from "#src/interfaces/entities/dialogue/IDialogueOwner.ts";
 
@@ -27,8 +26,9 @@ export class Dialogue implements IDialogue {
   isCompleted: boolean;
   isActive: boolean;
   currentLineLevelIndex: number;
-  currentChoiceIndex: number;
-  lines: IDialogueLine[] | undefined;
+  currentChoiceLevelIndex: number;
+  rootLine: IDialogueLine | undefined;
+  currentLine: IDialogueLine | undefined;
   onDialogueCompleted: () => void;
 
   constructor(
@@ -45,8 +45,9 @@ export class Dialogue implements IDialogue {
     this.isCompleted = isCompleted ?? false;
     this.isActive = isActive ?? false;
     this.currentLineLevelIndex = currentLineIndex ?? 0;
-    this.currentChoiceIndex = currentChoiceIndex ?? 0;
-    this.lines = lines ?? [];
+    this.currentChoiceLevelIndex = currentChoiceIndex ?? 0;
+    this.rootLine = lines?.[0];
+    this.currentLine = this.rootLine;
     this.onDialogueCompleted = () => {};
   }
 }

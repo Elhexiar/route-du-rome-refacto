@@ -9,7 +9,7 @@ export function createDialogueOwnerBehavior(state: IDialogueOwner) {
       return this;
     },
 
-    addDialogueLine(line: IDialogueLine, dialogueId?: string) {
+    addDialogueLine(_line: IDialogueLine, dialogueId?: string) {
       const targetDialogue = dialogueId
         ? state.dialogues.find((dialogue) => dialogue.id === dialogueId)
         : state.dialogues[state.dialogues.length - 1];

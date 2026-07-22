@@ -6,9 +6,12 @@ export interface INpc extends IDialogueOwner {
   name: string;
   icon: string;
   job: string;
+  color: string;
   portrait: string;
   lattitude: number;
   longitude: number;
   presentationVideo: string;
-  presentationDialogue: IDialogue;
+  presentationDialogue: IDialogue | null;
+  done: boolean;
+  accessible: boolean;
 }
