@@ -2,6 +2,10 @@ import type { IMapView } from "#IUI/IMapView";
 import { Npc } from "#src/entities/Npc.ts";
 import type { INpc } from "#src/interfaces/entities/INpc.ts";
 import { Marker } from "./Marker";
+import type { NpcData } from "#Entities/Npc.ts";
+import type { ConfigData } from "#Entities/Config.ts";
+import { GameManager } from "#Controllers/GameManager.ts";
+import type { NpcController } from "#Controllers/NpcController.ts";
 
 export class LeafletMapView implements IMapView {
   private readonly element: HTMLElement;
@@ -33,7 +37,7 @@ export class LeafletMapView implements IMapView {
     this.initMap();
   }
 
-  private async initMap(): Promise<void> {
+  private initMap(): void {
     const mapContainer = this.element.querySelector("#map");
 
     if (!mapContainer) {
@@ -68,9 +72,11 @@ export class LeafletMapView implements IMapView {
     // Initialize the map with the specified bounds and zoom levels
     const map = (this.leaflet as any)
       .map(mapContainer, {
-        // minZoom: 11,
+        minZoom: 11,
         maxZoom: 13,
         zoomControl: true,
+        maxBounds: bounds,
+        maxBoundsViscosity: 0.8,
       })
       .setView([48.58, -1.96], 11);
 
@@ -84,85 +90,15 @@ export class LeafletMapView implements IMapView {
 
     this.map = map;
 
-    // Test : Add a few markers for testing purposes
-
-    type dataNpc = {
-      id: string;
-      name: string;
-      color: string;
-      job: string;
-      icon: string;
-      portrait: string;
-      lattitude: number;
-      longitude: number;
-    };
-
-    type Config = {
-      Npcs: dataNpc[];
-    };
-
-    const response = await fetch("/config.json");
-    const data: Config = await response.json();
-
-    data.Npcs.forEach((npcData) => {
-      const npc: Npc = new Npc(
-        npcData.id,
-        npcData.name,
-        npcData.color,
-        npcData.job,
-        npcData.icon,
-        npcData.portrait,
-        npcData.lattitude,
-        npcData.longitude,
-        "",
-        null,
-        [],
-      );
-
-      this.addMarker(npc.lattitude, npc.longitude, npc);
-      this.onMarkerClick(npc, () => {
-        console.log(`Marker clicked: ${npc.name}`);
-      });
-    });
-
-    // const testNPC1: Npc = new Npc(
-    //   "jeanne",
-    //   "Jeanne",
-    //   "#ff0000",
-    //   "Mécanicienne",
-    //   "🔩",
-    //   "/portraits/JeannePP.png",
-    //   48.424580002157796,
-    //   -1.7402379516237536,
-    //   "",
-    //   null,
-    //   [],
-    // );
-    // const testNPC2: Npc = new Npc(
-    //   "manu",
-    //   "Manu",
-    //   "#00ff00",
-    //   "Guide touristique",
-    //   "🗺️",
-    //   "/portraits/ManuPP.png",
-    //   48.583,
-    //   -1.9,
-    //   "",
-    //   null,
-    //   [],
-    // );
-
-    // this.addMarker(testNPC1.lattitude, testNPC1.longitude, testNPC1);
-    // this.onMarkerClick(testNPC1, () => {
-    //   console.log(`Marker clicked: ${testNPC1.name}`);
-    // });
-    // this.addMarker(testNPC2.lattitude, testNPC2.longitude, testNPC2);
-    // this.onMarkerClick(testNPC2, () => {
-    //   console.log(`Marker clicked: ${testNPC2.name}`);
+    // console.log("Map initialized");
+    // GameManager.npcController?.onNpcsLoaded((npcs) => {
+    //   npcs.forEach((npc) => {
+    //     this.addNPCMarker(npc.lattitude, npc.longitude, npc);
+    //   });
     // });
   }
 
-  addMarker(lat: number, lng: number, npc: INpc): Marker | undefined {
+  addNPCMarker(lat: number, lng: number, npc: INpc): Marker | undefined {
     if (!this.map) {
       console.error("Map is not initialized.");
       return;
@@ -173,7 +109,17 @@ export class LeafletMapView implements IMapView {
     return marker;
   }
 
-  removeMarker(npc: INpc): void {
+  moveNPCMarker(npc: INpc, newLat: number, newLng: number): void {
+    const marker = this.markers.get(npc);
+
+    if (!marker) {
+      return;
+    }
+
+    marker.setLatLng([newLat, newLng]);
+  }
+
+  removeNPCMarker(npc: INpc): void {
     const marker = this.markers.get(npc);
 
     if (!marker) {
@@ -184,7 +130,22 @@ export class LeafletMapView implements IMapView {
     this.markers.delete(npc);
   }
 
-  onMarkerClick(npc: INpc, callback: () => void): void {
+  addHeroMarker(lat: number, lng: number, hero: any): Marker | undefined {
+    if (!this.map) {
+      console.error("Map is not initialized.");
+      return;
+    }
+
+    const marker = new Marker(this.leaflet, this.map, undefined, hero);
+    this.markers.set(hero, marker);
+    return marker;
+  }
+
+  moveHeroMarker(hero: any, newLat: number, newLng: number): void {}
+
+  removeHeroMarker(hero: any): void {}
+
+  onNPcMarkerClick(npc: INpc, callback: () => void): void {
     const marker = this.markers.get(npc);
 
     if (!marker) {

@@ -1,4 +1,28 @@
 {
+  "Heroes": [
+    {
+      "id": "elio",
+      "name": "Élio",
+      "role": "Explorateur France Travail",
+      "description": "Élio est <strong>conseiller France Travail en herbe</strong> et grand aventurier. Il parcourt l'<strong>Ille-et-Vilaine</strong> à la rencontre des pros. Sa mission : <strong>découvrir les métiers du 35</strong>.",
+      "bio": "",
+      "presentationDialogue": null,
+      "portrait": "/portraits/ElioPP.png",
+      "presentationVideo": "/videos/Elio.mp4",
+      "dialogue": null
+    },
+    {
+      "id": "elia",
+      "name": "Élia",
+      "role": "Exploratrice France Travail",
+      "description": "Élia est <strong>conseillère France Travail en herbe</strong> et grande aventurière. Elle parcourt l'<strong>Ille-et-Vilaine</strong> à la rencontre des pros. Sa mission : <strong>découvrir les métiers du 35</strong>.",
+      "bio": "",
+      "presentationDialogue": null,
+      "portrait": "/portraits/EliaPP.png",
+      "presentationVideo": "/videos/Elia.mp4",
+      "dialogue": null
+    }
+  ],
   "Npcs": [
     {
       "id": "maritime",

@@ -1,5 +1,6 @@
 import type { IDialogue } from "./dialogue/IDialogue";
 import type { IDialogueOwner } from "./dialogue/IDialogueOwner";
+import type { IQuest } from "./IQuest";
 
 export interface INpc extends IDialogueOwner {
   id: string;
@@ -10,7 +11,10 @@ export interface INpc extends IDialogueOwner {
   portrait: string;
   lattitude: number;
   longitude: number;
-  presentationVideo: string;
+  relatedQuests: IQuest[];
+  backgroundVideo: string;
+  jobPresentationVideo: string;
+  videoTitle: string;
   presentationDialogue: IDialogue | null;
   done: boolean;
   accessible: boolean;

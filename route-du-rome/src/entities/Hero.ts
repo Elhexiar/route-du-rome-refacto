@@ -2,6 +2,20 @@ import type { IHero } from "#IEntities/IHero";
 import type { IDialogue } from "#IEntities/dialogue/IDialogue";
 import { createDialogueOwnerBehavior } from "#src/interfaces/entities/dialogue/IDialogueFactory.ts";
 import type { IDialogueLine } from "#src/interfaces/entities/dialogue/IDialogueLine.ts";
+import type { DialogueData } from "#Entities/dialogue/Dialogue.ts";
+
+// JSON data structure for Hero
+export type HeroData = {
+  id: string;
+  name: string;
+  role: string;
+  description: string;
+  bio: string;
+  presentationDialogue?: DialogueData | null;
+  portrait: string;
+  presentationVideo: string;
+  dialogues?: DialogueData[];
+};
 
 /**
  * @param id : string : Identifiant unique du héros
@@ -21,7 +35,7 @@ export class Hero implements IHero {
   role: string;
   description: string;
   bio: string;
-  presentationDialogue: IDialogue | undefined;
+  presentationDialogue: IDialogue | undefined | null;
   portrait: string;
   presentationVideo: string;
 
@@ -39,7 +53,7 @@ export class Hero implements IHero {
     bio: string,
     portrait: string,
     presentationVideo: string,
-    presentationDialogue?: IDialogue | undefined,
+    presentationDialogue?: IDialogue | undefined | null,
     dialogues?: IDialogue[],
   ) {
     this.id = id;

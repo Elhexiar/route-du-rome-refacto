@@ -11,6 +11,19 @@
   font-weight: 400;
   color: #f5f5f5;
   background-color: #111827;
+  --navy: #1d1e3c;
+  --violet: #69408c;
+  --v2: #8b5bb8;
+  --pink: #eb94c2;
+  --yellow: #ffcc52;
+  --accent: #406bde;
+  --coral: #eb6366;
+  --sky: #b0bff0;
+  --plum: #d9c9e5;
+  --muted: #a99bbf;
+  --text: #f0ecf8;
+  --panel: rgba(18, 14, 36, 0.96);
+  --gold: #ffde8c;
 }
 
 body {
@@ -161,4 +174,46 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+/* ══ PLAYER MARKER ══ */
+.player-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.player-portrait {
+  width: 68px;
+  height: 68px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 4px solid var(--violet);
+  box-shadow:
+    0 0 0 4px rgba(105, 64, 140, 0.3),
+    0 0 28px rgba(105, 64, 140, 0.6);
+  animation: ppPulse 2s ease-in-out infinite;
+}
+@keyframes ppPulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 3px rgba(105, 64, 140, 0.3),
+      0 0 24px rgba(105, 64, 140, 0.6);
+  }
+  50% {
+    box-shadow:
+      0 0 0 6px rgba(105, 64, 140, 0.1),
+      0 0 36px rgba(105, 64, 140, 0.9);
+  }
+}
+.player-lbl {
+  background: var(--navy);
+  border: 1px solid var(--violet);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 900;
+  padding: 2px 8px;
+  border-radius: 8px;
+  margin-top: 3px;
+  white-space: nowrap;
 }

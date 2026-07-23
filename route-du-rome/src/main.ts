@@ -1,8 +1,6 @@
+import { GameManager } from "./controllers/GameManager";
 import "./style.css";
-import { LeafletMapView } from "./ui/map/MapView";
 
 const app = document.querySelector("#app");
 
-if (app) {
-  new LeafletMapView(app as HTMLElement);
-}
+GameManager.init(app);

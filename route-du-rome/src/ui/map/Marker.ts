@@ -1,53 +1,92 @@
+import { GameManager } from "#src/controllers/GameManager.ts";
+import type { IHero } from "#src/interfaces/entities/index.ts";
 import type { INpc } from "#src/interfaces/entities/INpc.ts";
 
 export class Marker {
   private readonly marker: any;
 
-  constructor(leaflet: any, map: any, npc: INpc) {
-    this.marker = this.render(leaflet, map, npc);
+  constructor(leaflet: any, map: any, npc?: INpc, hero?: IHero) {
+    this.marker = this.render(leaflet, map, npc, hero);
   }
 
-  private render(leaflet: any, map: any, npc: INpc): any {
+  private render(leaflet: any, map: any, npc?: INpc, hero?: IHero): any {
     if (!leaflet) {
       console.error("Leaflet library is not loaded.");
       return undefined;
     }
-    var lockOverlay =
-      !npc.done && !npc.accessible
-        ? '<div class="quest-locked-overlay">🔒</div>'
-        : "";
 
-    var iconInner = "<img src='" + npc.portrait + "' alt='" + npc.name + "' />";
+    if (npc) {
+      var lockOverlay =
+        !npc.done && !npc.accessible
+          ? '<div class="quest-locked-overlay">🔒</div>'
+          : "";
 
-    const icon = leaflet.divIcon({
-      className: "leaflet-marker-icon map-marker map-marker--npc",
-      html:
-        '<div class="npc-wrap" style="position:relative;">' +
-        '<div class="npc-icon' +
-        (npc.done ? " done" : "") +
-        '" style="border-color:' +
-        npc.color +
-        ';position:relative;">' +
-        iconInner +
-        lockOverlay +
-        "</div>" +
-        '<div class="npc-sector-badge" style="background:' +
-        npc.color +
-        ';">' +
-        npc.icon +
-        " " +
-        npc.name +
-        "</div>" +
-        '<div class="npc-lbl">' +
-        npc.name +
-        (npc.done ? " ✓" : "") +
-        "</div>" +
-        "</div>",
-      iconSize: [120, 130],
-      iconAnchor: [60, 125],
-    });
+      var iconInner =
+        "<img src='" + npc.portrait + "' alt='" + npc.name + "' />";
 
-    return leaflet.marker([npc.lattitude, npc.longitude], { icon }).addTo(map);
+      const icon = leaflet.divIcon({
+        className: "leaflet-marker-icon map-marker map-marker--npc",
+        html:
+          '<div class="npc-wrap" style="position:relative;">' +
+          '<div class="npc-icon' +
+          (npc.done ? " done" : "") +
+          '" style="border-color:' +
+          npc.color +
+          ';position:relative;">' +
+          iconInner +
+          lockOverlay +
+          "</div>" +
+          '<div class="npc-sector-badge" style="background:' +
+          npc.color +
+          ';">' +
+          npc.icon +
+          " " +
+          npc.name +
+          "</div>" +
+          '<div class="npc-lbl">' +
+          npc.name +
+          (npc.done ? " ✓" : "") +
+          "</div>" +
+          "</div>",
+        iconSize: [120, 130],
+        iconAnchor: [60, 125],
+      });
+
+      return leaflet
+        .marker([npc.lattitude, npc.longitude], { icon })
+        .addTo(map);
+    }
+
+    if (hero) {
+      var iconInner =
+        "<img src='" + hero.portrait + "' alt='" + hero.name + "' />";
+
+      const icon = leaflet.divIcon({
+        className: "leaflet-marker-icon map-marker map-marker--npc",
+
+        html:
+          '<div class="player-wrap">' +
+          '<img id="pm-portrait" class="player-portrait" src="' +
+          hero.portrait +
+          '">' +
+          '<div id="pm-name" class="player-lbl">' +
+          hero.name +
+          "</div>" +
+          "</div>",
+        iconSize: [90, 110],
+        iconAnchor: [45, 104],
+      });
+
+      console.log(icon);
+      const initialPosition = GameManager.heroController?.position;
+
+      return leaflet
+        .marker(
+          [initialPosition?.lattitude ?? 0, initialPosition?.longitude ?? 0],
+          { icon },
+        )
+        .addTo(map);
+    }
   }
 
   onClick(callback: () => void): void {
