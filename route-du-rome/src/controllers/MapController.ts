@@ -12,7 +12,7 @@ export class MapController implements IMapController {
     this.InitMapView(this.mapView);
   }
 
-  InitMapView(mapView: any): void {
+  InitMapView(_mapView: any): void {
     GameManager.npcController?.onNpcsLoaded((npcs) => {
       npcs.forEach((npc) => {
         this.AddNpcMarker(npc.lattitude, npc.longitude, npc);
@@ -37,35 +37,39 @@ export class MapController implements IMapController {
   AddHeroMarker(lattitude: number, longitude: number, hero: IHero): void {
     this.mapView.addHeroMarker(lattitude, longitude, hero);
   }
-  RemoveNpcMarker(npc: INpc): void {
+  RemoveNpcMarker(_npc: INpc): void {
     throw new Error("Method not implemented.");
   }
-  RemoveHeroMarker(hero: IHero): void {
+  RemoveHeroMarker(_hero: IHero): void {
     throw new Error("Method not implemented.");
   }
-  GetNpcMarker(npc: INpc) {
+  GetNpcMarker(_npc: INpc) {
     throw new Error("Method not implemented.");
   }
-  GetHeroMarker(hero: IHero) {
+  GetHeroMarker(_hero: IHero) {
     throw new Error("Method not implemented.");
   }
-  MoveNpcMarker(npc: INpc, newLattitude: number, newLongitude: number): void {
-    throw new Error("Method not implemented.");
-  }
-  MoveHeroMarker(
-    hero: IHero,
-    newLattitude: number,
-    newLongitude: number,
+  MoveNpcMarker(
+    _npc: INpc,
+    _newLattitude: number,
+    _newLongitude: number,
   ): void {
     throw new Error("Method not implemented.");
   }
-  ToggleMarkerVisibility(visible: boolean, npc?: INpc, hero?: IHero): void {
+  MoveHeroMarker(
+    _hero: IHero,
+    _newLattitude: number,
+    _newLongitude: number,
+  ): void {
+    throw new Error("Method not implemented.");
+  }
+  ToggleMarkerVisibility(_visible: boolean, _npc?: INpc, _hero?: IHero): void {
     throw new Error("Method not implemented.");
   }
   ToggleMarkerAccessibility(
-    accessible: boolean,
-    npc?: INpc,
-    hero?: IHero,
+    _accessible: boolean,
+    _npc?: INpc,
+    _hero?: IHero,
   ): void {
     throw new Error("Method not implemented.");
   }

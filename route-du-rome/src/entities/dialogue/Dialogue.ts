@@ -1,6 +1,11 @@
 import type { IDialogue } from "#IEntities/dialogue/IDialogue";
-import type { DialogueNodeJSON } from "#src/interfaces/entities/dialogue/IDialogueNode.ts";
+import type {
+  DialogueNodeJSON,
+  IDialogueNode,
+} from "#src/interfaces/entities/dialogue/IDialogueNode.ts";
 import type { IDialogueOwner } from "#src/interfaces/entities/dialogue/IDialogueOwner.ts";
+
+import { DialogueNode } from "./DialogueNode";
 
 export type DialogueData = {
   // Temporary type for testing purposes
@@ -32,8 +37,8 @@ export class Dialogue implements IDialogue {
   private _isActive: boolean;
   private _currentLineDepth: number;
   private _currentChoiceDepth: number;
-  private _rootNode: DialogueNodeJSON | undefined;
-  private _currentNode: DialogueNodeJSON | undefined;
+  private _rootNode: IDialogueNode | undefined;
+  private _currentNode: IDialogueNode | undefined;
   private _OnDialogueCompleted: () => void;
 
   get id(): string {
@@ -60,11 +65,11 @@ export class Dialogue implements IDialogue {
     return this._currentChoiceDepth;
   }
 
-  get rootNode(): DialogueNodeJSON | undefined {
+  get rootNode(): IDialogueNode | undefined {
     return this._rootNode;
   }
 
-  get currentNode(): DialogueNodeJSON | undefined {
+  get currentNode(): IDialogueNode | undefined {
     return this._currentNode;
   }
 
@@ -102,14 +107,15 @@ export class Dialogue implements IDialogue {
     }
 
     const parsedData = json as DialogueNodeJSON;
+    const rootNode = new DialogueNode(parsedData);
 
-    this._rootNode = parsedData;
-    this._currentNode = this._rootNode;
+    this._rootNode = rootNode;
+    this._currentNode = rootNode;
 
     return this;
   }
 
-  AddAction(actionID: string, actionType: "OnStartText" | "OnEndText"): void {
+  AddAction(_actionID: string, _actionType: "OnStartText" | "OnEndText"): void {
     throw new Error("Method not implemented.");
   }
 
@@ -117,7 +123,7 @@ export class Dialogue implements IDialogue {
     throw new Error("Method not implemented.");
   }
 
-  Choose(choiceID?: string, choiceIndex?: number): void {
+  Choose(_choiceID?: string, _choiceIndex?: number): void {
     throw new Error("Method not implemented.");
   }
 }

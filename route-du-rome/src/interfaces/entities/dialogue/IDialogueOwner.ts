@@ -2,7 +2,7 @@ import type { IDialogue } from "./IDialogue";
 
 export interface IDialogueOwner {
   dialogues: IDialogue[];
-  currentActiveDialogue: IDialogue | undefined;
+  currentActiveDialogue: IDialogue | null | undefined;
 }
 
 // const d = Dialogue(loadedJson)

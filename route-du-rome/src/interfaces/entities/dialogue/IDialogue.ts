@@ -1,5 +1,5 @@
 import type { IDialogueOwner } from "./IDialogueOwner";
-import type { DialogueNodeJSON } from "./IDialogueNode";
+import type { IDialogueNode } from "./IDialogueNode";
 
 /***
  *
@@ -23,8 +23,8 @@ export interface IDialogue {
   readonly isActive: boolean;
   readonly currentLineDepth: number;
   readonly currentChoiceDepth: number;
-  readonly rootNode: DialogueNodeJSON | undefined;
-  readonly currentNode: DialogueNodeJSON | undefined;
+  readonly rootNode: IDialogueNode | undefined;
+  readonly currentNode: IDialogueNode | undefined;
 
   AddAction(actionID: string, actionType: "OnStartText" | "OnEndText"): void;
   readonly OnDialogueCompleted: () => void;

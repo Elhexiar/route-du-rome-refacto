@@ -1,7 +1,5 @@
 import type { IDialogue } from "#IEntities/dialogue/IDialogue";
-import type { IDialogueLine } from "#IEntities/dialogue/IDialogueLine.ts";
 import type { INpc } from "#IEntities/INpc.ts";
-import { createDialogueOwnerBehavior } from "#src/interfaces/entities/dialogue/IDialogueFactory.ts";
 import type { IQuest } from "#IEntities/IQuest.ts";
 import type { DialogueData } from "./dialogue/Dialogue";
 
@@ -58,11 +56,9 @@ export class Npc implements INpc {
   videoTitle: string;
   presentationDialogue: IDialogue | null;
   dialogues: IDialogue[];
-  currentActiveDialogue: IDialogue | null;
+  currentActiveDialogue: IDialogue | null | undefined;
   done: boolean = false;
   accessible: boolean = true;
-
-  private readonly dialogueOwnerBehavior = createDialogueOwnerBehavior(this);
 
   constructor(
     id: string,
@@ -95,15 +91,5 @@ export class Npc implements INpc {
       : null;
     this.dialogues = dialogues;
     this.currentActiveDialogue = null;
-  }
-
-  addDialogue(dialogue: IDialogue): void {
-    this.dialogueOwnerBehavior.addDialogue(dialogue);
-  }
-  addDialogueLine(line: IDialogueLine, dialogueId?: string): void {
-    this.dialogueOwnerBehavior.addDialogueLine(line, dialogueId);
-  }
-  getDialogueById(dialogueId: string): IDialogue | undefined {
-    return this.dialogueOwnerBehavior.getDialogueById(dialogueId);
   }
 }

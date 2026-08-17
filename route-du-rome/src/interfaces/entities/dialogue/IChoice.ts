@@ -1,4 +1,4 @@
-import type { DialogueNodeJSON } from "./IDialogueNode";
+import type { IDialogueNode } from "./IDialogueNode";
 
 /***
  *
@@ -9,8 +9,12 @@ import type { DialogueNodeJSON } from "./IDialogueNode";
  */
 
 export interface IChoice {
+  root: IDialogueNode | null;
+  parent: IDialogueNode | IChoice | null;
   id: string;
   text: string;
   actionID?: string;
-  next?: DialogueNodeJSON | undefined;
+  next: IDialogueNode | null;
+
+  select(): IDialogueNode | null;
 }

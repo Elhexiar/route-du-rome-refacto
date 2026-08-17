@@ -12,5 +12,5 @@ export interface IMapView {
   removeHeroMarker(hero: any): void;
 
   setView(lat: number, lng: number, zoom: number): void;
-  onNPcMarkerClick(npc: INpc, callback: () => void): void;
+  onNpcMarkerClick(npc: INpc, callback: () => void): void;
 }

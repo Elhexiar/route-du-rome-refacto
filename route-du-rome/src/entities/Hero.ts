@@ -1,7 +1,5 @@
 import type { IHero } from "#IEntities/IHero";
 import type { IDialogue } from "#IEntities/dialogue/IDialogue";
-import { createDialogueOwnerBehavior } from "#src/interfaces/entities/dialogue/IDialogueFactory.ts";
-import type { IDialogueLine } from "#src/interfaces/entities/dialogue/IDialogueLine.ts";
 import type { DialogueData } from "#Entities/dialogue/Dialogue.ts";
 
 // JSON data structure for Hero
@@ -41,9 +39,7 @@ export class Hero implements IHero {
 
   // Dialogue Owner properties
   dialogues: IDialogue[] = [];
-  currentActiveDialogue: IDialogue | null = null;
-
-  private readonly dialogueOwnerBehavior = createDialogueOwnerBehavior(this);
+  currentActiveDialogue: IDialogue | null | undefined = null;
 
   constructor(
     id: string,
@@ -71,17 +67,5 @@ export class Hero implements IHero {
       ((this.presentationDialogue = presentationDialogue),
         this.dialogues.unshift(presentationDialogue));
     }
-  }
-
-  addDialogue(dialogue: IDialogue): void {
-    this.dialogueOwnerBehavior.addDialogue(dialogue);
-  }
-
-  addDialogueLine(line: IDialogueLine, dialogueId?: string): void {
-    this.dialogueOwnerBehavior.addDialogueLine(line, dialogueId);
-  }
-
-  getDialogueById(dialogueId: string): IDialogue | undefined {
-    return this.dialogueOwnerBehavior.getDialogueById(dialogueId);
   }
 }

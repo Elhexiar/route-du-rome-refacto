@@ -37,7 +37,33 @@
       "backgroundVideo": "/videos/Morgane1.mp4",
       "jobPresentationVideo": "https://www.youtube.com/embed/hlov7EFUT7E",
       "videoTitle": "Les métiers de la mer en Bretagne",
-      "PresentationDialogue": null
+      "presentationDialogue": {
+        "id": "morgane-intro",
+        "text": "Bonjour ! Que souhaitez-vous savoir sur mon métier ?",
+        "choices": [
+          {
+            "id": "morgane-metier",
+            "text": "Parlez-moi de votre métier.",
+            "next": {
+              "id": "morgane-metier-reponse",
+              "text": "Je travaille sur les bateaux et j'organise les sorties en mer pour la pêche locale."
+            }
+          },
+          {
+            "id": "morgane-formation",
+            "text": "Quelles formations faut-il suivre ?",
+            "next": {
+              "id": "morgane-formation-reponse",
+              "text": "Il faut souvent passer par un CAP ou un bac pro maritime, puis des stages pratiques."
+            }
+          },
+          {
+            "id": "morgane-repeat",
+            "text": "Recommencez, je n'ai pas bien compris.",
+            "findID": "morgane-intro"
+          }
+        ]
+      }
     },
     {
       "id": "agriculture",

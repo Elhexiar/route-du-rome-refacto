@@ -33,7 +33,8 @@
       "#IRepositories/*": ["./src/interfaces/repositories/*"],
       "#UI/*": ["./src/ui/*"],
       "#IUI/*": ["./src/interfaces/ui/*"],
-      "#Lib/*": ["./src/lib/*"]
+      "#Lib/*": ["./src/lib/*"],
+      "#Utils/*": ["./src/utils/*"]
     }
   },
   "include": ["src", "src/entities/.ts"]

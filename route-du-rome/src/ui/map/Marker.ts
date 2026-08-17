@@ -5,7 +5,11 @@ import type { INpc } from "#src/interfaces/entities/INpc.ts";
 export class Marker {
   private readonly marker: any;
 
+  npc?: INpc;
+  hero?: IHero;
+
   constructor(leaflet: any, map: any, npc?: INpc, hero?: IHero) {
+    this.npc = npc;
     this.marker = this.render(leaflet, map, npc, hero);
   }
 

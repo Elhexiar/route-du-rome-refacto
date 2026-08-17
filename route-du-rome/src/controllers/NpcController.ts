@@ -46,13 +46,23 @@ export class NpcController implements INpcController {
         npcData.backgroundVideo,
         npcData.jobPresentationVideo,
         npcData.videoTitle,
-        null,
+        null, // presentationDialogue will be set later
         [],
       );
+
+      // building the presentation dialogue for the NPC if it exists
+      if (npcData.presentationDialogue) {
+        const parsedDialogue = new Dialogue(
+          npc,
+          npc.name + "-presentation-dialogue",
+          npcData.presentationDialogue,
+        );
+        npc.presentationDialogue = parsedDialogue;
+      }
+
       this.AddNpc(npc);
     });
     console.log("NPCs added from JSON:", this.Npcs);
-
   }
 
   RemoveNpc(npc: INpc): void {

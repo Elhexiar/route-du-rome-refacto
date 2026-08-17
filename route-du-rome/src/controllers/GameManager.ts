@@ -2,38 +2,40 @@ import type {
   IHeroController,
   INpcController,
   IMapController,
+  IDialogueController,
 } from "#IControllers/index.ts";
 import {
   HeroController,
   NpcController,
   MapController,
+  DialogueController,
 } from "#Controllers/index.ts";
 
 export class GameManager {
   private static _instance: GameManager | null = null;
 
-  private _app: HTMLElement | null = null;
+  public _app: HTMLElement | null = null;
 
   private configPath: string = "/config.json";
 
   private _heroController: IHeroController | null = null;
   private _npcController: INpcController | null = null;
   private _mapController: IMapController | null = null;
-  //   private _dialogueController: IDialogueController | null = null;
+  private _dialogueController: IDialogueController | null = null;
+
   //   private _experienceController: IExperienceController | null = null;
 
-  private constructor() {
-    this.initializeControllers();
-  }
+  private constructor() {}
 
   private initializeControllers(): void {
     this._heroController = new HeroController(this.configPath);
     this._npcController = new NpcController(this.configPath);
 
+    // Initialize the map controller only if the app element is provided
     if (this._app) {
       this._mapController = new MapController(this._app);
     }
-    // this._dialogueController = new DialogueController();
+    this._dialogueController = new DialogueController(this._app);
     // this._experienceController = new ExperienceController();
   }
 
@@ -69,6 +71,14 @@ export class GameManager {
     GameManager.instance._mapController = value;
   }
 
+  public static get dialogueController(): IDialogueController | null {
+    return GameManager.instance._dialogueController;
+  }
+
+  public static set dialogueController(value: IDialogueController | null) {
+    GameManager.instance._dialogueController = value;
+  }
+
   public static resetForTests(): void {
     GameManager._instance = null;
   }
@@ -85,8 +95,11 @@ export class GameManager {
       manager.initializeControllers();
     }
 
-    if (appElement && !manager._mapController) {
-      manager._mapController = new MapController(appElement);
+    if (
+      appElement &&
+      (!manager._mapController || !manager._dialogueController)
+    ) {
+      manager.initializeControllers();
     }
   }
 }

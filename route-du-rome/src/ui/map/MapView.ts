@@ -1,11 +1,6 @@
 import type { IMapView } from "#IUI/IMapView";
-import { Npc } from "#src/entities/Npc.ts";
 import type { INpc } from "#src/interfaces/entities/INpc.ts";
 import { Marker } from "./Marker";
-import type { NpcData } from "#Entities/Npc.ts";
-import type { ConfigData } from "#Entities/Config.ts";
-import { GameManager } from "#Controllers/GameManager.ts";
-import type { NpcController } from "#Controllers/NpcController.ts";
 
 export class LeafletMapView implements IMapView {
   private readonly element: HTMLElement;
@@ -98,7 +93,7 @@ export class LeafletMapView implements IMapView {
     // });
   }
 
-  addNPCMarker(lat: number, lng: number, npc: INpc): Marker | undefined {
+  addNPCMarker(_lat: number, _lng: number, npc: INpc): Marker | undefined {
     if (!this.map) {
       console.error("Map is not initialized.");
       return;
@@ -106,6 +101,14 @@ export class LeafletMapView implements IMapView {
 
     const marker = new Marker(this.leaflet, this.map, npc);
     this.markers.set(npc, marker);
+
+    marker.onClick(() => {
+      console.log("Marker clicked for NPC:", npc.name);
+      this.onNpcMarkerClick(npc, () => {
+        console.log("NPC click callback triggered for:", npc.name);
+      });
+    });
+
     return marker;
   }
 
@@ -130,7 +133,7 @@ export class LeafletMapView implements IMapView {
     this.markers.delete(npc);
   }
 
-  addHeroMarker(lat: number, lng: number, hero: any): Marker | undefined {
+  addHeroMarker(_lat: number, _lng: number, hero: any): Marker | undefined {
     if (!this.map) {
       console.error("Map is not initialized.");
       return;
@@ -141,11 +144,11 @@ export class LeafletMapView implements IMapView {
     return marker;
   }
 
-  moveHeroMarker(hero: any, newLat: number, newLng: number): void {}
+  moveHeroMarker(_hero: any, _newLat: number, _newLng: number): void {}
 
-  removeHeroMarker(hero: any): void {}
+  removeHeroMarker(_hero: any): void {}
 
-  onNPcMarkerClick(npc: INpc, callback: () => void): void {
+  onNpcMarkerClick(npc: INpc, callback: () => void): void {
     const marker = this.markers.get(npc);
 
     if (!marker) {
