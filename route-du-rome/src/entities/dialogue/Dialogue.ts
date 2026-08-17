@@ -2,6 +2,13 @@ import type { IDialogue } from "#IEntities/dialogue/IDialogue";
 import type { DialogueNodeJSON } from "#src/interfaces/entities/dialogue/IDialogueNode.ts";
 import type { IDialogueOwner } from "#src/interfaces/entities/dialogue/IDialogueOwner.ts";
 
+export type DialogueData = {
+  // Temporary type for testing purposes
+
+  id: string;
+  ownerId: string;
+};
+
 /**
  * Implements {@link IDialogue}
  *

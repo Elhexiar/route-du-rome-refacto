@@ -45,6 +45,15 @@
     ],
     "#IRepositories/*": [
       "./src/interfaces/repositories/*"
+    ],
+    "#UI/*": [
+      "./src/ui/*"
+    ],
+    "#IUI/*": [
+      "./src/interfaces/ui/*"
+    ],
+    "#Lib/*": [
+      "./src/lib/*"
     ]
   }
 }

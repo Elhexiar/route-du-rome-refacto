@@ -30,7 +30,10 @@
       "#Services/*": ["./src/services/*"],
       "#IServices/*": ["./src/interfaces/services/*"],
       "#Repositories/*": ["./src/repositories/*"],
-      "#IRepositories/*": ["./src/interfaces/repositories/*"]
+      "#IRepositories/*": ["./src/interfaces/repositories/*"],
+      "#UI/*": ["./src/ui/*"],
+      "#IUI/*": ["./src/interfaces/ui/*"],
+      "#Lib/*": ["./src/lib/*"]
     }
   },
   "include": ["src", "src/entities/.ts"]
