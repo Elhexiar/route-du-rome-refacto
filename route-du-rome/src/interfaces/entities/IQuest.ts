@@ -6,6 +6,6 @@ export interface IQuest {
 
   checkCompletionCondition(): boolean;
   Complete(): void;
-  onComplete: () => void;
+  OnQuestActions: (() => void)[];
   Reward(): void;
 }

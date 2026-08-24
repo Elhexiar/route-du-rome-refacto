@@ -14,6 +14,7 @@ export interface IChoice {
   id: string;
   text: string;
   actionID?: string;
+  actions?: (() => void)[];
   next: IDialogueNode | null;
 
   select(): IDialogueNode | null;

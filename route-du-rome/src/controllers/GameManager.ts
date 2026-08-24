@@ -3,13 +3,16 @@ import type {
   INpcController,
   IMapController,
   IDialogueController,
+  IExperienceController,
 } from "#IControllers/index.ts";
-import {
-  HeroController,
-  NpcController,
-  MapController,
-  DialogueController,
-} from "#Controllers/index.ts";
+import { HeroController } from "./HeroController.ts";
+import { NpcController } from "./NpcController.ts";
+import { MapController } from "./MapController.ts";
+import { DialogueController } from "./DialogueController.ts";
+import { ExperienceController } from "./ExperienceController.ts";
+
+import { QuestService } from "#Services/QuestService.ts";
+import { BadgeService } from "#Services/BadgeService.ts";
 
 export class GameManager {
   private static _instance: GameManager | null = null;
@@ -22,6 +25,7 @@ export class GameManager {
   private _npcController: INpcController | null = null;
   private _mapController: IMapController | null = null;
   private _dialogueController: IDialogueController | null = null;
+  private _experienceController: IExperienceController | null = null;
 
   //   private _experienceController: IExperienceController | null = null;
 
@@ -36,6 +40,11 @@ export class GameManager {
       this._mapController = new MapController(this._app);
     }
     this._dialogueController = new DialogueController(this._app);
+    this._experienceController = new ExperienceController(
+      new QuestService(),
+      new BadgeService(),
+    );
+
     // this._experienceController = new ExperienceController();
   }
 
@@ -77,6 +86,14 @@ export class GameManager {
 
   public static set dialogueController(value: IDialogueController | null) {
     GameManager.instance._dialogueController = value;
+  }
+
+  public static get experienceController(): IExperienceController | null {
+    return GameManager.instance._experienceController;
+  }
+
+  public static set experienceController(value: IExperienceController | null) {
+    GameManager.instance._experienceController = value;
   }
 
   public static resetForTests(): void {

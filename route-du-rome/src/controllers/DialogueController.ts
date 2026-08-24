@@ -1,6 +1,6 @@
 import type { IDialogueController } from "#IControllers/IDialogueController";
 import { NPCDialogueView } from "#UI/dialogue/NPCDialogueView";
-import { GameManager } from ".";
+import { GameManager } from "./GameManager.ts";
 import type { IDialogue, IDialogueNode } from "../interfaces/entities";
 
 export class DialogueController implements IDialogueController {
