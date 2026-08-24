@@ -12,8 +12,8 @@ export type DialogueNodeJSON = {
   text: string;
   next?: DialogueNodeJSON | null;
   choices?: ChoiceJSON[] | null;
-  OnStartTextActionID?: string[];
-  OnEndTextActionID?: string[];
+  OnStartTextActionID?: string | string[];
+  OnEndTextActionID?: string | string[];
 };
 
 export interface IChoice {
@@ -36,10 +36,10 @@ export interface IDialogueNode {
   nextNode?: IDialogueNode | null;
   choices?: IChoice[] | null;
   OnStartTextActionID?: string[];
+  OnStartActions?: (() => void)[];
   OnEndTextActionID?: string[];
+  OnEndActions?: (() => void)[];
 
-  findNodeByID(id: string): IDialogueNode | null;
-  findActionByID(id: string): string | null;
   next(): IDialogueNode | null;
 }
 

@@ -38,31 +38,45 @@
       "jobPresentationVideo": "https://www.youtube.com/embed/hlov7EFUT7E",
       "videoTitle": "Les métiers de la mer en Bretagne",
       "presentationDialogue": {
-        "id": "morgane-intro",
-        "text": "Bonjour ! Que souhaitez-vous savoir sur mon métier ?",
-        "choices": [
-          {
-            "id": "morgane-metier",
-            "text": "Parlez-moi de votre métier.",
-            "next": {
-              "id": "morgane-metier-reponse",
-              "text": "Je travaille sur les bateaux et j'organise les sorties en mer pour la pêche locale."
+        "id": "morgane-intro-0",
+        "text": "Bonjour, je suis Morgane, officière de pêche à Saint-Malo. Je vais vous parler de mon métier et de la pêche locale.",
+        "next": {
+          "id": "morgane-intro-1",
+          "text": "Que souhaitez-vous savoir sur mon métier ?",
+          "choices": [
+            {
+              "id": "morgane-metier",
+              "text": "Parlez-moi de votre métier.",
+              "next": {
+                "id": "morgane-metier-reponse",
+                "text": "Je travaille sur les bateaux et j'organise les sorties en mer pour la pêche locale.",
+                "next": {
+                  "id": "morgane-metier-reponse-2",
+                  "text": "Je m'assure que tout se passe bien et que les poissons sont pêchés de manière durable.",
+                  "OnEndTextActionID": "choice-end"
+                }
+              }
+            },
+            {
+              "id": "morgane-formation",
+              "text": "Quelles formations faut-il suivre ?",
+              "next": {
+                "id": "morgane-formation-reponse",
+                "text": "Il faut souvent passer par un CAP ou un bac pro maritime, puis des stages pratiques.",
+                "next": {
+                  "id": "morgane-formation-reponse-2",
+                  "text": "Il est aussi important d'avoir de l'expérience en mer et de connaître les règles de sécurité.",
+                  "OnEndTextActionID": "choice-end"
+                }
+              }
+            },
+            {
+              "id": "morgane-repeat",
+              "text": "Recommencez, je n'ai pas bien compris.",
+              "findID": "morgane-intro-0"
             }
-          },
-          {
-            "id": "morgane-formation",
-            "text": "Quelles formations faut-il suivre ?",
-            "next": {
-              "id": "morgane-formation-reponse",
-              "text": "Il faut souvent passer par un CAP ou un bac pro maritime, puis des stages pratiques."
-            }
-          },
-          {
-            "id": "morgane-repeat",
-            "text": "Recommencez, je n'ai pas bien compris.",
-            "findID": "morgane-intro"
-          }
-        ]
+          ]
+        }
       }
     },
     {

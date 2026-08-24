@@ -25,9 +25,13 @@ export class DialogueController implements IDialogueController {
 
     GameManager.npcController?.onNpcsLoaded((npcs) => {
       npcs.forEach((npc) => {
-        GameManager.mapController?.mapView?.onNpcMarkerClick(npc, () => {
-          this.currentActiveDialogue = npc.presentationDialogue;
+        // add an action to the dialogue to hide the view when the dialogue ends
+        npc.presentationDialogue?.OnDialogueActions?.push(() => {
+          this.npcDialogueViews?.HideView();
+        });
 
+        //
+        GameManager.mapController?.mapView?.onNpcMarkerClick(npc, () => {
           this.npcDialogueViews?.ResetForNewNPC(npc);
           this.npcDialogueViews?.ShowView();
         });

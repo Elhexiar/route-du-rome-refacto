@@ -2,13 +2,21 @@
 import type { INpc } from "#IEntities/INpc";
 import type { IDialogue } from "#IEntities/dialogue/IDialogue";
 import type { IDialogueView } from "#IUI/IDialogueView";
+import { GameManager } from "#Controllers/GameManager";
 
 export class NPCDialogueView implements IDialogueView {
   npc: INpc | null = null;
   dialogue: IDialogue | null = null;
   currentVisibility: boolean = false;
+  private choiceSelectedCallback: ((choiceId: string) => void) | null = null;
+  private typingIntervalId: number | null = null;
+  private isTyping: boolean = false;
+  private fullDialogueText: string = "";
+  private textElement: HTMLParagraphElement | null = null;
+  private choicesElement: HTMLDivElement | null = null;
 
   private readonly element: HTMLElement;
+  private readonly typingSpeedMs: number = 24;
 
   constructor(container: HTMLElement) {
     this.element = document.createElement("section");
@@ -23,6 +31,7 @@ export class NPCDialogueView implements IDialogueView {
   }
 
   HideView(): void {
+    this.stopTypingAnimation();
     this.element.style.display = "none";
     this.currentVisibility = false;
   }
@@ -38,6 +47,13 @@ export class NPCDialogueView implements IDialogueView {
   ResetForNewNPC(npc: INpc): void {
     this.npc = npc;
     this.dialogue = npc.presentationDialogue;
+    if (GameManager.dialogueController) {
+      console.log(
+        "Mise à jour du dialogue actif dans le DialogueController pour le PNJ :",
+        this.npc?.name,
+      );
+      GameManager.dialogueController.currentActiveDialogue = this.dialogue;
+    }
     this.render();
 
     console.log(
@@ -59,41 +75,203 @@ export class NPCDialogueView implements IDialogueView {
     this.dialogue = node;
     this.render();
     console.log("Mise à jour du dialogue pour le PNJ :", this.npc?.name);
+    this.notifyController();
   }
 
-  onChoiceSelected(_callback: (choiceId: string) => void): void {
+  notifyController() {
+    if (GameManager.dialogueController) {
+      console.log(
+        "Mise à jour du dialogue actif dans le DialogueController pour le PNJ :",
+        this.npc?.name,
+      );
+      GameManager.dialogueController.currentActiveDialogue = this.dialogue;
+    }
+  }
+
+  onChoiceSelected(callback: (choiceId: string) => void): void {
+    this.choiceSelectedCallback = callback;
     console.log(
       "Enregistrement du callback pour le choix du dialogue du PNJ :",
       this.npc?.name,
     );
   }
 
+  // Makes sure to escape HTML special characters to prevent XSS attacks, who knows
+  private escapeHtml(text: string): string {
+    return text
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#39;");
+  }
+
+  private stopTypingAnimation(): void {
+    if (this.typingIntervalId !== null) {
+      window.clearInterval(this.typingIntervalId);
+      this.typingIntervalId = null;
+    }
+
+    this.isTyping = false;
+  }
+
+  private finishTypingAnimation(): void {
+    this.stopTypingAnimation();
+
+    if (this.textElement) {
+      this.textElement.textContent = this.fullDialogueText;
+    }
+
+    if (this.choicesElement) {
+      this.choicesElement.style.visibility = "visible";
+      this.choicesElement.style.pointerEvents = "auto";
+    }
+
+    this.dialogue?.currentNode?.OnEndActions?.forEach((action) => action());
+  }
+
+  private startTypingAnimation(text: string): void {
+    this.stopTypingAnimation();
+
+    this.fullDialogueText = text;
+
+    if (!this.textElement) {
+      return;
+    }
+
+    this.textElement.textContent = "";
+
+    if (this.choicesElement) {
+      this.choicesElement.style.visibility = "hidden";
+      this.choicesElement.style.pointerEvents = "none";
+    }
+
+    if (!text.length) {
+      this.finishTypingAnimation();
+      return;
+    }
+
+    this.isTyping = true;
+    let characterIndex = 0;
+
+    this.typingIntervalId = window.setInterval(() => {
+      characterIndex += 1;
+
+      if (!this.textElement) {
+        this.stopTypingAnimation();
+        return;
+      }
+
+      this.textElement.textContent = text.slice(0, characterIndex);
+
+      if (characterIndex >= text.length) {
+        this.finishTypingAnimation();
+      }
+    }, this.typingSpeedMs);
+  }
+
   private render(): void {
+    const currentNode = this.dialogue?.currentNode ?? this.dialogue?.rootNode;
     const currentNpcName = this.npc?.name ?? "NPC";
     const currentDialogueText =
-      this.dialogue?.rootNode?.text ??
-      this.dialogue?.currentNode?.text ??
-      "Aucun dialogue disponible.";
+      currentNode?.text ?? "Aucun dialogue disponible.";
+    const currentChoices = currentNode?.choices ?? [];
+
+    const choicesHTML =
+      currentChoices.length > 0
+        ? currentChoices
+            .map(
+              (choice, index) =>
+                `<button class="button choice-button" data-choice-id="${this.escapeHtml(choice.id)}">
+                  <div class="choice-button__index">${this.escapeHtml((index + 1).toString())}</div>
+                  <div class="choice-button__text">${this.escapeHtml(choice.text)}</div>
+                </button>`,
+            )
+            .join("")
+        : "";
 
     this.element.innerHTML = `
       <div class="dialogue-view__body">
       </div>
 
       <div class="dialogue-view__dialogue-container">
-        <p>Dialogue du NPC : ${currentNpcName}</p>
-        <p>${currentDialogueText}</p>
+        <div class="dialogue-view__header">
+            <div class="dialogue-view__npc-info">
+              <div class="dialogue-view__header-start">
+                <img src="${this.npc?.portrait || "default-portrait.jpg"}" alt="${this.escapeHtml(currentNpcName)}" class="dialogue-view__npc-portrait">
+                <div class="dialogue-view__title-container">
+                  <h2 class="dialogue-view__npc-name">${this.escapeHtml(currentNpcName)}</h2>
+                  <p class="dialogue-view__npc-role">${this.escapeHtml(this.npc?.job || "Rôle inconnu")}</p>              
+                </div>
+              </div>
+              <div class="dialogue-view__header-end">
+                <span class="dialogue-view__npc-job-icon">${this.npc?.icon || "🎭"}</span>
+                <button class="dialogue-view__exit-button">x</button>
+              </div>
+            </div>
+        </div>
+        <p class="dialogue-view__text"></p>
         <div class="dialogue-view__choices-container">
-          <button class="button choice-button">Continuer</button>
-          <button class="button choice-button">Explorer</button>
+          ${choicesHTML}
         </div>
       </div>
     `;
 
-    this.element.querySelectorAll("button").forEach((button) => {
-      button.addEventListener("click", () => {
-        const action = button.textContent?.trim() ?? "action";
-        console.log(`Action choisie : ${action}`);
+    this.textElement = this.element.querySelector<HTMLParagraphElement>(
+      ".dialogue-view__text",
+    );
+    this.choicesElement = this.element.querySelector<HTMLDivElement>(
+      ".dialogue-view__choices-container",
+    );
+
+    this.startTypingAnimation(currentDialogueText);
+
+    // Choices event listeners
+    this.element
+      .querySelectorAll<HTMLButtonElement>(".choice-button")
+      .forEach((button) => {
+        button.addEventListener("click", (event) => {
+          event.stopPropagation(); // Prevent the click from bubbling up to the dialogue container
+          const choiceId = button.dataset.choiceId?.trim() ?? "";
+          const choiceText = button.textContent?.trim() ?? "action";
+
+          if (choiceId) {
+            this.choiceSelectedCallback?.(choiceId);
+          }
+
+          console.log(
+            `Choix sélectionné : ${choiceText} (id: ${choiceId || "N/A"})`,
+          );
+
+          this.dialogue?.Choose(choiceId);
+          console.log(`Dialogue après le choix :`, this.dialogue);
+
+          this.updateDialogue(this.dialogue);
+        });
       });
-    });
+
+    // Dialogue container click event listener for Continue
+    this.element
+      .querySelector<HTMLDivElement>(".dialogue-view__dialogue-container")
+      ?.addEventListener("click", (event) => {
+        const target = event.target;
+        if (
+          target instanceof HTMLElement &&
+          target.closest(".dialogue-view__choices-container")
+        ) {
+          return;
+        }
+
+        if (this.isTyping) {
+          this.finishTypingAnimation();
+          return;
+        }
+
+        console.log("Dialogue container clicked. Continuing dialogue...");
+        if (this.dialogue?.Continue()) {
+          console.log(`Dialogue après la continuation :`, this.dialogue);
+          this.updateDialogue(this.dialogue);
+        }
+      });
   }
 }

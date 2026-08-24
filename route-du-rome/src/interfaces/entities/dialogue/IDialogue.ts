@@ -12,7 +12,7 @@ import type { IDialogueNode } from "./IDialogueNode";
  *
  * @function Continue : void : Passe à la ligne de dialogue suivante
  * @function Choose : void : Selectionne un choix par son identifiant ou son index et passe à la ligne de dialogue suivante
- * @function onDialogueCompleted : () => void : Callback appelé lorsque le dialogue est terminé
+ * @function CompleteDialogue : void : Termine le dialogue et déclenche ses actions de fin
  *
  */
 
@@ -26,9 +26,14 @@ export interface IDialogue {
   readonly rootNode: IDialogueNode | undefined;
   readonly currentNode: IDialogueNode | undefined;
 
-  AddAction(actionID: string, actionType: "OnStartText" | "OnEndText"): void;
-  readonly OnDialogueCompleted: () => void;
-  Continue: () => void;
+  AddAction(
+    actionID: string,
+    actionType: "OnStartText" | "OnEndText",
+    action: () => void,
+  ): void;
+  readonly OnDialogueActions: (() => void)[];
+  CompleteDialogue: () => void;
+  Continue: () => boolean;
   Choose: (choiceID?: string, choiceIndex?: number) => void;
   ImportDialogueFromJSON: (json: unknown) => IDialogue | null;
 }

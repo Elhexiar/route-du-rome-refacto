@@ -6,7 +6,7 @@ import type {
 
 import { DialogueNode } from "#Entities/dialogue/DialogueNode";
 
-import { getRoot } from "#Utils/DialogueUtils";
+import { findNodeByID, getRoot } from "#Utils/DialogueUtils";
 
 export class Choice implements IChoice {
   root: IDialogueNode | null;
@@ -14,6 +14,7 @@ export class Choice implements IChoice {
   id: string;
   text: string;
   actionID?: string;
+  actions?: (() => void)[];
   findID?: string;
   next: IDialogueNode | null = null;
 
@@ -35,7 +36,7 @@ export class Choice implements IChoice {
 
   select(): IDialogueNode | null {
     if (this.findID) {
-      return this.root?.findNodeByID(this.findID) ?? null;
+      return findNodeByID(this.root, this.findID);
     }
 
     return this.next;

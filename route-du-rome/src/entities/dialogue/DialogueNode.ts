@@ -14,7 +14,9 @@ export class DialogueNode implements IDialogueNode {
   nextNode?: IDialogueNode | null | undefined;
   choices?: IChoice[] | null;
   OnStartTextActionID?: string[];
+  OnStartActions?: (() => void)[];
   OnEndTextActionID?: string[];
+  OnEndActions?: (() => void)[];
 
   constructor(
     DialogueNodeJSON: DialogueNodeJSON,
@@ -31,62 +33,27 @@ export class DialogueNode implements IDialogueNode {
     this.choices =
       DialogueNodeJSON.choices?.map((choice) => new Choice(choice, this)) ||
       null;
-    this.OnStartTextActionID = DialogueNodeJSON.OnStartTextActionID;
-    this.OnEndTextActionID = DialogueNodeJSON.OnEndTextActionID;
-  }
-
-  onStartTextAction(): () => void {
-    return () => {};
-  }
-
-  onEndTextAction(): () => void {
-    return () => {};
+    this.OnStartTextActionID = DialogueNodeJSON.OnStartTextActionID
+      ? Array.isArray(DialogueNodeJSON.OnStartTextActionID)
+        ? DialogueNodeJSON.OnStartTextActionID
+        : [DialogueNodeJSON.OnStartTextActionID]
+      : undefined;
+    this.OnEndTextActionID = DialogueNodeJSON.OnEndTextActionID
+      ? Array.isArray(DialogueNodeJSON.OnEndTextActionID)
+        ? DialogueNodeJSON.OnEndTextActionID
+        : [DialogueNodeJSON.OnEndTextActionID]
+      : undefined;
   }
 
   next(): IDialogueNode | null {
-    return this.nextNode ?? null;
-  }
-
-  findNodeByID(id: string): IDialogueNode | null {
-    if (this.id === id) {
-      return this;
-    }
-
-    if (this.nextNode && this.nextNode.id === id) {
-      return this.nextNode;
+    if (this.choices && this.choices.length > 0) {
+      return null;
     }
 
     if (this.nextNode) {
-      const foundNext = this.nextNode.findNodeByID(id);
-      if (foundNext) {
-        return foundNext;
-      }
+      return this.nextNode as IDialogueNode;
     }
 
-    if (this.choices) {
-      for (const choice of this.choices) {
-        if (choice.id === id) {
-          return null;
-        }
-
-        const foundChoiceTarget = choice.next?.findNodeByID(id);
-        if (foundChoiceTarget) {
-          return foundChoiceTarget;
-        }
-
-        if (choice.findID === id && choice.root) {
-          return choice.root.findNodeByID(id);
-        }
-      }
-    }
-
-    return null;
-  }
-
-  findActionByID(id: string): string | null {
-    if (this.OnStartTextActionID?.includes(id)) {
-      return id;
-    }
     return null;
   }
 }
