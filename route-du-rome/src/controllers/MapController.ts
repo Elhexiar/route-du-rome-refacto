@@ -54,14 +54,14 @@ export class MapController implements IMapController {
     _newLattitude: number,
     _newLongitude: number,
   ): void {
-    throw new Error("Method not implemented.");
+    this.mapView.moveNPCMarker(_npc, _newLattitude, _newLongitude);
   }
   MoveHeroMarker(
     _hero: IHero,
     _newLattitude: number,
     _newLongitude: number,
   ): void {
-    throw new Error("Method not implemented.");
+    this.mapView.moveHeroMarker(_hero, _newLattitude, _newLongitude);
   }
   ToggleMarkerVisibility(_visible: boolean, _npc?: INpc, _hero?: IHero): void {
     throw new Error("Method not implemented.");

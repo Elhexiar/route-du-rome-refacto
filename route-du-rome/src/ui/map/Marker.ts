@@ -10,6 +10,7 @@ export class Marker {
 
   constructor(leaflet: any, map: any, npc?: INpc, hero?: IHero) {
     this.npc = npc;
+    this.hero = hero;
     this.marker = this.render(leaflet, map, npc, hero);
   }
 
@@ -56,9 +57,18 @@ export class Marker {
         iconAnchor: [60, 125],
       });
 
-      return leaflet
+      const m = leaflet
         .marker([npc.lattitude, npc.longitude], { icon })
         .addTo(map);
+
+      // prevent marker clicks from propagating to the map
+      if (leaflet && leaflet.DomEvent) {
+        m.on("click", (e: any) => {
+          leaflet.DomEvent.stopPropagation(e);
+        });
+      }
+
+      return m;
     }
 
     if (hero) {
@@ -84,12 +94,27 @@ export class Marker {
       console.log(icon);
       const initialPosition = GameManager.heroController?.position;
 
-      return leaflet
+      const m = leaflet
         .marker(
           [initialPosition?.lattitude ?? 0, initialPosition?.longitude ?? 0],
           { icon },
         )
         .addTo(map);
+
+      if (leaflet && leaflet.DomEvent) {
+        m.on("click", (e: any) => {
+          leaflet.DomEvent.stopPropagation(e);
+        });
+      }
+
+      return m;
+    }
+  }
+
+  setLatLng(latlng: [number, number]): void {
+    if (!this.marker) return;
+    if (typeof this.marker.setLatLng === "function") {
+      this.marker.setLatLng(latlng);
     }
   }
 

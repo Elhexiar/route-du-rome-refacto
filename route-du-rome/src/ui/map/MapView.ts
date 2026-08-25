@@ -1,6 +1,7 @@
 import type { IMapView } from "#IUI/IMapView";
 import type { INpc } from "#src/interfaces/entities/INpc.ts";
 import { Marker } from "./Marker";
+import { GameManager } from "#src/controllers/GameManager.ts";
 
 export class LeafletMapView implements IMapView {
   private readonly element: HTMLElement;
@@ -9,8 +10,8 @@ export class LeafletMapView implements IMapView {
     this.element = document.createElement("section");
     this.element.className = "map-view";
     this.element.style.width = "100%";
-    this.element.style.minHeight = "500px";
-    this.element.style.height = "100%";
+    this.element.style.height = "auto";
+    this.element.style.flexGrow = "1";
     container.appendChild(this.element);
     this.render();
   }
@@ -19,6 +20,9 @@ export class LeafletMapView implements IMapView {
   map: any = null;
 
   leaflet: any = null;
+
+  // track dragging to avoid treating drags as clicks
+  private mapDragging: boolean = false;
 
   markers: Map<INpc, any> = new Map<INpc, any>();
 
@@ -85,6 +89,44 @@ export class LeafletMapView implements IMapView {
 
     this.map = map;
 
+    // track dragging to avoid treating drags as clicks
+    this.map.on("dragstart", () => {
+      this.mapDragging = true;
+    });
+
+    this.map.on("dragend", () => {
+      // small timeout to avoid immediate click after drag
+      setTimeout(() => (this.mapDragging = false), 50);
+    });
+
+    // handle map clicks: ignore when dragging or when clicking on a marker
+    this.map.on("click", (e: any) => {
+      if (this.mapDragging) return;
+
+      const originalTarget = e?.originalEvent?.target as
+        | HTMLElement
+        | undefined;
+
+      // Check if the click was on a marker
+      if (originalTarget && originalTarget.closest) {
+        const markerEl = originalTarget.closest(
+          ".leaflet-marker-icon, .map-marker",
+        );
+        if (markerEl) return;
+      }
+
+      const hero = GameManager.heroController?.currentHero;
+      if (!hero) return;
+
+      // move hero marker if exists
+      const m = this.markers.get(hero);
+      if (m && typeof m.setLatLng === "function") {
+        m.setLatLng([e.latlng.lat, e.latlng.lng]);
+      } else if (m && m.marker && typeof m.marker.setLatLng === "function") {
+        m.marker.setLatLng([e.latlng.lat, e.latlng.lng]);
+      }
+    });
+
     // console.log("Map initialized");
     // GameManager.npcController?.onNpcsLoaded((npcs) => {
     //   npcs.forEach((npc) => {
@@ -144,7 +186,15 @@ export class LeafletMapView implements IMapView {
     return marker;
   }
 
-  moveHeroMarker(_hero: any, _newLat: number, _newLng: number): void {}
+  moveHeroMarker(_hero: any, _newLat: number, _newLng: number): void {
+    const marker = this.markers.get(_hero);
+
+    if (!marker) {
+      return;
+    }
+
+    marker.setLatLng([_newLat, _newLng]);
+  }
 
   removeHeroMarker(_hero: any): void {}
 

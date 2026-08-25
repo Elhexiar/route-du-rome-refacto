@@ -13,7 +13,7 @@ import { ExperienceController } from "./ExperienceController.ts";
 
 import { QuestService } from "#Services/QuestService.ts";
 import { BadgeService } from "#Services/BadgeService.ts";
-
+import { HeaderHeroSelectionView } from "#UI/HeaderHeroSelectionView.ts";
 export class GameManager {
   private static _instance: GameManager | null = null;
 
@@ -26,6 +26,7 @@ export class GameManager {
   private _mapController: IMapController | null = null;
   private _dialogueController: IDialogueController | null = null;
   private _experienceController: IExperienceController | null = null;
+  private _headerView: HeaderHeroSelectionView | null = null;
 
   //   private _experienceController: IExperienceController | null = null;
 
@@ -44,6 +45,8 @@ export class GameManager {
       new QuestService(),
       new BadgeService(),
     );
+
+    this._headerView = new HeaderHeroSelectionView(this._app as HTMLElement);
 
     // this._experienceController = new ExperienceController();
   }
@@ -94,6 +97,14 @@ export class GameManager {
 
   public static set experienceController(value: IExperienceController | null) {
     GameManager.instance._experienceController = value;
+  }
+
+  public static get headerView(): HeaderHeroSelectionView | null {
+    return GameManager.instance._headerView;
+  }
+
+  public static set headerView(value: HeaderHeroSelectionView | null) {
+    GameManager.instance._headerView = value;
   }
 
   public static resetForTests(): void {
