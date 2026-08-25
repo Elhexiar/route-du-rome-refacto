@@ -24,7 +24,7 @@ export class LeafletMapView implements IMapView {
   // track dragging to avoid treating drags as clicks
   private mapDragging: boolean = false;
 
-  markers: Map<INpc, any> = new Map<INpc, any>();
+  markers: Map<any, any> = new Map<any, any>();
 
   private render(): void {
     this.element.innerHTML = `
@@ -118,13 +118,7 @@ export class LeafletMapView implements IMapView {
       const hero = GameManager.heroController?.currentHero;
       if (!hero) return;
 
-      // move hero marker if exists
-      const m = this.markers.get(hero);
-      if (m && typeof m.setLatLng === "function") {
-        m.setLatLng([e.latlng.lat, e.latlng.lng]);
-      } else if (m && m.marker && typeof m.marker.setLatLng === "function") {
-        m.marker.setLatLng([e.latlng.lat, e.latlng.lng]);
-      }
+      this.moveHeroMarker(hero, e.latlng.lat, e.latlng.lng);
     });
 
     // console.log("Map initialized");
@@ -181,7 +175,14 @@ export class LeafletMapView implements IMapView {
       return;
     }
 
+    const existingMarker = this.markers.get(hero);
+    if (existingMarker) {
+      existingMarker.remove();
+      this.markers.delete(hero);
+    }
+
     const marker = new Marker(this.leaflet, this.map, undefined, hero);
+    marker.setLatLng([_lat, _lng]);
     this.markers.set(hero, marker);
     return marker;
   }
@@ -194,9 +195,24 @@ export class LeafletMapView implements IMapView {
     }
 
     marker.setLatLng([_newLat, _newLng]);
+    if (GameManager.heroController?.position) {
+      GameManager.heroController.position = {
+        lattitude: _newLat,
+        longitude: _newLng,
+      };
+    }
   }
 
-  removeHeroMarker(_hero: any): void {}
+  removeHeroMarker(_hero: any): void {
+    const marker = this.markers.get(_hero);
+
+    if (!marker) {
+      return;
+    }
+
+    marker.remove();
+    this.markers.delete(_hero);
+  }
 
   onNpcMarkerClick(npc: INpc, callback: () => void): void {
     const marker = this.markers.get(npc);

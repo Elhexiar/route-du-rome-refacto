@@ -2,6 +2,7 @@ import type { IQuestService } from "#IServices/index";
 import type { IQuest } from "#src/interfaces/entities/IQuest.ts";
 import { GameManager } from "#Controllers/GameManager.ts";
 import { NPCDefaultQuest } from "#Entities/Quest.ts";
+import { NPCBadge } from "#Entities/NPCBadge.ts";
 
 export class QuestService implements IQuestService {
   quests: Map<string, IQuest> = new Map<string, IQuest>();
@@ -29,6 +30,7 @@ export class QuestService implements IQuestService {
     GameManager.npcController?.onNpcsLoaded((npcs) => {
       npcs.forEach((npc) => {
         const defaultQuest = new NPCDefaultQuest(
+          npc,
           npc.id + "-default",
           `Default Quest for ${npc.name}`,
           "This is a default quest.",
@@ -49,6 +51,22 @@ export class QuestService implements IQuestService {
         console.log(
           `Default quest created for NPC ${npc.name}: ${defaultQuest.name}`,
         );
+
+        // create a badge for the quest and associate it with the quest
+        const badge = new NPCBadge(
+          npc,
+          defaultQuest.id + "-badge",
+          npc.jobSector,
+          npc.name,
+          npc.icon,
+        );
+
+        defaultQuest.OnQuestActions.push(() => {
+          badge.Unlock();
+        });
+
+        defaultQuest.relatedBadge = badge;
+        GameManager.experienceController?.badgeService.createBadge(badge);
       });
     });
   }

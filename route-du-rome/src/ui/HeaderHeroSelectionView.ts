@@ -59,5 +59,18 @@ export class HeaderHeroSelectionView {
               </div>
             </div>
         `;
+
+    const heroButtons = this.element.querySelectorAll(
+      ".header-hero-selection-view__hero-button",
+    );
+
+    heroButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const heroId = button.getAttribute("data-hero-id");
+        if (heroId) {
+          GameManager.heroController?.SwitchHeroById(heroId);
+        }
+      });
+    });
   }
 }

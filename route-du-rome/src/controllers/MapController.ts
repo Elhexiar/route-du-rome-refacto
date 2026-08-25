@@ -5,6 +5,7 @@ import { GameManager } from "./GameManager";
 
 export class MapController implements IMapController {
   mapView: any;
+  private currentHeroMarkerOwner: IHero | null = null;
 
   constructor(_app: HTMLElement) {
     this.mapView = new LeafletMapView(_app);
@@ -22,11 +23,17 @@ export class MapController implements IMapController {
     GameManager.heroController?.onHeroesSwitched((hero) => {
       if (hero) {
         const position = GameManager.heroController?.position;
-        this.AddHeroMarker(
-          position?.lattitude ?? 0,
-          position?.longitude ?? 0,
-          hero,
-        );
+        const lat = position?.lattitude ?? 0;
+        const lng = position?.longitude ?? 0;
+
+        // Keep exactly one player marker: remove old then create fresh marker
+        // so the portrait/name icon always matches the selected hero.
+        if (this.currentHeroMarkerOwner) {
+          this.RemoveHeroMarker(this.currentHeroMarkerOwner);
+        }
+
+        this.AddHeroMarker(lat, lng, hero);
+        this.currentHeroMarkerOwner = hero;
       }
     });
   }
@@ -40,8 +47,12 @@ export class MapController implements IMapController {
   RemoveNpcMarker(_npc: INpc): void {
     throw new Error("Method not implemented.");
   }
-  RemoveHeroMarker(_hero: IHero): void {
-    throw new Error("Method not implemented.");
+  RemoveHeroMarker(hero: IHero): void {
+    this.mapView.removeHeroMarker(hero);
+
+    if (this.currentHeroMarkerOwner?.id === hero.id) {
+      this.currentHeroMarkerOwner = null;
+    }
   }
   GetNpcMarker(_npc: INpc) {
     throw new Error("Method not implemented.");

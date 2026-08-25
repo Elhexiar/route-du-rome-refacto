@@ -39,6 +39,7 @@ export class NpcController implements INpcController {
         npcData.name,
         npcData.color,
         npcData.job,
+        npcData.jobSector,
         npcData.icon,
         npcData.portrait,
         npcData.lattitude,

@@ -8,6 +8,7 @@ export type NpcData = {
   name: string;
   color: string;
   job: string;
+  jobSector: string;
   icon: string;
   portrait: string;
   lattitude: number;
@@ -24,6 +25,7 @@ export type NpcData = {
  * @param name : string : Nom du PNJ
  * @param color : string : Couleur associée au PNJ
  * @param job : string : Métier du PNJ
+ * @param jobSector : string : Secteur du métier du PNJ
  * @param icon : string : URL de l'icône du PNJ
  * @param portrait : string : URL de l'image du portrait du PNJ
  * @param lattitude : number : Latitude de la position du PNJ
@@ -46,6 +48,7 @@ export class Npc implements INpc {
   name: string;
   color: string;
   job: string;
+  jobSector: string;
   icon: string;
   portrait: string;
   lattitude: number;
@@ -65,6 +68,7 @@ export class Npc implements INpc {
     name: string,
     color: string,
     job: string,
+    jobSector: string,
     icon: string,
     portrait: string,
     lattitude: number,
@@ -79,6 +83,7 @@ export class Npc implements INpc {
     this.name = name;
     this.color = color;
     this.job = job;
+    this.jobSector = jobSector;
     this.icon = icon;
     this.portrait = portrait;
     this.lattitude = lattitude;

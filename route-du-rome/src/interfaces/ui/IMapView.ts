@@ -1,7 +1,7 @@
 import type { INpc } from "#IEntities/INpc";
 
 export interface IMapView {
-  markers: Map<INpc, any>;
+  markers: Map<any, any>;
 
   addNPCMarker(lat: number, lng: number, npc: INpc): void;
   moveNPCMarker(npc: INpc, newLat: number, newLng: number): void;

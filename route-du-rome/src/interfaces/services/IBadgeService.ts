@@ -2,13 +2,14 @@ import type { IBadge } from "../entities";
 
 export interface IBadgeService {
   badges: Map<string, IBadge>;
+  collectedBadges: Set<string>;
 
-  getBadgeById(badgeId: string): Promise<IBadge | null>;
-  getAllBadges(): Promise<IBadge[]>;
-  createBadge(badgeData: IBadge): Promise<IBadge>;
-  updateBadge(
-    badgeId: string,
-    badgeData: Partial<IBadge>,
-  ): Promise<IBadge | null>;
-  deleteBadge(badgeId: string): Promise<boolean>;
+  getBadgeById(badgeId: string): IBadge | null;
+  getAllBadges(): IBadge[];
+  getAllCollectedBadges(): IBadge[];
+  createBadge(badgeData: IBadge): IBadge;
+  updateBadge(badgeId: string, badgeData: Partial<IBadge>): IBadge | null;
+  deleteBadge(badgeId: string): boolean;
+  collectBadge(badgeId: string): boolean;
+  uncollectBadge(badgeId: string): boolean;
 }

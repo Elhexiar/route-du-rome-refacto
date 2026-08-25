@@ -133,4 +133,27 @@ export class Marker {
 
     this.marker.remove();
   }
+
+  UpdateMarker(): void {
+    if (!this.marker) {
+      return;
+    }
+    // updates the marker's icon based on the current state of the NPC or Hero
+    const icon = this.marker.getIcon();
+
+    // Query the DOM for the marker's icon element
+    const markerEl = document.querySelector(
+      ".leaflet-marker-icon, .map-marker",
+    );
+
+    if (markerEl) {
+      // Update the icon's HTML content based on the current state of the NPC or Hero
+      if (this.npc) {
+        const lockOverlay =
+          !this.npc.done && !this.npc.accessible
+            ? '<div class="quest-locked-overlay">🔒</div>'
+            : "";
+      }
+    }
+  }
 }

@@ -7,6 +7,7 @@ export interface INpc extends IDialogueOwner {
   name: string;
   icon: string;
   job: string;
+  jobSector: string;
   color: string;
   portrait: string;
   lattitude: number;

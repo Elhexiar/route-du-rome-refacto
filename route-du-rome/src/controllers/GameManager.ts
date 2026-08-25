@@ -107,6 +107,10 @@ export class GameManager {
     GameManager.instance._headerView = value;
   }
 
+  public static get app(): HTMLElement | null {
+    return GameManager.instance._app;
+  }
+
   public static resetForTests(): void {
     GameManager._instance = null;
   }

@@ -1,13 +1,18 @@
 import type { IQuest } from "#IEntities/IQuest.ts";
+import type { IBadge } from "#IEntities/IBadge.ts";
+import type { INpc } from "../interfaces/entities";
 
 export class NPCDefaultQuest implements IQuest {
+  relatedNPC: INpc;
   id: string;
   name: string;
   description: string;
   isCompleted: boolean;
   OnQuestActions: (() => void)[];
+  relatedBadge: IBadge | null = null;
 
-  constructor(id: string, name: string, description: string) {
+  constructor(relatedNPC: INpc, id: string, name: string, description: string) {
+    this.relatedNPC = relatedNPC;
     this.id = id;
     this.name = name;
     this.description = description;
