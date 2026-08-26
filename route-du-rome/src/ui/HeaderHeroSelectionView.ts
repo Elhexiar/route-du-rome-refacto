@@ -1,5 +1,6 @@
 import { GameManager } from "#Controllers/GameManager";
 import type { BadgeService } from "#src/services/BadgeService.ts";
+import type { DialogueController, HeroController } from "../controllers";
 
 export class HeaderHeroSelectionView {
   private readonly element: HTMLElement;
@@ -97,8 +98,11 @@ export class HeaderHeroSelectionView {
       ".header-hero-selection-view__backstart-button",
     );
     backStartButton?.addEventListener("click", () => {
-      // Implement the logic to navigate back to the home screen
-      console.log("Navigating back to the home screen...");
+      const heroController = GameManager.heroController as HeroController;
+      const dialogueController =
+        GameManager.dialogueController as DialogueController;
+      dialogueController.dialogueView?.HideView();
+      heroController.welcomeHeroSelectionView?.ShowView();
     });
 
     const notebookButton = this.element.querySelector(

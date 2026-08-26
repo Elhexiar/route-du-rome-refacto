@@ -36,4 +36,5 @@ export interface IDialogue {
   Continue: () => boolean;
   Choose: (choiceID?: string, choiceIndex?: number) => void;
   ImportDialogueFromJSON: (json: unknown) => IDialogue | null;
+  Reset: () => void;
 }

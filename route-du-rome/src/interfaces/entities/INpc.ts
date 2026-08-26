@@ -14,7 +14,7 @@ export interface INpc extends IDialogueOwner {
   longitude: number;
   relatedQuests: IQuest[];
   backgroundVideo: string;
-  jobPresentationVideo: string;
+  jobVideoUrl: string;
   videoTitle: string;
   presentationDialogue: IDialogue | null;
   done: boolean;

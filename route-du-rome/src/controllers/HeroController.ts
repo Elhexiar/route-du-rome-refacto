@@ -3,10 +3,16 @@ import type { IHero } from "#IEntities/IHero.ts";
 import type { ConfigData } from "#Entities/Config.ts";
 import { Hero } from "#Entities/Hero.ts";
 import { Dialogue } from "#Entities/dialogue/Dialogue.ts";
+import { WelcomeHeroSelectionView } from "#UI/WelcomeHeroSelectionView.ts";
+import { GameManager } from "#Controllers/GameManager.ts";
+import { VideoPreloadService } from "#Services/VideoPreloadService.ts";
 
 export class HeroController implements IHeroController {
   heroes: IHero[] = [];
   currentHero: IHero | null = null;
+
+  welcomeHeroSelectionView: WelcomeHeroSelectionView | null = null;
+
   private onHeroesLoadedCallbacks: Array<(heroes: IHero[]) => void> = [];
   private onHeroesSwitchedCallbacks: Array<(hero: IHero | null) => void> = [];
   position: { lattitude: number; longitude: number } = {
@@ -31,8 +37,12 @@ export class HeroController implements IHeroController {
 
     const configData: ConfigData = await response.json();
 
+    VideoPreloadService.preloadVideos(
+      configData.Heroes.map((heroData) => heroData.presentationVideo),
+    );
+
     configData.Heroes.forEach((heroData) => {
-      const hero: IHero = new Hero(
+      const hero = new Hero(
         heroData.id,
         heroData.name,
         heroData.role,
@@ -42,6 +52,7 @@ export class HeroController implements IHeroController {
         heroData.presentationVideo,
         null,
         [],
+        heroData.tags,
       );
 
       if (heroData.presentationDialogue) {
@@ -53,10 +64,24 @@ export class HeroController implements IHeroController {
         hero.presentationDialogue = parsedDialogue;
       }
 
+      // heroes are special and there dialogue should not be able to complete
+      // so we add an action at the end of the dialogue that reinitializes the dialogue to the root node
+      if (hero.presentationDialogue) {
+        hero.presentationDialogue.OnDialogueActions.push(() => {
+          if (hero.presentationDialogue) {
+            hero.presentationDialogue.Reset();
+          }
+        });
+      }
+
       this.heroes.push(hero);
     });
 
     console.log("Heroes added from JSON:", this.heroes);
+
+    this.welcomeHeroSelectionView = new WelcomeHeroSelectionView(
+      GameManager.app ?? document.body,
+    );
 
     this.onHeroesLoadedCallbacks.forEach((callback) => callback(this.heroes));
   }

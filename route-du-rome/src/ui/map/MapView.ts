@@ -130,13 +130,6 @@ export class LeafletMapView implements IMapView {
     const marker = new Marker(this.leaflet, this.map, npc);
     this.markers.set(npc, marker);
 
-    marker.onClick(() => {
-      console.log("Marker clicked for NPC:", npc.name);
-      this.onNpcMarkerClick(npc, () => {
-        console.log("NPC click callback triggered for:", npc.name);
-      });
-    });
-
     return marker;
   }
 

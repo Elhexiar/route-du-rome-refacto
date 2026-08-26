@@ -23,8 +23,9 @@
         }
       },
       "portrait": "/portraits/ElioPP.png",
-      "presentationVideo": "/videos/Elio.mp4",
-      "dialogue": null
+      "presentationVideo": "/videos/Elio1.mp4",
+      "dialogue": null,
+      "tags": ["⚡ Dynamique", "🗺️ Curieux", "💬 Bavard"]
     },
     {
       "id": "elia",
@@ -49,8 +50,9 @@
         }
       },
       "portrait": "/portraits/EliaPP.png",
-      "presentationVideo": "/videos/Elia.mp4",
-      "dialogue": null
+      "presentationVideo": "/videos/Elia1.mp4",
+      "dialogue": null,
+      "tags": ["🌟 Déterminée", "🎯 Précise", "✨ Courageuse"]
     }
   ],
   "Npcs": [
@@ -66,7 +68,7 @@
       "longitude": -2.025,
       "relatedQuests": ["test0", "test1"],
       "backgroundVideo": "/videos/Morgane1.mp4",
-      "jobPresentationVideo": "https://www.youtube.com/embed/hlov7EFUT7E",
+      "jobVideoUrl": "https://www.youtube.com/embed/hlov7EFUT7E",
       "videoTitle": "Les métiers de la mer en Bretagne",
       "presentationDialogue": {
         "id": "morgane-intro-0",
@@ -127,7 +129,7 @@
       "longitude": -1.75,
       "relatedQuests": ["test2", "test3"],
       "backgroundVideo": "/videos/Sarah.mp4",
-      "jobPresentationVideo": "https://www.youtube.com/embed/ld61odTHtmQ",
+      "jobVideoUrl": "https://www.youtube.com/embed/ld61odTHtmQ",
       "videoTitle": "L'agriculture biologique en Ille-et-Vilaine",
       "presentationDialogue": {
         "id": "sarah-intro-0",
@@ -188,7 +190,7 @@
       "longitude": -1.847,
       "relatedQuests": ["test4", "test5"],
       "backgroundVideo": "/videos/Sophie.mp4",
-      "jobPresentationVideo": "https://www.youtube.com/embed/2S3sDu4qA5Q",
+      "jobVideoUrl": "https://www.youtube.com/embed/2S3sDu4qA5Q",
       "videoTitle": "Restauration & Hôtellerie en Bretagne",
       "presentationDialogue": {
         "id": "sophie-intro-0",
@@ -249,7 +251,7 @@
       "longitude": -1.897,
       "relatedQuests": ["test6", "test7"],
       "backgroundVideo": "/videos/Nathan.mp4",
-      "jobPresentationVideo": "https://www.youtube.com/embed/ZFnOWlLyNbs",
+      "jobVideoUrl": "https://www.youtube.com/embed/ZFnOWlLyNbs",
       "videoTitle": "Les métiers du nucléaire en Bretagne",
       "presentationDialogue": {
         "id": "nathan-intro-0",
@@ -310,7 +312,7 @@
       "longitude": -2.047,
       "relatedQuests": ["test8", "test9"],
       "backgroundVideo": "/videos/Claire.mp4",
-      "jobPresentationVideo": "https://www.youtube.com/embed/F-VOm1wzwvY",
+      "jobVideoUrl": "https://www.youtube.com/embed/F-VOm1wzwvY",
       "videoTitle": "Les métiers de l'aide à la personne en Bretagne",
       "presentationDialogue": {
         "id": "claire-intro-0",
@@ -371,7 +373,7 @@
       "longitude": -2.133,
       "relatedQuests": ["test10", "test11"],
       "backgroundVideo": "/videos/Manu.mp4",
-      "jobPresentationVideo": "https://www.youtube.com/embed/NYyxxNX2s0s",
+      "jobVideoUrl": "https://www.youtube.com/embed/NYyxxNX2s0s",
       "videoTitle": "Les métiers de la salle et du service",
       "presentationDialogue": {
         "id": "manu-intro-0",
@@ -432,7 +434,7 @@
       "longitude": -1.748,
       "relatedQuests": ["test12", "test13"],
       "backgroundVideo": "/videos/Florian.mp4",
-      "jobPresentationVideo": "https://www.youtube.com/embed/wBEamqw5g3o",
+      "jobVideoUrl": "https://www.youtube.com/embed/wBEamqw5g3o",
       "videoTitle": "Chaudronnerie et métallurgie",
       "presentationDialogue": {
         "id": "florian-intro-0",
@@ -493,7 +495,7 @@
       "longitude": -1.84,
       "relatedQuests": ["test14", "test15"],
       "backgroundVideo": "/videos/Laetitia.mp4",
-      "jobPresentationVideo": "https://www.youtube.com/embed/UKJ2awXwErU",
+      "jobVideoUrl": "https://www.youtube.com/embed/UKJ2awXwErU",
       "videoTitle": "Petite enfance & éducation",
       "presentationDialogue": {
         "id": "laetitia-intro-0",
@@ -554,7 +556,7 @@
       "longitude": -1.49,
       "relatedQuests": ["test16", "test17"],
       "backgroundVideo": "/videos/Jeanne.mp4",
-      "jobPresentationVideo": "https://www.youtube.com/embed/erflQIu7kno",
+      "jobVideoUrl": "https://www.youtube.com/embed/erflQIu7kno",
       "videoTitle": "Mécanique et cheffe d'atelier",
       "presentationDialogue": {
         "id": "jeanne-intro-0",

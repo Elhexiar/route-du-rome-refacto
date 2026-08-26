@@ -1,0 +1,168 @@
+@startuml DialogueView
+
+
+title DialogueView - architecture et interactions
+
+skinparam componentStyle rectangle
+skinparam shadowing false
+skinparam packageStyle rectangle
+
+package "UI dialogue" {
+    class DialogueView implements IDialogueView {
+        - speaker: INpc | IHero | null
+        - dialogue: IDialogue | null
+        - currentVisibility: boolean
+        - choiceSelectedCallback: (choiceId: string) => void
+        - textElement: HTMLParagraphElement
+        - choicesElement: HTMLDivElement
+        - element: HTMLElement
+        - typingAnimator: DialogueTypingAnimator
+        - backgroundVideoController: DialogueBackgroundVideoController
+        + ShowView(): void
+        + HideView(): void
+        + ToggleView(): void
+        + ResetForNewSpeaker(speaker): void
+        + updateDialogue(node): void
+        + onChoiceSelected(callback): void
+        - render(): void
+        - bindDialogueContainerClick(): void
+        - bindChoiceButtons(): void
+        - onTypingFinished(): void
+    }
+
+    interface IDialogueView
+
+    class DialogueTemplate <<utility>> {
+        + initializeDialogueLayout(root): DialogueLayoutRefs
+        + renderChoicesHtml(choices, escapeHtml): string
+    }
+
+    class DialogueTypingAnimator {
+        - isTyping: boolean
+        - fullText: string
+        + typing: boolean
+        + start(text, textElement, choicesElement, onFinished): void
+        + finish(textElement, choicesElement, onFinished): void
+        + stop(): void
+    }
+
+    class DialogueBackgroundVideoController {
+        + setSource(src): void
+        + ensurePlayback(): void
+    }
+}
+
+package "Dialogue domain" {
+    interface IDialogue {
+        + currentNode: IDialogueNode
+        + rootNode: IDialogueNode
+        + Continue(): boolean
+        + Choose(choiceId): void
+    }
+
+    interface IDialogueNode {
+        + text: string
+        + choices: IChoice[]
+        + OnEndActions: (() => void)[]
+    }
+
+    class IChoice {
+        + id: string
+        + text: string
+    }
+
+    interface INpc {
+        + name: string
+        + job: string
+        + icon: string
+        + portrait: string
+        + presentationDialogue: IDialogue
+        + backgroundVideo: string
+    }
+
+    interface IHero {
+        + name: string
+        + role: string
+        + portrait: string
+        + presentationDialogue: IDialogue
+        + presentationVideo: string
+    }
+}
+
+class DialogueController {
+    + currentActiveDialogue: IDialogue | null
+}
+
+class GameManager {
+    {static} dialogueController: DialogueController | null
+}
+
+IDialogueView <|.. DialogueView
+DialogueView ..> DialogueTemplate : initialise et render le layout
+DialogueView *-- DialogueTypingAnimator : anime le texte
+DialogueView *-- DialogueBackgroundVideoController : pilote la video
+DialogueView --> IDialogue : Continue / Choose
+DialogueView --> INpc : affiche les metadonnees
+DialogueView --> IHero : affiche les metadonnees
+DialogueView ..> GameManager : synchronise le dialogue actif
+DialogueTemplate ..> IChoice : render les choix
+IDialogue *-- IDialogueNode
+IDialogueNode *-- IChoice
+GameManager *-- DialogueController
+
+@enduml
+
+@startuml DialogueView_Continuation
+
+title DialogueView - continuation d'une ligne
+
+actor Joueur
+participant "DialogueView" as View
+participant "DialogueTypingAnimator" as Animator
+participant "IDialogue" as Dialogue
+participant "DialogueController" as Controller
+
+Joueur -> View: clique sur le conteneur de dialogue
+alt texte en cours d'animation
+    View -> Animator: finish(textElement, choicesElement)
+    Animator -> Animator: stop()
+    Animator -> View: onTypingFinished()
+    View -> Dialogue: execute OnEndActions
+else texte termine
+    View -> Dialogue: Continue()
+    alt continuation disponible
+        Dialogue --> View: true
+        View -> View: updateDialogue(dialogue)
+        View -> Controller: currentActiveDialogue = dialogue
+        View -> Animator: start(texte courant, ...)
+    else fin du dialogue
+        Dialogue --> View: false
+    end
+end
+
+@enduml
+
+@startuml DialogueView_Choice
+
+title DialogueView - selection d'un choix
+
+actor Joueur
+participant "choice-button" as Button
+participant "DialogueView" as View
+participant "IDialogue" as Dialogue
+participant "DialogueController" as Controller
+participant "DialogueTypingAnimator" as Animator
+
+Joueur -> Button: clique sur un choix
+Button -> View: choiceId
+View -> View: stopPropagation()
+View -> View: choiceSelectedCallback(choiceId)
+View -> Dialogue: Choose(choiceId)
+View -> View: updateDialogue(dialogue)
+View -> Controller: currentActiveDialogue = dialogue
+View -> Animator: start(texte suivant, ...)
+Animator -> Animator: masque les choix pendant la frappe
+Animator --> View: onTypingFinished()
+View -> Dialogue: execute OnEndActions
+
+@enduml

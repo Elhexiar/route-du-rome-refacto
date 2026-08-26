@@ -3,6 +3,7 @@ import type { INpc } from "#IEntities/INpc.ts";
 import type { ConfigData } from "#Entities/Config.ts";
 import { Npc, type NpcData } from "#Entities/Npc.ts";
 import { Dialogue } from "#src/entities/dialogue/Dialogue.ts";
+import { VideoPreloadService } from "#Services/VideoPreloadService.ts";
 
 export class NpcController implements INpcController {
   Npcs: INpc[] = [];
@@ -24,6 +25,11 @@ export class NpcController implements INpcController {
     }
 
     const configData: ConfigData = await response.json();
+
+    VideoPreloadService.preloadVideos(
+      configData.Npcs.map((npcData) => npcData.backgroundVideo),
+    );
+
     this.AddNpcsFromJSON(configData);
     this.onNpcsLoadedCallbacks.forEach((callback) => callback(this.Npcs));
   }
@@ -45,7 +51,7 @@ export class NpcController implements INpcController {
         npcData.lattitude,
         npcData.longitude,
         npcData.backgroundVideo,
-        npcData.jobPresentationVideo,
+        npcData.jobVideoUrl,
         npcData.videoTitle,
         null, // presentationDialogue will be set later
         [],

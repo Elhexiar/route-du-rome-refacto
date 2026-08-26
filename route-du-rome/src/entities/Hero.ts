@@ -12,6 +12,7 @@ export type HeroData = {
   presentationDialogue?: DialogueData | null;
   portrait: string;
   presentationVideo: string;
+  tags: string[];
   dialogues?: DialogueData[];
 };
 
@@ -36,6 +37,7 @@ export class Hero implements IHero {
   presentationDialogue: IDialogue | undefined | null;
   portrait: string;
   presentationVideo: string;
+  tags: string[];
 
   // Dialogue Owner properties
   dialogues: IDialogue[] = [];
@@ -51,6 +53,7 @@ export class Hero implements IHero {
     presentationVideo: string,
     presentationDialogue?: IDialogue | undefined | null,
     dialogues?: IDialogue[],
+    tags: string[] = [],
   ) {
     this.id = id;
     this.name = name;
@@ -59,6 +62,7 @@ export class Hero implements IHero {
     this.bio = bio;
     this.portrait = portrait;
     this.presentationVideo = presentationVideo;
+    this.tags = tags;
 
     this.currentActiveDialogue = null;
 

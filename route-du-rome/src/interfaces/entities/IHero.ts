@@ -21,5 +21,6 @@ export interface IHero extends IDialogueOwner {
   presentationDialogue: IDialogue | undefined | null;
   portrait: string;
   presentationVideo: string;
+  tags: string[];
   dialogues: IDialogue[];
 }

@@ -46,6 +46,7 @@ body {
 
 /* Header */
 .header {
+  position: relative;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -56,9 +57,13 @@ body {
   max-height: 150px;
   background: linear-gradient(90deg, #1d1e3c 0%, #2d1e45 100%);
   border-bottom: 2px solid var(--violet);
+
+  z-index: 750;
 }
 
 .header-hero-selection-view {
+  position: relative;
+  z-index: 800;
   box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
 }
 
@@ -256,17 +261,51 @@ body {
   /* padding: 1.5rem; */
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
 
-  z-index: 1000;
+  z-index: 500;
   display: none;
   flex-direction: column;
 }
 
 .dialogue-view__body {
+  position: relative;
   flex-grow: 1;
-  background: rgba(18, 14, 36, 0.3);
+  background: #120e24;
+  overflow: hidden;
+}
+
+.dialogue-view__background-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  object-fit: cover;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 180ms ease-out;
+}
+
+.dialogue-view__background-video.is-ready {
+  opacity: 1;
+}
+
+.dialogue-view__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(18, 14, 36, 0.2),
+    rgba(18, 14, 36, 0.55)
+  );
+  pointer-events: none;
 }
 
 .dialogue-view__dialogue-container {
+  position: absolute;
+  bottom: 2rem;
+  left: 0;
+  right: 0;
   border-top: 4px solid var(--violet);
 
   background: var(--dark-panel);
@@ -351,6 +390,14 @@ body {
 
 .dialogue-view__exit-button:hover {
   opacity: 1;
+}
+
+.dialogue-view__text {
+  min-height: 1em;
+  padding: 1rem;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #fff;
 }
 
 /* Buttons */
@@ -801,4 +848,143 @@ body {
   letter-spacing: 1px;
   flex-shrink: 0;
   border-top: 2px solid #4a2a66;
+}
+
+/* Welcome Hero Selection View */
+
+.welcome-hero-selection-view {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: radial-gradient(
+    ellipse at 50% 30%,
+    #2d1e45 0%,
+    #1d1e3c 60%,
+    #0d0d1a 100%
+  );
+  animation: fadeUp 0.5s ease;
+}
+
+.ft-badge {
+  background: var(--violet);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  padding: 5px 20px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  margin-bottom: 22px;
+}
+.game-title {
+  font-family: "Syne", sans-serif;
+  font-size: 50px;
+  font-weight: 800;
+  color: #fff;
+  text-align: center;
+  line-height: 1.1;
+  text-shadow: 0 0 50px rgba(105, 64, 140, 0.7);
+  margin-bottom: 8px;
+}
+.game-title span {
+  color: var(--yellow);
+}
+.game-sub {
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 42px;
+}
+
+.cards-row {
+  display: flex;
+  flex-direction: row;
+  gap: 1.5rem;
+}
+
+.card-info {
+  margin: 0.5rem;
+}
+
+.card-name {
+  font-family: "Syne", sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 3px;
+  margin-left: 10px;
+  margin-top: 10px;
+}
+.card-role {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin: 10px;
+  margin-top: 0;
+}
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.card-tag {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 9px;
+  border-radius: 20px;
+  background: rgba(105, 64, 140, 0.22);
+  border: 1px solid rgba(105, 64, 140, 0.4);
+  color: var(--plum);
+}
+
+.hero-card {
+  max-width: 250px;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid rgba(105, 64, 140, 0.3);
+  background: rgba(105, 64, 140, 0.1);
+  transition:
+    transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.25s,
+    border-color 0.25s;
+  user-select: none;
+}
+.hero-card:hover {
+  transform: translateY(-10px) scale(1.04);
+  border-color: var(--violet);
+  box-shadow: 0 24px 60px rgba(105, 64, 140, 0.55);
+}
+.hero-card:active {
+  transform: scale(0.97);
+}
+.hero-card__portrait {
+  width: 100%;
+  overflow: hidden;
+  background: linear-gradient(
+    180deg,
+    rgba(105, 64, 140, 0.15) 0%,
+    rgba(105, 64, 140, 0.4) 100%
+  );
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.pick-hint {
+  margin-top: 1rem;
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 2px;
+  text-transform: uppercase;
 }

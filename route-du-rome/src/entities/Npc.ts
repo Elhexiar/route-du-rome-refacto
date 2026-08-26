@@ -15,7 +15,7 @@ export type NpcData = {
   longitude: number;
   relatedQuestsIds: string[];
   backgroundVideo: string;
-  jobPresentationVideo: string;
+  jobVideoUrl: string;
   videoTitle: string;
   presentationDialogue: DialogueData | null;
 };
@@ -30,7 +30,7 @@ export type NpcData = {
  * @param portrait : string : URL de l'image du portrait du PNJ
  * @param lattitude : number : Latitude de la position du PNJ
  * @param longitude : number : Longitude de la position du PNJ
- * @param presentationVideo : string : URL de la vidéo de présentation du PNJ
+ * @param jobVideoUrl : string : URL de la vidéo métier du PNJ
  * @param presentationDialogue : IDialogue | null : Dialogue de présentation du PNJ
  * @param dialogues : IDialogue[] : Liste des dialogues associés au PNJ
  * @param done : boolean : Indique si le PNJ a été rencontré ou non
@@ -55,7 +55,7 @@ export class Npc implements INpc {
   longitude: number;
   relatedQuests: IQuest[] = [];
   backgroundVideo: string;
-  jobPresentationVideo: string;
+  jobVideoUrl: string;
   videoTitle: string;
   presentationDialogue: IDialogue | null;
   dialogues: IDialogue[];
@@ -74,7 +74,7 @@ export class Npc implements INpc {
     lattitude: number,
     longitude: number,
     backgroundVideo: string,
-    jobPresentationVideo: string,
+    jobVideoUrl: string,
     videoTitle: string,
     presentationDialogue: IDialogue | null,
     dialogues: IDialogue[],
@@ -89,11 +89,9 @@ export class Npc implements INpc {
     this.lattitude = lattitude;
     this.longitude = longitude;
     this.backgroundVideo = backgroundVideo;
-    this.jobPresentationVideo = jobPresentationVideo;
+    this.jobVideoUrl = jobVideoUrl;
     this.videoTitle = videoTitle;
-    this.presentationDialogue = presentationDialogue
-      ? presentationDialogue
-      : null;
+    this.presentationDialogue = presentationDialogue ?? null;
     this.dialogues = dialogues;
     this.currentActiveDialogue = null;
   }

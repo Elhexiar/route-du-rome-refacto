@@ -3,7 +3,14 @@ import type { IHero } from "#IEntities/IHero";
 import type { INpc } from "#IEntities/INpc";
 import type { IDialogue } from "#IEntities/dialogue/IDialogue";
 import type { IDialogueView } from "#IUI/IDialogueView";
+import type { IChoice } from "#src/interfaces/entities/dialogue/IDialogueNode.ts";
 import { GameManager } from "#Controllers/GameManager";
+import { DialogueBackgroundVideoController } from "./DialogueBackgroundVideoController.ts";
+import {
+  initializeDialogueLayout,
+  renderChoicesHtml,
+} from "./DialogueTemplate.ts";
+import { DialogueTypingAnimator } from "./DialogueTypingAnimator.ts";
 
 // TODO : I Replaced the NPCDialogueView with a more generic DialogueView that can handle both NPCs and Heroes.
 // But it still has a lot of legacy code from the NPCDialogueView
@@ -13,29 +20,38 @@ export class DialogueView implements IDialogueView {
   dialogue: IDialogue | null = null;
   currentVisibility: boolean = false;
   private choiceSelectedCallback: ((choiceId: string) => void) | null = null;
-  private typingIntervalId: number | null = null;
-  private isTyping: boolean = false;
-  private fullDialogueText: string = "";
-  private textElement: HTMLParagraphElement | null = null;
-  private choicesElement: HTMLDivElement | null = null;
+  private readonly textElement: HTMLParagraphElement;
+  private readonly choicesElement: HTMLDivElement;
 
   private readonly element: HTMLElement;
-  private readonly typingSpeedMs: number = 24;
+  private readonly typingAnimator = new DialogueTypingAnimator(24);
+  private readonly backgroundVideoController: DialogueBackgroundVideoController;
 
   constructor(container: HTMLElement) {
     this.element = document.createElement("section");
     this.element.className = "dialogue-view";
     container.appendChild(this.element);
+
+    const layoutRefs = initializeDialogueLayout(this.element);
+    this.textElement = layoutRefs.textElement;
+    this.choicesElement = layoutRefs.choicesElement;
+
+    this.backgroundVideoController = new DialogueBackgroundVideoController(
+      this.element,
+    );
+    this.bindDialogueContainerClick();
+
     this.render();
   }
 
   ShowView(): void {
     this.element.style.display = "flex";
+    this.backgroundVideoController.ensurePlayback();
     this.currentVisibility = true;
   }
 
   HideView(): void {
-    this.stopTypingAnimation();
+    this.typingAnimator.stop();
     this.element.style.display = "none";
     this.currentVisibility = false;
   }
@@ -115,68 +131,87 @@ export class DialogueView implements IDialogueView {
       .replaceAll("'", "&#39;");
   }
 
-  private stopTypingAnimation(): void {
-    if (this.typingIntervalId !== null) {
-      window.clearInterval(this.typingIntervalId);
-      this.typingIntervalId = null;
-    }
-
-    this.isTyping = false;
-  }
-
-  private finishTypingAnimation(): void {
-    this.stopTypingAnimation();
-
-    if (this.textElement) {
-      this.textElement.textContent = this.fullDialogueText;
-    }
-
-    if (this.choicesElement) {
-      this.choicesElement.style.visibility = "visible";
-      this.choicesElement.style.pointerEvents = "auto";
-    }
-
+  private onTypingFinished(): void {
     this.dialogue?.currentNode?.OnEndActions?.forEach((action) => action());
   }
 
   private startTypingAnimation(text: string): void {
-    this.stopTypingAnimation();
+    this.typingAnimator.start(text, this.textElement, this.choicesElement, () =>
+      this.onTypingFinished(),
+    );
+  }
 
-    this.fullDialogueText = text;
+  private finishTypingAnimation(): void {
+    this.typingAnimator.finish(this.textElement, this.choicesElement, () =>
+      this.onTypingFinished(),
+    );
+  }
 
-    if (!this.textElement) {
+  private bindDialogueContainerClick(): void {
+    const dialogueContainer = this.element.querySelector<HTMLDivElement>(
+      ".dialogue-view__dialogue-container",
+    );
+
+    if (!dialogueContainer) {
       return;
     }
 
-    this.textElement.textContent = "";
-
-    if (this.choicesElement) {
-      this.choicesElement.style.visibility = "hidden";
-      this.choicesElement.style.pointerEvents = "none";
-    }
-
-    if (!text.length) {
-      this.finishTypingAnimation();
-      return;
-    }
-
-    this.isTyping = true;
-    let characterIndex = 0;
-
-    this.typingIntervalId = window.setInterval(() => {
-      characterIndex += 1;
-
-      if (!this.textElement) {
-        this.stopTypingAnimation();
+    dialogueContainer.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) {
         return;
       }
 
-      this.textElement.textContent = text.slice(0, characterIndex);
-
-      if (characterIndex >= text.length) {
-        this.finishTypingAnimation();
+      if (target.closest(".dialogue-view__choices-container")) {
+        return;
       }
-    }, this.typingSpeedMs);
+
+      if (this.typingAnimator.typing) {
+        this.finishTypingAnimation();
+        return;
+      }
+
+      console.log("Dialogue container clicked. Continuing dialogue...");
+      if (this.dialogue?.Continue()) {
+        console.log(`Dialogue après la continuation :`, this.dialogue);
+        this.updateDialogue(this.dialogue);
+      }
+    });
+  }
+
+  private bindChoiceButtons(): void {
+    this.choicesElement
+      .querySelectorAll<HTMLButtonElement>(".choice-button")
+      .forEach((choiceButton) => {
+        choiceButton.addEventListener("click", (event) => {
+          event.stopPropagation();
+
+          const choiceId = choiceButton.dataset.choiceId?.trim() ?? "";
+          const choiceText = choiceButton.textContent?.trim() ?? "action";
+
+          if (choiceId) {
+            this.choiceSelectedCallback?.(choiceId);
+          }
+
+          console.log(
+            `Choix sélectionné : ${choiceText} (id: ${choiceId || "N/A"})`,
+          );
+
+          this.dialogue?.Choose(choiceId);
+          console.log(`Dialogue après le choix :`, this.dialogue);
+          this.updateDialogue(this.dialogue);
+        });
+      });
+  }
+
+  private getBackgroundVideoSource(): string {
+    if (!this.speaker) {
+      return "/videos/default-background.mp4";
+    }
+
+    return "backgroundVideo" in this.speaker
+      ? this.speaker.backgroundVideo
+      : this.speaker.presentationVideo;
   }
 
   private render(): void {
@@ -189,105 +224,56 @@ export class DialogueView implements IDialogueView {
     }
     const currentSpeakerIcon =
       this.speaker && "icon" in this.speaker ? this.speaker.icon : null;
+    const currentSpeakerPortrait =
+      this.speaker?.portrait || "default-portrait.jpg";
     const currentDialogueText =
       currentNode?.text ?? "Aucun dialogue disponible.";
-    const currentChoices = currentNode?.choices ?? [];
+    const currentChoices = (currentNode?.choices ?? []) as IChoice[];
+    const rawBackgroundMediaSrc = this.getBackgroundVideoSource();
 
-    const choicesHTML =
-      currentChoices.length > 0
-        ? currentChoices
-            .map(
-              (choice, index) =>
-                `<button class="button choice-button" data-choice-id="${this.escapeHtml(choice.id)}">
-                  <div class="choice-button__index">${this.escapeHtml((index + 1).toString())}</div>
-                  <div class="choice-button__text">${this.escapeHtml(choice.text)}</div>
-                </button>`,
-            )
-            .join("")
-        : "";
-
-    this.element.innerHTML = `
-      <div class="dialogue-view__body">
-      </div>
-
-      <div class="dialogue-view__dialogue-container">
-        <div class="dialogue-view__header">
-            <div class="dialogue-view__npc-info">
-              <div class="dialogue-view__header-start">
-                <img src="${this.speaker?.portrait || "default-portrait.jpg"}" alt="${this.escapeHtml(currentSpeakerName)}" class="dialogue-view__npc-portrait">
-                <div class="dialogue-view__title-container">
-                  <h2 class="dialogue-view__npc-name">${this.escapeHtml(currentSpeakerName)}</h2>
-                  <p class="dialogue-view__npc-role">${this.escapeHtml(currentSpeakerRole || "Rôle inconnu")}</p>              
-                </div>
-              </div>
-              <div class="dialogue-view__header-end">
-                <span class="dialogue-view__npc-job-icon">${currentSpeakerIcon || "🎭"}</span>
-                <button class="dialogue-view__exit-button">x</button>
-              </div>
-            </div>
-        </div>
-        <p class="dialogue-view__text"></p>
-        <div class="dialogue-view__choices-container">
-          ${choicesHTML}
-        </div>
-      </div>
-    `;
-
-    this.textElement = this.element.querySelector<HTMLParagraphElement>(
-      ".dialogue-view__text",
+    const choicesHTML = renderChoicesHtml(currentChoices, (text) =>
+      this.escapeHtml(text),
     );
-    this.choicesElement = this.element.querySelector<HTMLDivElement>(
-      ".dialogue-view__choices-container",
+
+    this.backgroundVideoController.setSource(rawBackgroundMediaSrc);
+
+    const portraitElement = this.element.querySelector<HTMLImageElement>(
+      ".dialogue-view__npc-portrait",
     );
+    if (portraitElement) {
+      portraitElement.src = currentSpeakerPortrait;
+      portraitElement.alt = currentSpeakerName;
+    }
+
+    const nameElement = this.element.querySelector<HTMLElement>(
+      ".dialogue-view__npc-name",
+    );
+    if (nameElement) {
+      nameElement.textContent = currentSpeakerName;
+    }
+
+    const roleElement = this.element.querySelector<HTMLElement>(
+      ".dialogue-view__npc-role",
+    );
+    if (roleElement) {
+      roleElement.textContent = currentSpeakerRole || "Rôle inconnu";
+    }
+
+    const iconElement = this.element.querySelector<HTMLElement>(
+      ".dialogue-view__npc-job-icon",
+    );
+    if (iconElement) {
+      iconElement.textContent = currentSpeakerIcon || "🎭";
+    }
+
+    this.choicesElement.innerHTML = choicesHTML;
+
+    this.bindChoiceButtons();
 
     this.startTypingAnimation(currentDialogueText);
 
-    // Choices event listeners
-    this.element
-      .querySelectorAll<HTMLButtonElement>(".choice-button")
-      .forEach((button) => {
-        button.addEventListener("click", (event) => {
-          event.stopPropagation(); // Prevent the click from bubbling up to the dialogue container
-          const choiceId = button.dataset.choiceId?.trim() ?? "";
-          const choiceText = button.textContent?.trim() ?? "action";
-
-          if (choiceId) {
-            this.choiceSelectedCallback?.(choiceId);
-          }
-
-          console.log(
-            `Choix sélectionné : ${choiceText} (id: ${choiceId || "N/A"})`,
-          );
-
-          this.dialogue?.Choose(choiceId);
-          console.log(`Dialogue après le choix :`, this.dialogue);
-
-          this.updateDialogue(this.dialogue);
-        });
-      });
-
-    // Dialogue container click event listener for Continue
-    this.element
-      .querySelector<HTMLDivElement>(".dialogue-view__dialogue-container")
-      ?.addEventListener("click", (event) => {
-        const target = event.target;
-        if (
-          target instanceof HTMLElement &&
-          target.closest(".dialogue-view__choices-container")
-        ) {
-          return;
-        }
-
-        if (this.isTyping) {
-          this.finishTypingAnimation();
-          return;
-        }
-
-        console.log("Dialogue container clicked. Continuing dialogue...");
-        if (this.dialogue?.Continue()) {
-          console.log(`Dialogue après la continuation :`, this.dialogue);
-          this.updateDialogue(this.dialogue);
-        }
-      });
+    if (this.currentVisibility) {
+      this.backgroundVideoController.ensurePlayback();
+    }
   }
 }

@@ -217,4 +217,12 @@ export class Dialogue implements IDialogue {
       console.warn("Selected choice does not lead to a next node.");
     }
   }
+
+  Reset(): void {
+    this._currentNode = this._rootNode;
+    this._currentLineDepth = 0;
+    this._currentChoiceDepth = 0;
+    this._isCompleted = false;
+    console.log("Dialogue has been reset to the root node.");
+  }
 }
