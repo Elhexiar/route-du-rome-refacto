@@ -110,6 +110,18 @@ body {
   white-space: nowrap;
 }
 
+.header-hero-selection-view__title {
+  font-size: 17px;
+  font-weight: 800;
+  font-family: "Syne", sans-serif;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.header-hero-selection-view__title span {
+  color: var(--yellow);
+}
+
 .header-hero-selection-view__center p {
   margin: 0;
   color: var(--text);
@@ -119,6 +131,7 @@ body {
 }
 
 .header-hero-selection-view__hero-button {
+  position: relative;
   padding: 6px 18px 6px 6px;
   display: flex;
   flex-direction: row;
@@ -131,6 +144,33 @@ body {
   padding: 3px 12px 3px 3px;
   cursor: pointer;
   transition: all 0.25s;
+}
+
+.header-hero-selection-view__hero-button.inactive:hover {
+  background: rgba(105, 64, 140, 0.3);
+  border-color: rgba(105, 64, 140, 0.45);
+}
+
+.header-hero-selection-view__hero-button.active {
+  border-color: var(--yellow);
+  background: rgba(255, 204, 82, 0.15);
+}
+
+.header-hero-selection-view__hero-button.active::after {
+  content: "✓";
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 16px;
+  height: 16px;
+  background: var(--yellow);
+  color: #1d1e3c;
+  border-radius: 50%;
+  font-size: 9px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .header-hero-selection-view__hero-portrait {
@@ -161,6 +201,46 @@ body {
   background: linear-gradient(90deg, var(--violet), var(--pink));
   border-radius: 6px;
   width: 50%;
+}
+
+.header-hero-selection-view__notebook-button {
+  background: linear-gradient(135deg, #5c3878, #8b5bb8);
+  border: 2px solid var(--violet);
+  color: #fff;
+  font-family: "Nunito", sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(105, 64, 140, 0.4);
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.header-hero-selection-view__notebook-button:hover {
+  background: linear-gradient(135deg, #69408c, #8b5bb8);
+  box-shadow: 0 4px 16px rgba(105, 64, 140, 0.6);
+}
+
+.header-hero-selection-view__settings-button {
+  background: linear-gradient(135deg, #5c3878, #8b5bb8);
+  border: 2px solid var(--violet);
+  color: #fff;
+  font-family: "Nunito", sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(105, 64, 140, 0.4);
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.header-hero-selection-view__settings-button:hover {
+  background: linear-gradient(135deg, #69408c, #8b5bb8);
+  box-shadow: 0 4px 16px rgba(105, 64, 140, 0.6);
 }
 
 /* Dialogue */

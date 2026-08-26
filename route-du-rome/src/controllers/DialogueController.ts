@@ -1,5 +1,5 @@
 import type { IDialogueController } from "#IControllers/IDialogueController";
-import { NPCDialogueView } from "#UI/dialogue/NPCDialogueView";
+import { DialogueView } from "#src/ui/dialogue/DialogueView.ts";
 import { GameManager } from "./GameManager.ts";
 import type { IDialogue, IDialogueNode } from "../interfaces/entities";
 
@@ -8,33 +8,42 @@ export class DialogueController implements IDialogueController {
   currentActiveDialogue: IDialogue | null | undefined;
   currentActiveNode: IDialogueNode | null;
 
-  // rather than building a new dialogue view for each NPC, we can reuse the same view
-  //   and just update its content based on the current NPC
-  npcDialogueViews: NPCDialogueView | null = null;
-  // same for the hero dialogue view, we can reuse the same view
-  //   and just update its content based on the current hero
+  dialogueView: DialogueView | null = null;
 
   constructor(app: HTMLElement | null = null) {
     this.dialogueRegistry = new Map<string, IDialogue>();
     this.currentActiveDialogue = null;
     this.currentActiveNode = null;
 
-    this.npcDialogueViews = app
-      ? new NPCDialogueView(app as HTMLElement)
-      : null;
+    this.dialogueView = app ? new DialogueView(app as HTMLElement) : null;
 
     GameManager.npcController?.onNpcsLoaded((npcs) => {
       npcs.forEach((npc) => {
         // add an action to the dialogue to hide the view when the dialogue ends
         npc.presentationDialogue?.OnDialogueActions?.push(() => {
-          this.npcDialogueViews?.HideView();
+          this.dialogueView?.HideView();
         });
 
         //
         GameManager.mapController?.mapView?.onNpcMarkerClick(npc, () => {
-          this.npcDialogueViews?.ResetForNewNPC(npc);
-          this.npcDialogueViews?.ShowView();
+          if (npc.presentationDialogue?.isCompleted) {
+            console.log(`Dialogue for NPC ${npc.name} is already completed.`);
+            return;
+          }
+
+          this.dialogueView?.ResetForNewNPC(npc);
+          this.dialogueView?.ShowView();
         });
+      });
+    });
+
+    GameManager.heroController?.onHeroesSwitched((hero) => {
+      if (!hero?.presentationDialogue) {
+        return;
+      }
+
+      hero.presentationDialogue.OnDialogueActions?.push(() => {
+        this.dialogueView?.HideView();
       });
     });
   }

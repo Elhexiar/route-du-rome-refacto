@@ -2,6 +2,7 @@ import type { IHeroController } from "#IControllers/index.ts";
 import type { IHero } from "#IEntities/IHero.ts";
 import type { ConfigData } from "#Entities/Config.ts";
 import { Hero } from "#Entities/Hero.ts";
+import { Dialogue } from "#Entities/dialogue/Dialogue.ts";
 
 export class HeroController implements IHeroController {
   heroes: IHero[] = [];
@@ -42,6 +43,16 @@ export class HeroController implements IHeroController {
         null,
         [],
       );
+
+      if (heroData.presentationDialogue) {
+        const parsedDialogue = new Dialogue(
+          hero,
+          hero.name + "-presentation-dialogue",
+          heroData.presentationDialogue,
+        );
+        hero.presentationDialogue = parsedDialogue;
+      }
+
       this.heroes.push(hero);
     });
 

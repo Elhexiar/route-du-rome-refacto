@@ -40,6 +40,8 @@ export class QuestService implements IQuestService {
           console.log(
             `Quest "${defaultQuest.name}" completed for NPC ${npc.name}`,
           );
+          npc.done = true;
+          GameManager.mapController?.mapView?.markers.get(npc)?.UpdateMarker();
         });
 
         this.quests.set(defaultQuest.id, defaultQuest);
@@ -62,7 +64,7 @@ export class QuestService implements IQuestService {
         );
 
         defaultQuest.OnQuestActions.push(() => {
-          badge.Unlock();
+          GameManager.experienceController?.badgeService.collectBadge(badge.id);
         });
 
         defaultQuest.relatedBadge = badge;

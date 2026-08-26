@@ -6,7 +6,22 @@
       "role": "Explorateur France Travail",
       "description": "Élio est <strong>conseiller France Travail en herbe</strong> et grand aventurier. Il parcourt l'<strong>Ille-et-Vilaine</strong> à la rencontre des pros. Sa mission : <strong>découvrir les métiers du 35</strong>.",
       "bio": "",
-      "presentationDialogue": null,
+      "presentationDialogue": {
+        "id": "elio-presentation-0",
+        "text": "Salut ! Moi c'est Élio — Explorateur France Travail et grand aventurier !",
+        "next": {
+          "id": "elio-presentation-1",
+          "text": "Je parcours l'Ille-et-Vilaine à la rencontre des pros : marins, agricultrices, chefs cuisiniers, chaudronniers...",
+          "next": {
+            "id": "elio-presentation-2",
+            "text": "Chaque rencontre est une quête. Chaque quête, une vidéo et une vraie réalité de terrain.",
+            "next": {
+              "id": "elio-presentation-3",
+              "text": "Alors... tu m'accompagnes dans La Route du Rome ?"
+            }
+          }
+        }
+      },
       "portrait": "/portraits/ElioPP.png",
       "presentationVideo": "/videos/Elio.mp4",
       "dialogue": null
@@ -17,7 +32,22 @@
       "role": "Exploratrice France Travail",
       "description": "Élia est <strong>conseillère France Travail en herbe</strong> et grande aventurière. Elle parcourt l'<strong>Ille-et-Vilaine</strong> à la rencontre des pros. Sa mission : <strong>découvrir les métiers du 35</strong>.",
       "bio": "",
-      "presentationDialogue": null,
+      "presentationDialogue": {
+        "id": "elia-presentation-0",
+        "text": "Salut ! Moi c'est Élia — Exploratrice France Travail et grande aventurière !",
+        "next": {
+          "id": "elia-presentation-1",
+          "text": "Je parcours l'Ille-et-Vilaine à la rencontre des pros : marins, agricultrices, chefs cuisiniers, chaudronniers...",
+          "next": {
+            "id": "elia-presentation-2",
+            "text": "Chaque rencontre est une quête. Chaque quête, une vidéo et une vraie réalité de terrain.",
+            "next": {
+              "id": "elia-presentation-3",
+              "text": "Alors... tu m'accompagnes dans La Route du Rome ?"
+            }
+          }
+        }
+      },
       "portrait": "/portraits/EliaPP.png",
       "presentationVideo": "/videos/Elia.mp4",
       "dialogue": null
@@ -40,41 +70,46 @@
       "videoTitle": "Les métiers de la mer en Bretagne",
       "presentationDialogue": {
         "id": "morgane-intro-0",
-        "text": "Bonjour, je suis Morgane, officière de pêche à Saint-Malo. Je vais vous parler de mon métier et de la pêche locale.",
+        "text": "Salut ! Moi c'est Morgane, officière de pêche à Saint-Malo. La mer, c'est ma vie depuis toujours !",
         "next": {
           "id": "morgane-intro-1",
-          "text": "Que souhaitez-vous savoir sur mon métier ?",
+          "text": "Le secteur maritime breton, c'est des milliers d'emplois : marins-pêcheurs, mécaniciens navires, ostréiculteurs, techniciens portuaires...",
           "choices": [
             {
               "id": "morgane-metier",
-              "text": "Parlez-moi de votre métier.",
+              "text": "La pêche en haute mer, c'est quoi ?",
               "next": {
                 "id": "morgane-metier-reponse",
-                "text": "Je travaille sur les bateaux et j'organise les sorties en mer pour la pêche locale.",
+                "text": "La pêche hauturière, c'est intense mais passionnant ! L'ENSM de Saint-Malo forme les officiers en 2 à 4 ans. France Travail peut financer la formation !",
                 "next": {
                   "id": "morgane-metier-reponse-2",
-                  "text": "Je m'assure que tout se passe bien et que les poissons sont pêchés de manière durable.",
-                  "OnEndTextActionID": "choice-end"
+                  "text": "La mer offre des métiers variés, en mer comme à terre."
                 }
               }
             },
             {
               "id": "morgane-formation",
-              "text": "Quelles formations faut-il suivre ?",
+              "text": "L'aquaculture / les huîtres ?",
               "next": {
                 "id": "morgane-formation-reponse",
-                "text": "Il faut souvent passer par un CAP ou un bac pro maritime, puis des stages pratiques.",
+                "text": "L'ostréiculture en baie du Mont-Saint-Michel, c'est une tradition séculaire ! Des formations courtes existent via France Travail, et beaucoup de postes disponibles localement.",
                 "next": {
                   "id": "morgane-formation-reponse-2",
-                  "text": "Il est aussi important d'avoir de l'expérience en mer et de connaître les règles de sécurité.",
-                  "OnEndTextActionID": "choice-end"
+                  "text": "C'est un métier de passion qui fait vivre tout le littoral."
                 }
               }
             },
             {
-              "id": "morgane-repeat",
-              "text": "Recommencez, je n'ai pas bien compris.",
-              "findID": "morgane-intro-0"
+              "id": "morgane-terre",
+              "text": "Travailler à terre, au port ?",
+              "next": {
+                "id": "morgane-terre-reponse",
+                "text": "Le port de Saint-Malo recrute des logisticiens, manutentionnaires et techniciens toute l'année. Pas besoin d'aller sur l'eau pour travailler dans le maritime !",
+                "next": {
+                  "id": "morgane-terre-reponse-2",
+                  "text": "Le maritime offre donc des opportunités pour de nombreux profils."
+                }
+              }
             }
           ]
         }
@@ -94,7 +129,52 @@
       "backgroundVideo": "/videos/Sarah.mp4",
       "jobPresentationVideo": "https://www.youtube.com/embed/ld61odTHtmQ",
       "videoTitle": "L'agriculture biologique en Ille-et-Vilaine",
-      "PresentationDialogue": null
+      "presentationDialogue": {
+        "id": "sarah-intro-0",
+        "text": "Bonjour ! Je suis Sarah, agricultrice bio à Dol-de-Bretagne. On cultive des légumes et on élève des poules en plein air.",
+        "next": {
+          "id": "sarah-intro-1",
+          "text": "Le bio en Ille-et-Vilaine, c'est en plein essor. Les exploitations cherchent des gens passionnés, avec ou sans diplôme !",
+          "choices": [
+            {
+              "id": "sarah-formation",
+              "text": "Comment se former à l'agriculture bio ?",
+              "next": {
+                "id": "sarah-formation-reponse",
+                "text": "Le BPREA Agrobiologie se prépare en 2 ans en alternance. France Travail peut financer la formation.",
+                "next": {
+                  "id": "sarah-formation-fin",
+                  "text": "C'est une voie royale pour rejoindre le secteur !"
+                }
+              }
+            },
+            {
+              "id": "sarah-rentable",
+              "text": "C'est rentable le bio ?",
+              "next": {
+                "id": "sarah-rentable-reponse",
+                "text": "De plus en plus ! Les circuits courts et les AMAP se développent partout dans le 35.",
+                "next": {
+                  "id": "sarah-rentable-fin",
+                  "text": "Les revenus se stabilisent avec l'expérience et les bonnes pratiques."
+                }
+              }
+            },
+            {
+              "id": "sarah-postes",
+              "text": "Y a des postes disponibles ?",
+              "next": {
+                "id": "sarah-postes-reponse",
+                "text": "Oui, beaucoup ! Les exploitations bio cherchent des maraîchers, des agents d'élevage et des cueilleurs.",
+                "next": {
+                  "id": "sarah-postes-fin",
+                  "text": "Contacte France Travail pour les offres en cours."
+                }
+              }
+            }
+          ]
+        }
+      }
     },
     {
       "id": "cuisiniere",
@@ -110,7 +190,52 @@
       "backgroundVideo": "/videos/Sophie.mp4",
       "jobPresentationVideo": "https://www.youtube.com/embed/2S3sDu4qA5Q",
       "videoTitle": "Restauration & Hôtellerie en Bretagne",
-      "PresentationDialogue": null
+      "presentationDialogue": {
+        "id": "sophie-intro-0",
+        "text": "Bonjour ! Cheffe de cuisine à Cancale — la capitale de l'huître ! Galettes, crêpes, fruits de mer, on régale toute l'année.",
+        "next": {
+          "id": "sophie-intro-1",
+          "text": "Le secteur HCR recrute en permanence. Même débutant sans diplôme, on peut démarrer vite et évoluer !",
+          "choices": [
+            {
+              "id": "sophie-cuisine",
+              "text": "Devenir cuisinier, par où commencer ?",
+              "next": {
+                "id": "sophie-cuisine-reponse",
+                "text": "Le CAP Cuisine se prépare en 1 an pour les adultes avec France Travail.",
+                "next": {
+                  "id": "sophie-cuisine-fin",
+                  "text": "La gastronomie bretonne est mondialement reconnue, les opportunités sont immenses !"
+                }
+              }
+            },
+            {
+              "id": "sophie-service",
+              "text": "La salle et le service, c'est bien payé ?",
+              "next": {
+                "id": "sophie-service-reponse",
+                "text": "Le Titre Pro Serveur ou le Bac Pro SAPAT se fait rapidement.",
+                "next": {
+                  "id": "sophie-service-fin",
+                  "text": "Les extras payent bien et les débouchés sont partout dans la région."
+                }
+              }
+            },
+            {
+              "id": "sophie-management",
+              "text": "Gérer un restaurant un jour ?",
+              "next": {
+                "id": "sophie-management-reponse",
+                "text": "Le BTS MHR (Management Hôtellerie Restauration) ouvre les portes du management.",
+                "next": {
+                  "id": "sophie-management-fin",
+                  "text": "Accessible en alternance et très valorisé dans toute la Bretagne !"
+                }
+              }
+            }
+          ]
+        }
+      }
     },
     {
       "id": "nucleaire",
@@ -126,7 +251,52 @@
       "backgroundVideo": "/videos/Nathan.mp4",
       "jobPresentationVideo": "https://www.youtube.com/embed/ZFnOWlLyNbs",
       "videoTitle": "Les métiers du nucléaire en Bretagne",
-      "PresentationDialogue": null
+      "presentationDialogue": {
+        "id": "nathan-intro-0",
+        "text": "Bonjour ! Je suis Nathan, conducteur de travaux sur des chantiers nucléaires. Un secteur qui recrute massivement en ce moment !",
+        "next": {
+          "id": "nathan-intro-1",
+          "text": "La filière nucléaire a besoin de milliers de profils : techniciens, ingénieurs, soudeurs qualifiés, agents de radioprotection...",
+          "choices": [
+            {
+              "id": "nathan-danger",
+              "text": "C'est dangereux, le nucléaire ?",
+              "next": {
+                "id": "nathan-danger-reponse",
+                "text": "Très encadré ! On suit des formations habilitation nucléaire obligatoires.",
+                "next": {
+                  "id": "nathan-danger-fin",
+                  "text": "France Travail finance les préparations aux certifications SCN, CSQ et RP. Sécurité avant tout."
+                }
+              }
+            },
+            {
+              "id": "nathan-formation",
+              "text": "Quelles formations pour entrer dans le secteur ?",
+              "next": {
+                "id": "nathan-formation-reponse",
+                "text": "BAC Pro à BTS selon le poste. EDF et ses sous-traitants recrutent en alternance et forment eux-mêmes.",
+                "next": {
+                  "id": "nathan-formation-fin",
+                  "text": "Des centaines de postes sont à venir en Bretagne !"
+                }
+              }
+            },
+            {
+              "id": "nathan-salaires",
+              "text": "Les salaires sont intéressants ?",
+              "next": {
+                "id": "nathan-salaires-reponse",
+                "text": "Oui, très ! Un technicien nucléaire débutant gagne 30 à 35k€.",
+                "next": {
+                  "id": "nathan-salaires-fin",
+                  "text": "Avec les primes et l'expérience, on dépasse vite les 45k€. Un secteur vraiment porteur."
+                }
+              }
+            }
+          ]
+        }
+      }
     },
     {
       "id": "aide",
@@ -142,7 +312,52 @@
       "backgroundVideo": "/videos/Claire.mp4",
       "jobPresentationVideo": "https://www.youtube.com/embed/F-VOm1wzwvY",
       "videoTitle": "Les métiers de l'aide à la personne en Bretagne",
-      "PresentationDialogue": null
+      "presentationDialogue": {
+        "id": "claire-intro-0",
+        "text": "Bonjour ! Je suis Claire, auxiliaire de vie à Dinan depuis 8 ans. J'accompagne des personnes âgées et des adultes en situation de handicap au quotidien.",
+        "next": {
+          "id": "claire-intro-1",
+          "text": "Les métiers du lien sont parmi les plus recruteurs du 35 en ce moment. Des milliers de postes sont à pourvoir, et la reconnaissance du métier grandit vraiment !",
+          "choices": [
+            {
+              "id": "claire-seniors",
+              "text": "Accompagner les seniors, comment ça se passe ?",
+              "next": {
+                "id": "claire-seniors-reponse",
+                "text": "C'est un accompagnement très humain : aide à la toilette, aux repas, aux déplacements, mais aussi beaucoup d'écoute et de lien social.",
+                "next": {
+                  "id": "claire-seniors-fin",
+                  "text": "Le Titre ADVF se prépare en quelques mois, financé par France Travail."
+                }
+              }
+            },
+            {
+              "id": "claire-handicap",
+              "text": "Travailler avec les personnes handicapées ?",
+              "next": {
+                "id": "claire-handicap-reponse",
+                "text": "Le DEAES (Diplôme d'État AES) est la voie royale.",
+                "next": {
+                  "id": "claire-handicap-fin",
+                  "text": "Des contrats en alternance sont disponibles partout dans le 35, avec une vraie progression salariale à la clé !"
+                }
+              }
+            },
+            {
+              "id": "claire-recrutement",
+              "text": "C'est un métier qui recrute vraiment ?",
+              "next": {
+                "id": "claire-recrutement-reponse",
+                "text": "Oui, massivement ! Le vieillissement de la population crée une demande croissante.",
+                "next": {
+                  "id": "claire-recrutement-fin",
+                  "text": "À Dinan et dans tout le pays de Rance, les structures cherchent des profils motivés, avec ou sans expérience."
+                }
+              }
+            }
+          ]
+        }
+      }
     },
     {
       "id": "restauration",
@@ -158,7 +373,52 @@
       "backgroundVideo": "/videos/Manu.mp4",
       "jobPresentationVideo": "https://www.youtube.com/embed/NYyxxNX2s0s",
       "videoTitle": "Les métiers de la salle et du service",
-      "PresentationDialogue": null
+      "presentationDialogue": {
+        "id": "manu-intro-0",
+        "text": "Salut ! Moi c'est Manu, serveur dans un restaurant gastronomique à Saint-Briac. Vue sur mer, clientèle internationale, c'est top !",
+        "next": {
+          "id": "manu-intro-1",
+          "text": "Le service en salle, c'est un art ! Contact client, réactivité, sens de l'organisation... et les perspectives d'évolution sont réelles.",
+          "choices": [
+            {
+              "id": "manu-devenir",
+              "text": "Comment devenir serveur rapidement ?",
+              "next": {
+                "id": "manu-devenir-reponse",
+                "text": "Le Titre Pro Serveur se prépare en 6 à 12 mois, financé par France Travail.",
+                "next": {
+                  "id": "manu-devenir-fin",
+                  "text": "Les saisons permettent de démarrer vite, même sans diplôme !"
+                }
+              }
+            },
+            {
+              "id": "manu-salaire",
+              "text": "C'est vraiment bien payé ?",
+              "next": {
+                "id": "manu-salaire-reponse",
+                "text": "Entre le fixe, les pourboires et les extras en saison, un bon serveur gagne bien sa vie sur la côte bretonne.",
+                "next": {
+                  "id": "manu-salaire-fin",
+                  "text": "Et les horaires peuvent être flexibles !"
+                }
+              }
+            },
+            {
+              "id": "manu-evolution",
+              "text": "Évoluer vers chef de rang ou manager ?",
+              "next": {
+                "id": "manu-evolution-reponse",
+                "text": "Absolument ! Avec de l'expérience et une formation complémentaire (BTS MHR), on peut évoluer vers chef de rang, maître d'hôtel ou même directeur de salle.",
+                "next": {
+                  "id": "manu-evolution-fin",
+                  "text": "Les possibilités d'évolution sont nombreuses."
+                }
+              }
+            }
+          ]
+        }
+      }
     },
     {
       "id": "chaudronnerie",
@@ -174,7 +434,52 @@
       "backgroundVideo": "/videos/Florian.mp4",
       "jobPresentationVideo": "https://www.youtube.com/embed/wBEamqw5g3o",
       "videoTitle": "Chaudronnerie et métallurgie",
-      "PresentationDialogue": null
+      "presentationDialogue": {
+        "id": "florian-intro-0",
+        "text": "Bonjour ! Florian, chaudronnier à Combourg depuis 6 ans. Je fabrique et assemble des pièces métalliques pour l'industrie agroalimentaire.",
+        "next": {
+          "id": "florian-intro-1",
+          "text": "La chaudronnerie, c'est un métier manuel, précis et créatif. Et les entreprises du 35 cherchent désespérément des profils qualifiés !",
+          "choices": [
+            {
+              "id": "florian-formation",
+              "text": "Comment se former à la chaudronnerie ?",
+              "next": {
+                "id": "florian-formation-reponse",
+                "text": "Le Bac Pro Technicien en Chaudronnerie Industrielle (TCI) se prépare en 3 ans, souvent en alternance.",
+                "next": {
+                  "id": "florian-formation-fin",
+                  "text": "France Travail finance aussi des reconversions rapides via des titres pro."
+                }
+              }
+            },
+            {
+              "id": "florian-pieces",
+              "text": "Quelles pièces tu fabriques au quotidien ?",
+              "next": {
+                "id": "florian-pieces-reponse",
+                "text": "Des cuves, des tuyauteries, des échangeurs de chaleur... Tout ce qui est en métal et qui doit résister à la pression et à la chaleur.",
+                "next": {
+                  "id": "florian-pieces-fin",
+                  "text": "C'est de la haute précision !"
+                }
+              }
+            },
+            {
+              "id": "florian-recrutement",
+              "text": "C'est un secteur qui recrute ?",
+              "next": {
+                "id": "florian-recrutement-reponse",
+                "text": "Énormément ! L'industrie agroalimentaire bretonne (lait, viande, légumes) a besoin de chaudronniers.",
+                "next": {
+                  "id": "florian-recrutement-fin",
+                  "text": "Les salaires sont très attractifs."
+                }
+              }
+            }
+          ]
+        }
+      }
     },
     {
       "id": "petite-enfance",
@@ -190,7 +495,52 @@
       "backgroundVideo": "/videos/Laetitia.mp4",
       "jobPresentationVideo": "https://www.youtube.com/embed/UKJ2awXwErU",
       "videoTitle": "Petite enfance & éducation",
-      "PresentationDialogue": null
+      "presentationDialogue": {
+        "id": "laetitia-intro-0",
+        "text": "Bonjour ! Je suis Laetitia, éducatrice de jeunes enfants à La Fresnais. J'accompagne le développement des tout-petits de 0 à 6 ans en crèche, c'est un métier qui a vraiment du sens !",
+        "next": {
+          "id": "laetitia-intro-1",
+          "text": "La petite enfance recrute massivement dans le 35. Les crèches, les haltes-garderies et les écoles maternelles cherchent des éducateurs qualifiés et passionnés !",
+          "choices": [
+            {
+              "id": "laetitia-formation",
+              "text": "Comment devenir éducateur de jeunes enfants ?",
+              "next": {
+                "id": "laetitia-formation-reponse",
+                "text": "Le Diplôme d'État EJE (Bac+3) se prépare en 3 ans.",
+                "next": {
+                  "id": "laetitia-formation-fin",
+                  "text": "France Travail peut financer la formation en alternance, notamment via des contrats pro avec des crèches municipales ou associatives."
+                }
+              }
+            },
+            {
+              "id": "laetitia-difference",
+              "text": "En quoi c'est différent d'une assistante maternelle ?",
+              "next": {
+                "id": "laetitia-difference-reponse",
+                "text": "L'EJE conçoit et anime des projets pédagogiques pour le groupe, encadre une équipe et accompagne les familles.",
+                "next": {
+                  "id": "laetitia-difference-fin",
+                  "text": "C'est un rôle à la fois éducatif, social et managérial — beaucoup plus large !"
+                }
+              }
+            },
+            {
+              "id": "laetitia-debouches",
+              "text": "Les débouchés dans le 35, c'est comment ?",
+              "next": {
+                "id": "laetitia-debouches-reponse",
+                "text": "Excellents ! Rennes Métropole et tout le bassin de Saint-Malo manquent d'EJE diplômés.",
+                "next": {
+                  "id": "laetitia-debouches-fin",
+                  "text": "Les collectivités, les associations et le secteur privé recrutent toute l'année. Le salaire démarre autour de 1 900 € nets."
+                }
+              }
+            }
+          ]
+        }
+      }
     },
     {
       "id": "mecanique",
@@ -206,7 +556,52 @@
       "backgroundVideo": "/videos/Jeanne.mp4",
       "jobPresentationVideo": "https://www.youtube.com/embed/erflQIu7kno",
       "videoTitle": "Mécanique et cheffe d'atelier",
-      "PresentationDialogue": null
+      "presentationDialogue": {
+        "id": "jeanne-intro-0",
+        "text": "Salut ! Moi c'est Jeanne, cheffe d'atelier dans un garage à Antrain. Je manage une équipe de 6 mécaniciens sur des véhicules toutes marques, du SUV au camion léger.",
+        "next": {
+          "id": "jeanne-intro-1",
+          "text": "La mécanique est en pleine révolution avec le tout-électrique. Les techniciens formés aux nouvelles motorisations sont devenus rares et ultra-demandés — c'est le moment idéal pour se lancer !",
+          "choices": [
+            {
+              "id": "jeanne-mecanique",
+              "text": "Comment devenir mécanicien auto ?",
+              "next": {
+                "id": "jeanne-mecanique-reponse",
+                "text": "Le CAP Maintenance Auto se prépare en 2 ans, souvent en alternance directement dans un garage.",
+                "next": {
+                  "id": "jeanne-mecanique-fin",
+                  "text": "France Travail finance aussi des reconversions rapides via des titres pro. Les recrutements sont ouverts partout dans le 35 !"
+                }
+              }
+            },
+            {
+              "id": "jeanne-electrique",
+              "text": "L'électrique, c'est vraiment l'avenir ?",
+              "next": {
+                "id": "jeanne-electrique-reponse",
+                "text": "Sans aucun doute ! Les habilitations haute tension pour véhicules hybrides et 100 % électriques sont les plus recherchées du secteur.",
+                "next": {
+                  "id": "jeanne-electrique-fin",
+                  "text": "France Travail finance ces formations courtes et certifiantes, parfois en quelques semaines."
+                }
+              }
+            },
+            {
+              "id": "jeanne-evolution",
+              "text": "Évoluer vers cheffe d'atelier comme toi ?",
+              "next": {
+                "id": "jeanne-evolution-reponse",
+                "text": "Tout à fait possible ! Avec 3 à 5 ans d'expérience terrain et un BTS Maintenance Auto ou un Titre chef d'équipe, on peut manager une équipe.",
+                "next": {
+                  "id": "jeanne-evolution-fin",
+                  "text": "Le salaire de cheffe d'atelier démarre à 35 000 € et grimpe vite."
+                }
+              }
+            }
+          ]
+        }
+      }
     }
   ]
 }

@@ -1,11 +1,15 @@
 // THIS IS JUST A TEST
+import type { IHero } from "#IEntities/IHero";
 import type { INpc } from "#IEntities/INpc";
 import type { IDialogue } from "#IEntities/dialogue/IDialogue";
 import type { IDialogueView } from "#IUI/IDialogueView";
 import { GameManager } from "#Controllers/GameManager";
 
-export class NPCDialogueView implements IDialogueView {
-  npc: INpc | null = null;
+// TODO : I Replaced the NPCDialogueView with a more generic DialogueView that can handle both NPCs and Heroes.
+// But it still has a lot of legacy code from the NPCDialogueView
+
+export class DialogueView implements IDialogueView {
+  speaker: INpc | IHero | null = null;
   dialogue: IDialogue | null = null;
   currentVisibility: boolean = false;
   private choiceSelectedCallback: ((choiceId: string) => void) | null = null;
@@ -44,45 +48,50 @@ export class NPCDialogueView implements IDialogueView {
     }
   }
 
+  // kept in case
   ResetForNewNPC(npc: INpc): void {
-    this.npc = npc;
-    this.dialogue = npc.presentationDialogue;
+    this.ResetForNewSpeaker(npc);
+  }
+
+  ResetForNewSpeaker(speaker: INpc | IHero): void {
+    this.speaker = speaker;
+    this.dialogue = speaker.presentationDialogue ?? null;
     if (GameManager.dialogueController) {
       console.log(
-        "Mise à jour du dialogue actif dans le DialogueController pour le PNJ :",
-        this.npc?.name,
+        "Mise à jour du dialogue actif dans le DialogueController :",
+        this.speaker.name,
       );
       GameManager.dialogueController.currentActiveDialogue = this.dialogue;
     }
     this.render();
 
-    console.log(
-      "Réinitialisation de la vue de dialogue pour le PNJ :",
-      npc.name,
-    );
+    console.log("Réinitialisation de la vue de dialogue pour :", speaker.name);
   }
 
+  // probably not needed anymore
   showDialogue(_node: any): void {
     this.render();
-    console.log("Affichage du dialogue pour le PNJ :", this.npc?.name);
+    console.log("Affichage du dialogue pour :", this.speaker?.name);
   }
 
+  // same
   hideDialogue(): void {
-    console.log("Masquage du dialogue pour le PNJ :", this.npc?.name);
+    console.log("Masquage du dialogue pour :", this.speaker?.name);
   }
 
   updateDialogue(node: any): void {
     this.dialogue = node;
     this.render();
-    console.log("Mise à jour du dialogue pour le PNJ :", this.npc?.name);
+    console.log("Mise à jour du dialogue pour :", this.speaker?.name);
     this.notifyController();
   }
 
+  // TODO: inverse the logic here, have the dialogue controller hook on a callback from the view, instead of the view notifying the controller
   notifyController() {
     if (GameManager.dialogueController) {
       console.log(
-        "Mise à jour du dialogue actif dans le DialogueController pour le PNJ :",
-        this.npc?.name,
+        "Mise à jour du dialogue actif dans le DialogueController :",
+        this.speaker?.name,
       );
       GameManager.dialogueController.currentActiveDialogue = this.dialogue;
     }
@@ -91,8 +100,8 @@ export class NPCDialogueView implements IDialogueView {
   onChoiceSelected(callback: (choiceId: string) => void): void {
     this.choiceSelectedCallback = callback;
     console.log(
-      "Enregistrement du callback pour le choix du dialogue du PNJ :",
-      this.npc?.name,
+      "Enregistrement du callback pour le choix du dialogue :",
+      this.speaker?.name,
     );
   }
 
@@ -172,7 +181,14 @@ export class NPCDialogueView implements IDialogueView {
 
   private render(): void {
     const currentNode = this.dialogue?.currentNode ?? this.dialogue?.rootNode;
-    const currentNpcName = this.npc?.name ?? "NPC";
+    const currentSpeakerName = this.speaker?.name ?? "Interlocuteur";
+    let currentSpeakerRole = "Rôle inconnu";
+    if (this.speaker) {
+      currentSpeakerRole =
+        "job" in this.speaker ? this.speaker.job : this.speaker.role;
+    }
+    const currentSpeakerIcon =
+      this.speaker && "icon" in this.speaker ? this.speaker.icon : null;
     const currentDialogueText =
       currentNode?.text ?? "Aucun dialogue disponible.";
     const currentChoices = currentNode?.choices ?? [];
@@ -198,14 +214,14 @@ export class NPCDialogueView implements IDialogueView {
         <div class="dialogue-view__header">
             <div class="dialogue-view__npc-info">
               <div class="dialogue-view__header-start">
-                <img src="${this.npc?.portrait || "default-portrait.jpg"}" alt="${this.escapeHtml(currentNpcName)}" class="dialogue-view__npc-portrait">
+                <img src="${this.speaker?.portrait || "default-portrait.jpg"}" alt="${this.escapeHtml(currentSpeakerName)}" class="dialogue-view__npc-portrait">
                 <div class="dialogue-view__title-container">
-                  <h2 class="dialogue-view__npc-name">${this.escapeHtml(currentNpcName)}</h2>
-                  <p class="dialogue-view__npc-role">${this.escapeHtml(this.npc?.job || "Rôle inconnu")}</p>              
+                  <h2 class="dialogue-view__npc-name">${this.escapeHtml(currentSpeakerName)}</h2>
+                  <p class="dialogue-view__npc-role">${this.escapeHtml(currentSpeakerRole || "Rôle inconnu")}</p>              
                 </div>
               </div>
               <div class="dialogue-view__header-end">
-                <span class="dialogue-view__npc-job-icon">${this.npc?.icon || "🎭"}</span>
+                <span class="dialogue-view__npc-job-icon">${currentSpeakerIcon || "🎭"}</span>
                 <button class="dialogue-view__exit-button">x</button>
               </div>
             </div>

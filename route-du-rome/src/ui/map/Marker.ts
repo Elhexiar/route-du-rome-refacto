@@ -21,48 +21,14 @@ export class Marker {
     }
 
     if (npc) {
-      var lockOverlay =
-        !npc.done && !npc.accessible
-          ? '<div class="quest-locked-overlay">🔒</div>'
-          : "";
-
-      var iconInner =
-        "<img src='" + npc.portrait + "' alt='" + npc.name + "' />";
-
-      const icon = leaflet.divIcon({
-        className: "leaflet-marker-icon map-marker map-marker--npc",
-        html:
-          '<div class="npc-wrap" style="position:relative;">' +
-          '<div class="npc-icon' +
-          (npc.done ? " done" : "") +
-          '" style="border-color:' +
-          npc.color +
-          ';position:relative;">' +
-          iconInner +
-          lockOverlay +
-          "</div>" +
-          '<div class="npc-sector-badge" style="background:' +
-          npc.color +
-          ';">' +
-          npc.icon +
-          " " +
-          npc.name +
-          "</div>" +
-          '<div class="npc-lbl">' +
-          npc.name +
-          (npc.done ? " ✓" : "") +
-          "</div>" +
-          "</div>",
-        iconSize: [120, 130],
-        iconAnchor: [60, 125],
-      });
+      const icon = this.createNpcIcon(leaflet, npc);
 
       const m = leaflet
         .marker([npc.lattitude, npc.longitude], { icon })
         .addTo(map);
 
       // prevent marker clicks from propagating to the map
-      if (leaflet && leaflet.DomEvent) {
+      if (leaflet?.DomEvent) {
         m.on("click", (e: any) => {
           leaflet.DomEvent.stopPropagation(e);
         });
@@ -72,9 +38,6 @@ export class Marker {
     }
 
     if (hero) {
-      var iconInner =
-        "<img src='" + hero.portrait + "' alt='" + hero.name + "' />";
-
       const icon = leaflet.divIcon({
         className: "leaflet-marker-icon map-marker map-marker--npc",
 
@@ -101,7 +64,7 @@ export class Marker {
         )
         .addTo(map);
 
-      if (leaflet && leaflet.DomEvent) {
+      if (leaflet?.DomEvent) {
         m.on("click", (e: any) => {
           leaflet.DomEvent.stopPropagation(e);
         });
@@ -109,6 +72,43 @@ export class Marker {
 
       return m;
     }
+  }
+
+  private createNpcIcon(leaflet: any, npc: INpc): any {
+    const lockOverlay =
+      !npc.done && !npc.accessible
+        ? '<div class="quest-locked-overlay">🔒</div>'
+        : "";
+    const iconInner =
+      "<img src='" + npc.portrait + "' alt='" + npc.name + "' />";
+
+    return leaflet.divIcon({
+      className: "leaflet-marker-icon map-marker map-marker--npc",
+      html:
+        '<div class="npc-wrap" style="position:relative;">' +
+        '<div class="npc-icon' +
+        (npc.done ? " done" : "") +
+        '" style="border-color:' +
+        npc.color +
+        ';position:relative;">' +
+        iconInner +
+        lockOverlay +
+        "</div>" +
+        '<div class="npc-sector-badge" style="background:' +
+        npc.color +
+        ';">' +
+        npc.icon +
+        " " +
+        npc.name +
+        "</div>" +
+        '<div class="npc-lbl">' +
+        npc.name +
+        (npc.done ? " ✓" : "") +
+        "</div>" +
+        "</div>",
+      iconSize: [120, 130],
+      iconAnchor: [60, 125],
+    });
   }
 
   setLatLng(latlng: [number, number]): void {
@@ -135,25 +135,12 @@ export class Marker {
   }
 
   UpdateMarker(): void {
-    if (!this.marker) {
+    if (!this.marker || !this.npc) {
       return;
     }
-    // updates the marker's icon based on the current state of the NPC or Hero
-    const icon = this.marker.getIcon();
 
-    // Query the DOM for the marker's icon element
-    const markerEl = document.querySelector(
-      ".leaflet-marker-icon, .map-marker",
+    this.marker.setIcon(
+      this.createNpcIcon(GameManager.mapController?.mapView?.leaflet, this.npc),
     );
-
-    if (markerEl) {
-      // Update the icon's HTML content based on the current state of the NPC or Hero
-      if (this.npc) {
-        const lockOverlay =
-          !this.npc.done && !this.npc.accessible
-            ? '<div class="quest-locked-overlay">🔒</div>'
-            : "";
-      }
-    }
   }
 }

@@ -3,6 +3,8 @@ import type { IBadge } from "../entities";
 export interface IBadgeService {
   badges: Map<string, IBadge>;
   collectedBadges: Set<string>;
+  onBadgeCollected(callback: () => void): void;
+  onBadgeUncollected(callback: () => void): void;
 
   getBadgeById(badgeId: string): IBadge | null;
   getAllBadges(): IBadge[];

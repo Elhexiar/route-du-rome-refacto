@@ -1,12 +1,13 @@
 import type { IBadgeService } from "#IServices/index";
 import type { IBadge } from "../interfaces/entities";
 import { GameManager } from "#Controllers/GameManager";
-import { NPCBadge } from "#src/entities/NPCBadge.ts";
 import { NotebookView } from "#UI/experience/NotebookView.ts";
 
 export class BadgeService implements IBadgeService {
   badges: Map<string, IBadge>;
   collectedBadges: Set<string>;
+  onBadgeCollectedCallbacks: (() => void)[] = [];
+  onBadgeUncollectedCallbacks: (() => void)[] = [];
 
   NotebookView: NotebookView | null = null;
 
@@ -18,6 +19,12 @@ export class BadgeService implements IBadgeService {
     if (app) {
       this.NotebookView = new NotebookView(app);
     }
+  }
+  onBadgeCollected(callback: () => void): void {
+    this.onBadgeCollectedCallbacks.push(callback);
+  }
+  onBadgeUncollected(callback: () => void): void {
+    this.onBadgeUncollectedCallbacks.push(callback);
   }
 
   getBadgeById(badgeId: string): IBadge | null {
@@ -49,14 +56,24 @@ export class BadgeService implements IBadgeService {
 
   collectBadge(badgeId: string): boolean {
     const badge = this.getBadgeById(badgeId);
-    if (!badge) {
+    if (!badge || badge.collected) {
       return false;
     }
     badge.Unlock();
     this.collectedBadges.add(badgeId);
+
+    this.onBadgeCollectedCallbacks.forEach((callback) => callback());
     return true;
   }
   uncollectBadge(badgeId: string): boolean {
-    throw new Error("Method not implemented.");
+    const badge = this.getBadgeById(badgeId);
+    if (!badge?.collected) {
+      return false;
+    }
+
+    badge.collected = false;
+    this.collectedBadges.delete(badgeId);
+    this.onBadgeUncollectedCallbacks.forEach((callback) => callback());
+    return true;
   }
 }

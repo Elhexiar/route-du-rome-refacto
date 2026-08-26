@@ -46,17 +46,9 @@ export class LeafletMapView implements IMapView {
     // Assign the Leaflet library to the class property
     this.leaflet = (window as Window & { L?: unknown }).L;
 
-    // Check if Leaflet is loaded if not, load it dynamically
+    // Leaflet is loaded before the application module in index.html.
     if (!this.leaflet) {
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = "/src/lib/leaflet/leaflet.css";
-      document.head.appendChild(link);
-
-      const script = document.createElement("script");
-      script.src = "/src/lib/leaflet/leaflet.js";
-      script.onload = () => this.initMap();
-      document.head.appendChild(script);
+      console.error("Leaflet library is not loaded.");
       return;
     }
 
