@@ -11,6 +11,7 @@ import {
   renderChoicesHtml,
 } from "./DialogueTemplate.ts";
 import { DialogueTypingAnimator } from "./DialogueTypingAnimator.ts";
+import { JobPresentationView } from "./JobPresentationView.ts";
 
 // TODO : I Replaced the NPCDialogueView with a more generic DialogueView that can handle both NPCs and Heroes.
 // But it still has a lot of legacy code from the NPCDialogueView
@@ -19,6 +20,9 @@ export class DialogueView implements IDialogueView {
   speaker: INpc | IHero | null = null;
   dialogue: IDialogue | null = null;
   currentVisibility: boolean = false;
+
+  jobPresentationView: JobPresentationView | null = null;
+
   private choiceSelectedCallback: ((choiceId: string) => void) | null = null;
   private readonly textElement: HTMLParagraphElement;
   private readonly choicesElement: HTMLDivElement;
@@ -40,8 +44,23 @@ export class DialogueView implements IDialogueView {
       this.element,
     );
     this.bindDialogueContainerClick();
+    this.bindKeyboardEvents();
+    this.bindCloseButton();
 
     this.render();
+
+    this.jobPresentationView = new JobPresentationView(container, this);
+
+    // TODO: this is hella ugly this should be changed,
+    // once npc data are properly transfered to the jobPresentationView
+    this.jobPresentationView.onClosed(() => {
+      const speaker = this.speaker;
+      if (speaker && "id" in speaker) {
+        GameManager.experienceController?.questService.quests
+          .get(`${speaker.id}-default`)
+          ?.Complete();
+      }
+    });
   }
 
   ShowView(): void {
@@ -147,6 +166,23 @@ export class DialogueView implements IDialogueView {
     );
   }
 
+  private tryForwardingText(): void {
+    if (!this.currentVisibility) {
+      return;
+    }
+
+    if (this.typingAnimator.typing) {
+      this.finishTypingAnimation();
+      return;
+    }
+
+    console.log("Dialogue container clicked. Continuing dialogue...");
+    if (this.dialogue?.Continue()) {
+      console.log(`Dialogue après la continuation :`, this.dialogue);
+      this.updateDialogue(this.dialogue);
+    }
+  }
+
   private bindDialogueContainerClick(): void {
     const dialogueContainer = this.element.querySelector<HTMLDivElement>(
       ".dialogue-view__dialogue-container",
@@ -158,24 +194,28 @@ export class DialogueView implements IDialogueView {
 
     dialogueContainer.addEventListener("click", (event) => {
       const target = event.target;
+
       if (!(target instanceof HTMLElement)) {
         return;
       }
 
+      // If the click is on a choice button, we don't want to continue the dialogue, so we return early.
       if (target.closest(".dialogue-view__choices-container")) {
         return;
       }
 
-      if (this.typingAnimator.typing) {
-        this.finishTypingAnimation();
+      this.tryForwardingText();
+    });
+  }
+
+  private bindKeyboardEvents(): void {
+    document.addEventListener("keydown", (event) => {
+      if (event.code !== "Space" || !this.currentVisibility) {
         return;
       }
 
-      console.log("Dialogue container clicked. Continuing dialogue...");
-      if (this.dialogue?.Continue()) {
-        console.log(`Dialogue après la continuation :`, this.dialogue);
-        this.updateDialogue(this.dialogue);
-      }
+      event.preventDefault();
+      this.tryForwardingText();
     });
   }
 
@@ -202,6 +242,18 @@ export class DialogueView implements IDialogueView {
           this.updateDialogue(this.dialogue);
         });
       });
+  }
+
+  private bindCloseButton(): void {
+    const closeButton = this.element.querySelector<HTMLButtonElement>(
+      ".dialogue-view__exit-button",
+    );
+
+    if (closeButton) {
+      closeButton.addEventListener("click", () => {
+        this.HideView();
+      });
+    }
   }
 
   private getBackgroundVideoSource(): string {

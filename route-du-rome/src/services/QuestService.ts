@@ -46,10 +46,6 @@ export class QuestService implements IQuestService {
 
         this.quests.set(defaultQuest.id, defaultQuest);
 
-        npc.presentationDialogue?.OnDialogueActions?.push(() => {
-          defaultQuest.Complete();
-        });
-
         console.log(
           `Default quest created for NPC ${npc.name}: ${defaultQuest.name}`,
         );

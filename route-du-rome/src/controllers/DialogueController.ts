@@ -21,7 +21,8 @@ export class DialogueController implements IDialogueController {
       npcs.forEach((npc) => {
         // add an action to the dialogue to hide the view when the dialogue ends
         npc.presentationDialogue?.OnDialogueActions?.push(() => {
-          this.dialogueView?.HideView();
+          console.log(`SHOWING JOB PRESENTATION VIEW FOR NPC ${npc.name}`);
+          this.dialogueView?.jobPresentationView?.ShowView();
         });
 
         //
