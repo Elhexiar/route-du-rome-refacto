@@ -16,11 +16,18 @@ export class NotebookView {
     const completedBadges =
       GameManager.experienceController?.badgeService.getAllCollectedBadges() ??
       [];
+    const collectedBadgeIds = Array.from(
+      GameManager.experienceController?.badgeService.collectedBadges ?? [],
+    );
+
+    // used to highlight the latest collected badge
+    const latestBadgeId = collectedBadgeIds.at(-1);
 
     const badgesElement = badges
       .map((badge) => {
+        const isLatestBadge = badge.id === latestBadgeId;
         return `
-                    <div class="notebook-view__badge ${badge.collected ? "active" : "inactive"}">
+                    <div class="notebook-view__badge ${badge.collected ? "active" : "inactive"} ${isLatestBadge ? "new" : ""}">
                         <div class="notebook-view__badge__color" style="background: ${badge.collected ? badge.color : "#ccc"};"></div>
                         <div class="notebook-view__badge__icon ${badge.collected ? "active" : "inactive"}">
                             ${badge.collected ? badge.icon : "🔒"}

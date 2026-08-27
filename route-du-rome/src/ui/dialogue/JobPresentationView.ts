@@ -1,13 +1,19 @@
+import type { INpc } from "#IEntities/INpc.ts";
 import type { DialogueView } from "./DialogueView";
 
 export class JobPresentationView {
   private dialogueView: DialogueView;
 
+  private npc: INpc;
+
+  private reply: string | null = null;
+
   private readonly element: HTMLElement;
   private closeCallback: (() => void) | null = null;
 
-  constructor(container: HTMLElement, dialogueView: DialogueView) {
+  constructor(container: HTMLElement, dialogueView: DialogueView, npc: INpc) {
     this.dialogueView = dialogueView;
+    this.npc = npc;
 
     this.element = document.createElement("section");
     this.element.className = "job-presentation-view";
@@ -16,14 +22,22 @@ export class JobPresentationView {
   }
 
   render(): void {
+    // if already open, keep it open after re-rendering
+    const wasOpen = this.element
+      .querySelector<HTMLElement>("#voverlay")
+      ?.classList.contains("open");
+
+    // reset reply on new render
+    this.reply = "";
+
     this.element.innerHTML = `
     <div id="voverlay">
       <div class="vmodal">
         <div class="vmod-head">
-          <div class="vmod-icon" id="vi">⚓</div>
+          <div class="vmod-icon" id="vi">${this.npc.icon}</div>
           <div>
-            <div class="vmod-title" id="vt">Métier</div>
-            <div class="vmod-sub" id="vs">Découverte · Ille-et-Vilaine</div>
+            <div class="vmod-title" id="vt">${this.npc.jobSector}</div>
+            <div class="vmod-sub" id="vs">${this.npc.name} · Ille-et-Vilaine</div>
           </div>
           <button class="vmod-x" type="button">✕</button>
         </div>
@@ -76,8 +90,22 @@ export class JobPresentationView {
             <div class="vdlg-question" id="vdq">
               Qu'est-ce qui t'intéresse dans ce métier ?
             </div>
-            <div class="vchoices" id="vcs"></div>
-            <div class="vdlg-reply" id="vdr"></div>
+            <div class="vchoices" id="vcs">
+              <div class="vc" id="vc0">
+              <span class="vcl">1</span>
+              ${this.npc.presentationDialogue?.rootNode?.nextNode?.choices?.[0].text}</div>
+              <div class="vc" id="vc1">
+                <span class="vcl">2</span>
+                ${this.npc.presentationDialogue?.rootNode?.nextNode?.choices?.[1].text}
+              </div>
+              <div class="vc" id="vc2">
+                <span class="vcl">3</span>
+                ${this.npc.presentationDialogue?.rootNode?.nextNode?.choices?.[2].text}
+              </div>
+            </div>
+            <div class="vdlg-reply show" id="vdr">
+              ${this.reply ?? ""}
+            </div>
           </div>
           <!-- Récompense -->
           <div class="vreward">
@@ -103,7 +131,27 @@ export class JobPresentationView {
 
     `;
 
-    const overlay = this.element.querySelector<HTMLElement>("#voverlay");
+    this.configureJobVideo();
+
+    if (wasOpen) {
+      this.element
+        .querySelector<HTMLElement>("#voverlay")
+        ?.classList.add("open");
+    }
+
+    const choices = this.element.querySelectorAll<HTMLElement>(".vc");
+    choices.forEach((choice, index) => {
+      choice.addEventListener("click", () => {
+        this.reply =
+          this.npc.presentationDialogue?.rootNode?.nextNode?.choices?.[index]
+            .next?.text ?? null;
+
+        // Update the reply instead of re-rendering the entire view to avoid losing the open state
+        this.element.querySelector<HTMLElement>("#vdr")!.textContent =
+          this.reply ?? "";
+      });
+    });
+
     const closeButtons = this.element.querySelectorAll<HTMLButtonElement>(
       ".vmod-x, .btn-g, .btn-v",
     );
@@ -116,8 +164,47 @@ export class JobPresentationView {
         this.dialogueView?.HideView();
       });
     });
+  }
 
-    overlay?.classList.remove("open");
+  private configureJobVideo(): void {
+    const iframe = this.element.querySelector<HTMLIFrameElement>("#vyt");
+    const placeholder = this.element.querySelector<HTMLElement>("#vph");
+    const title = this.element.querySelector<HTMLElement>("#vvt");
+
+    if (!iframe || !placeholder) {
+      return;
+    }
+
+    if (title) {
+      title.textContent = this.npc.videoTitle || "Vidéo du métier";
+    }
+
+    const showPlaceholder = () => {
+      iframe.style.display = "none";
+      placeholder.style.display = "block";
+    };
+
+    const videoUrl = this.npc.jobVideoUrl?.trim();
+    if (!videoUrl) {
+      showPlaceholder();
+      return;
+    }
+
+    iframe.addEventListener(
+      "load",
+      () => {
+        iframe.style.display = "block";
+        placeholder.style.display = "none";
+      },
+      { once: true },
+    );
+    iframe.addEventListener("error", showPlaceholder, { once: true });
+    iframe.src = videoUrl;
+  }
+
+  UpdateNPC(npc: INpc): void {
+    this.npc = npc;
+    this.render();
   }
 
   ShowView(): void {

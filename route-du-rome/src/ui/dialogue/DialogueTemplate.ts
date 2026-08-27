@@ -24,7 +24,7 @@ export function initializeDialogueLayout(
           <div class="dialogue-view__header-start">
             <img src="default-portrait.jpg" alt="Interlocuteur" class="dialogue-view__npc-portrait">
             <div class="dialogue-view__title-container">
-              <h2 class="dialogue-view__npc-name">Interlocuteur</h2>
+              <div class="dialogue-view__npc-name">Interlocuteur</div>
               <p class="dialogue-view__npc-role">Rôle inconnu</p>
             </div>
           </div>
@@ -36,6 +36,9 @@ export function initializeDialogueLayout(
       </div>
       <p class="dialogue-view__text"></p>
       <div class="dialogue-view__choices-container"></div>
+      <div class="dialogue-view__hint-container">
+        <div class="dialogue-view__hint">Appuyez sur <span class="dialogue-view__hint-key">Espace</span> · <span class="dialogue-view__hint-key">Clic</span> pour continuer</div>
+      </div>
     </div>
   `;
 

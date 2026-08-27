@@ -25,7 +25,13 @@ export class DialogueBackgroundVideoController {
       return;
     }
 
+    // If the video has already ended, we don't want to restart it.
+    if (videoElement.ended) {
+      return;
+    }
+
     const markReadyAndPlay = () => {
+      // Mark the video as ready and attempt to play it.
       videoElement.classList.add("is-ready");
       void videoElement.play().catch(() => {
         // Autoplay may still be blocked on some browsers despite muted=true.
@@ -39,6 +45,7 @@ export class DialogueBackgroundVideoController {
       return;
     }
 
+    // If the video is not ready, we need to load it and wait for it to be ready.
     videoElement.load();
     videoElement.addEventListener("loadeddata", markReadyAndPlay, {
       once: true,

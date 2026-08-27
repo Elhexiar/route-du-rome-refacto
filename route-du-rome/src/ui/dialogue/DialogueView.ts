@@ -48,19 +48,6 @@ export class DialogueView implements IDialogueView {
     this.bindCloseButton();
 
     this.render();
-
-    this.jobPresentationView = new JobPresentationView(container, this);
-
-    // TODO: this is hella ugly this should be changed,
-    // once npc data are properly transfered to the jobPresentationView
-    this.jobPresentationView.onClosed(() => {
-      const speaker = this.speaker;
-      if (speaker && "id" in speaker) {
-        GameManager.experienceController?.questService.quests
-          .get(`${speaker.id}-default`)
-          ?.Complete();
-      }
-    });
   }
 
   ShowView(): void {
@@ -91,6 +78,30 @@ export class DialogueView implements IDialogueView {
   ResetForNewSpeaker(speaker: INpc | IHero): void {
     this.speaker = speaker;
     this.dialogue = speaker.presentationDialogue ?? null;
+
+    // make sure its an NPC with a job, not a hero or other type of speaker
+    if ("job" in speaker) {
+      if (this.jobPresentationView) {
+        this.jobPresentationView.UpdateNPC(speaker);
+      } else {
+        this.jobPresentationView = new JobPresentationView(
+          this.element.parentElement ?? document.body,
+          this,
+          speaker,
+        );
+
+        // TODO : HORRIBLE way to handle quest completion, but it works for now. We should refactor this later.
+        this.jobPresentationView.onClosed(() => {
+          const currentSpeaker = this.speaker;
+          if (currentSpeaker && "id" in currentSpeaker) {
+            GameManager.experienceController?.questService.quests
+              .get(`${currentSpeaker.id}-default`)
+              ?.Complete();
+          }
+        });
+      }
+    }
+
     if (GameManager.dialogueController) {
       console.log(
         "Mise à jour du dialogue actif dans le DialogueController :",
@@ -99,8 +110,6 @@ export class DialogueView implements IDialogueView {
       GameManager.dialogueController.currentActiveDialogue = this.dialogue;
     }
     this.render();
-
-    console.log("Réinitialisation de la vue de dialogue pour :", speaker.name);
   }
 
   // probably not needed anymore
@@ -117,7 +126,6 @@ export class DialogueView implements IDialogueView {
   updateDialogue(node: any): void {
     this.dialogue = node;
     this.render();
-    console.log("Mise à jour du dialogue pour :", this.speaker?.name);
     this.notifyController();
   }
 
@@ -134,10 +142,6 @@ export class DialogueView implements IDialogueView {
 
   onChoiceSelected(callback: (choiceId: string) => void): void {
     this.choiceSelectedCallback = callback;
-    console.log(
-      "Enregistrement du callback pour le choix du dialogue :",
-      this.speaker?.name,
-    );
   }
 
   // Makes sure to escape HTML special characters to prevent XSS attacks, who knows

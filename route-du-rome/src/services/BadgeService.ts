@@ -63,6 +63,9 @@ export class BadgeService implements IBadgeService {
     this.collectedBadges.add(badgeId);
 
     this.onBadgeCollectedCallbacks.forEach((callback) => callback());
+
+    this.NotebookView?.ShowView();
+
     return true;
   }
   uncollectBadge(badgeId: string): boolean {
