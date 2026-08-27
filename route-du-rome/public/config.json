@@ -1,4 +1,87 @@
 {
+  "Levels": [
+    {
+      "id": "level1",
+      "name": "Niveau 1",
+      "description": "Débutant",
+      "icon": "🌱",
+      "min": 0,
+      "max": 150
+    },
+    {
+      "id": "level2",
+      "name": "Niveau 2",
+      "description": "Curieux",
+      "icon": "👀",
+      "min": 150,
+      "max": 300
+    },
+    {
+      "id": "level3",
+      "name": "Niveau 3",
+      "description": "Explorateur",
+      "icon": "🧭",
+      "min": 300,
+      "max": 500
+    },
+    {
+      "id": "level4",
+      "name": "Niveau 4",
+      "description": "Aventurier",
+      "icon": "⚔️",
+      "min": 500,
+      "max": 750
+    },
+    {
+      "id": "level5",
+      "name": "Niveau 5",
+      "description": "Connaisseur",
+      "icon": "📚",
+      "min": 750,
+      "max": 900
+    },
+    {
+      "id": "level6",
+      "name": "Niveau 6",
+      "description": "Spécialiste",
+      "icon": "🔬",
+      "min": 900,
+      "max": 1100
+    },
+    {
+      "id": "level7",
+      "name": "Niveau 7",
+      "description": "Expert",
+      "icon": "🏅",
+      "min": 1100,
+      "max": 1300
+    },
+    {
+      "id": "level8",
+      "name": "Niveau 8",
+      "description": "Champion",
+      "icon": "🥇",
+      "min": 1300,
+      "max": 1450
+    },
+    {
+      "id": "level9",
+      "name": "Niveau 9",
+      "description": "Maître du 35",
+      "icon": "🌟",
+      "min": 1450,
+      "max": 1500
+    },
+    {
+      "id": "level10",
+      "name": "Niveau 10",
+      "description": "Légende bretonne",
+      "icon": "🏆",
+      "min": 1500,
+      "max": 1500
+    }
+  ],
+
   "Heroes": [
     {
       "id": "elio",
