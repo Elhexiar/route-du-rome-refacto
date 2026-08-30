@@ -34,7 +34,9 @@
       "#UI/*": ["./src/ui/*"],
       "#IUI/*": ["./src/interfaces/ui/*"],
       "#Lib/*": ["./src/lib/*"],
-      "#Utils/*": ["./src/utils/*"]
+      "#Utils/*": ["./src/utils/*"],
+      "#events/*": ["./src/events/*"],
+      "#bootstrap/*": ["./src/bootstrap/*"]
     }
   },
   "include": ["src", "src/entities/.ts"]
