@@ -129,5 +129,4 @@ export class MapController implements IMapController {
   ): void {
     this.toggleMarkerVisibility(accessible, npc, hero);
   }
-
 }

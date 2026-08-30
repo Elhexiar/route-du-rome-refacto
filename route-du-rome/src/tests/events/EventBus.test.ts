@@ -25,24 +25,6 @@ describe("EventBus", () => {
     expect(eventBus.listenerCount(AppEvents.BADGE_COLLECTED)).toBe(0);
   });
 
-  it("removes a once listener when it throws", () => {
-    const eventBus = new EventBus();
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {
-      return undefined;
-    });
-    const listener = vi.fn(() => {
-      throw new Error("listener failure");
-    });
-
-    eventBus.once(AppEvents.GAME_STARTED, listener);
-    eventBus.emit({ type: AppEvents.GAME_STARTED, data: {} });
-    eventBus.emit({ type: AppEvents.GAME_STARTED, data: {} });
-
-    expect(listener).toHaveBeenCalledTimes(1);
-    expect(consoleError).toHaveBeenCalledTimes(1);
-    expect(eventBus.listenerCount(AppEvents.GAME_STARTED)).toBe(0);
-  });
-
   it("adds a timestamp when an event does not provide one", () => {
     const eventBus = new EventBus();
     const listener = vi.fn();

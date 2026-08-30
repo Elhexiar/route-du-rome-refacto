@@ -46,7 +46,7 @@ function createRuntime() {
     heroController: {
       heroes: [hero],
       currentHero: hero,
-      SwitchHero: vi.fn(),
+      switchHero: vi.fn(),
       welcomeHeroSelectionView: {
         ShowView: vi.fn(),
         HideView: vi.fn(),
@@ -146,7 +146,7 @@ describe("ConsoleTestController", () => {
 
     expect(controller.showHeroPresentation("hero-1")).toBe(true);
     expect(heroDialogue.Reset).toHaveBeenCalledTimes(1);
-    expect(runtime.heroController.SwitchHero).toHaveBeenCalledWith(
+    expect(runtime.heroController.switchHero).toHaveBeenCalledWith(
       runtime.heroController.heroes[0],
     );
     expect(dialogueView.ResetForNewSpeaker).toHaveBeenCalledWith(
