@@ -82,4 +82,44 @@ describe("NpcController", () => {
 
     expect(onLoaded).toHaveBeenCalledWith([npc]);
   });
+
+  it("loads NPCs through the canonical API contract", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          Npcs: [
+            {
+              id: "npc-4",
+              name: "Dorian",
+              color: "#abcdef",
+              job: "Chaudronnier",
+              jobSector: "Industrie",
+              icon: "🔥",
+              portrait: "/dorian.png",
+              latitude: 48.9,
+              longitude: -2.1,
+              relatedQuests: [],
+              backgroundVideo: "/dorian.mp4",
+              jobVideoUrl: "https://example.test/video4",
+              videoTitle: "Métier local",
+              presentationDialogue: null,
+            },
+          ],
+          Heroes: [],
+          Levels: [],
+        }),
+      }),
+    );
+
+    const controller = Object.create(NpcController.prototype) as NpcController;
+    controller.npcs = [];
+    controller["onNpcsLoadedCallbacks"] = [];
+
+    await controller.LoadNpcsFromConfig("/config.json");
+
+    expect(controller.npcs).toHaveLength(1);
+    expect(controller.npcs[0].id).toBe("npc-4");
+  });
 });

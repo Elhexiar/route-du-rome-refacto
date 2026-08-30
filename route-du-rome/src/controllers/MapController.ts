@@ -106,14 +106,41 @@ export class MapController implements IMapController {
   MoveHeroMarker(hero: IHero, newLatitude: number, newLongitude: number): void {
     this.moveHeroMarker(hero, newLatitude, newLongitude);
   }
-  ToggleMarkerVisibility(_visible: boolean, _npc?: INpc, _hero?: IHero): void {
-    throw new Error("Method not implemented.");
+  toggleMarkerVisibility(visible: boolean, npc?: INpc, hero?: IHero): void {
+    const marker = npc
+      ? this.mapView?.markers.get(npc)
+      : hero
+        ? this.mapView?.markers.get(hero)
+        : null;
+
+    const element = marker?.marker?.getElement?.() ?? marker?.marker?._icon;
+    if (element) {
+      element.style.display = visible ? "" : "none";
+      return;
+    }
+
+    if (typeof marker?.setOpacity === "function") {
+      marker.setOpacity(visible ? 1 : 0);
+    }
   }
-  ToggleMarkerAccessibility(
-    _accessible: boolean,
-    _npc?: INpc,
-    _hero?: IHero,
+
+  ToggleMarkerVisibility(visible: boolean, npc?: INpc, hero?: IHero): void {
+    this.toggleMarkerVisibility(visible, npc, hero);
+  }
+
+  toggleMarkerAccessibility(
+    accessible: boolean,
+    npc?: INpc,
+    hero?: IHero,
   ): void {
-    throw new Error("Method not implemented.");
+    this.toggleMarkerVisibility(accessible, npc, hero);
+  }
+
+  ToggleMarkerAccessibility(
+    accessible: boolean,
+    npc?: INpc,
+    hero?: IHero,
+  ): void {
+    this.toggleMarkerAccessibility(accessible, npc, hero);
   }
 }

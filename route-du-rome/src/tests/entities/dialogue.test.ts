@@ -141,6 +141,8 @@ describe("Dialogue and dialogue tree entities", () => {
   it("creates a Choice node that resolves to its next node or by findID", () => {
     const root = new DialogueNode({ id: "root", text: "Root" });
     const target = new DialogueNode({ id: "target", text: "Target" }, root);
+    expect(target.id).toBe("target");
+
     const choice = new Choice(
       { id: "choice-1", text: "Jump", findID: "target" },
       root,

@@ -1,15 +1,11 @@
 import { GameManager } from "#src/controllers/index.ts";
 import type { ConfigData } from "#src/entities/Config.ts";
-import type { INpc } from "#src/interfaces/entities/index.ts";
 
 export class QuestCompletedToast {
   private readonly element: HTMLElement;
 
-  private readonly levelData: ConfigData["Levels"] = null as any;
-
-  constructor(root: HTMLElement, levelData: ConfigData["Levels"]) {
+  constructor(root: HTMLElement, _levelData: ConfigData["Levels"]) {
     this.element = root;
-    this.levelData = levelData;
 
     this.element = document.createElement("div");
     this.element.className = "quest-completed-toast";

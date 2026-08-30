@@ -4,6 +4,10 @@ export class VideoPreloadService {
   private static readonly reportedReadyUrls = new Set<string>();
 
   static preloadVideos(urls: string[]): void {
+    if (typeof document === "undefined") {
+      return;
+    }
+
     urls.forEach((url) => {
       const normalizedUrl = url.trim();
       if (!normalizedUrl) {

@@ -5,7 +5,9 @@ import { Hero } from "#Entities/Hero.ts";
 
 describe("HeroController", () => {
   it("switches the current hero and triggers callbacks", () => {
-    const controller = Object.create(HeroController.prototype) as HeroController;
+    const controller = Object.create(
+      HeroController.prototype,
+    ) as HeroController;
     controller.heroes = [
       new Hero(
         "hero-1",
@@ -34,12 +36,14 @@ describe("HeroController", () => {
     controller.SwitchHero(controller.heroes[0]);
     controller.SwitchHeroById("hero-2");
 
-    expect(controller.currentHero?.id).toBe("hero-2");
+    expect((controller.currentHero as Hero | null)?.id).toBe("hero-2");
     expect(onSwitch).toHaveBeenCalledTimes(2);
   });
 
   it("notifies listeners when heroes are loaded", () => {
-    const controller = Object.create(HeroController.prototype) as HeroController;
+    const controller = Object.create(
+      HeroController.prototype,
+    ) as HeroController;
     controller.heroes = [];
     controller["onHeroesLoadedCallbacks"] = [];
     const onLoaded = vi.fn();
@@ -56,8 +60,48 @@ describe("HeroController", () => {
     );
 
     controller.heroes.push(hero);
-    controller["onHeroesLoadedCallbacks"].forEach((callback) => callback(controller.heroes));
+    controller["onHeroesLoadedCallbacks"].forEach((callback) =>
+      callback(controller.heroes),
+    );
 
     expect(onLoaded).toHaveBeenCalledWith([hero]);
+  });
+
+  it("loads heroes through the canonical API contract", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          Heroes: [
+            {
+              id: "hero-4",
+              name: "Hero Four",
+              role: "Role Four",
+              description: "Description Four",
+              bio: "Bio Four",
+              portrait: "/hero-four.png",
+              presentationVideo: "/hero-four.mp4",
+              presentationDialogue: null,
+              tags: [],
+            },
+          ],
+          Npcs: [],
+          Levels: [],
+        }),
+      }),
+    );
+
+    const controller = Object.create(
+      HeroController.prototype,
+    ) as HeroController;
+    controller.heroes = [];
+    controller["onHeroesLoadedCallbacks"] = [];
+    controller["onHeroesSwitchedCallbacks"] = [];
+
+    await controller.loadHeroesFromConfig("/config.json");
+
+    expect(controller.heroes).toHaveLength(1);
+    expect(controller.heroes[0].id).toBe("hero-4");
   });
 });

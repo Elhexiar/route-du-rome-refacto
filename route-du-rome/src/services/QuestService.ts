@@ -9,6 +9,8 @@ import { QuestCompletedToast } from "#src/ui/experience/QuestCompletedToast.ts";
 import { EndToast } from "#src/ui/experience/EndToast.ts";
 
 export class QuestService implements IQuestService {
+  private static readonly questXpReward = 150;
+
   quests: Map<string, IQuest> = new Map<string, IQuest>();
   levelData: ConfigData["Levels"] = [];
   questCompleteToast: QuestCompletedToast | null = null;
@@ -59,7 +61,9 @@ export class QuestService implements IQuestService {
 
     defaultQuest.OnQuestActions.push(() => {
       npc.done = true;
-      GameManager.experienceController?.addExperience(150);
+      GameManager.experienceController?.addExperience(
+        QuestService.questXpReward,
+      );
       GameManager.mapController?.mapView?.markers.get(npc)?.UpdateMarker();
 
       if (this.areAllQuestsCompleted()) {

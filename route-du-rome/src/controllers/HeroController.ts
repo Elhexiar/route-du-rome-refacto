@@ -74,9 +74,15 @@ export class HeroController implements IHeroController {
 
     console.log("Heroes added from JSON:", this.heroes);
 
-    this.welcomeHeroSelectionView = new WelcomeHeroSelectionView(
-      GameManager.app ?? document.body,
-    );
+    const appContainer =
+      GameManager.app ??
+      (typeof document !== "undefined" ? document.body : null);
+
+    if (appContainer) {
+      this.welcomeHeroSelectionView = new WelcomeHeroSelectionView(
+        appContainer,
+      );
+    }
 
     this.onHeroesLoadedCallbacks.forEach((callback) => callback(this.heroes));
   }
