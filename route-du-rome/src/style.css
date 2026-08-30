@@ -823,3 +823,7 @@ body {
   letter-spacing: 2px;
   text-transform: uppercase;
 }
+
+.leaflet-control-zoom {
+  display: none;
+}
