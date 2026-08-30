@@ -137,5 +137,7 @@ export class GameManager {
 }
 
 // makes the GameManager class accessible globally in the browser environment
-(window as Window & { GameManager?: typeof GameManager }).GameManager =
-  GameManager;
+if (typeof window !== "undefined") {
+  (window as Window & { GameManager?: typeof GameManager }).GameManager =
+    GameManager;
+}
