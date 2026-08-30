@@ -1,0 +1,238 @@
+@startuml servicesV1
+
+!define THEME_BG #292929
+!define THEME_PANEL #333333
+!define THEME_ACCENT #d37070
+!define THEME_LINE #B7B7B7
+!define THEME_TEXT #F2F2F2
+
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam linetype polyline
+skinparam shadowing false
+skinparam nodesep 35
+skinparam ranksep 35
+skinparam backgroundColor THEME_BG
+skinparam defaultFontName Arial
+skinparam defaultFontColor THEME_TEXT
+skinparam classBackgroundColor THEME_PANEL
+skinparam classBorderColor THEME_ACCENT
+skinparam classFontColor THEME_TEXT
+skinparam packageBackgroundColor THEME_PANEL
+skinparam packageBorderColor THEME_ACCENT
+skinparam packageFontColor THEME_TEXT
+skinparam ArrowColor THEME_ACCENT
+skinparam noteBackgroundColor THEME_BG
+skinparam noteBorderColor THEME_ACCENT
+skinparam noteFontColor THEME_TEXT
+
+title La Route du Rome - Services et dependances
+
+package "BadgeService" as BadgePackage {
+    class BadgeService {
+        +badges: Map<string, IBadge>
+        +collectedBadges: Set<string>
+        +onBadgeCollectedCallbacks: (() => void)[]
+        +onBadgeUncollectedCallbacks: (() => void)[]
+        +notebookView: NotebookView | null
+        -runtime: BadgeRuntime
+        --
+        +constructor(runtime?: BadgeRuntime | null)
+        +NotebookView: NotebookView | null
+        +onBadgeCollected(callback: () => void): void
+        +onBadgeUncollected(callback: () => void): void
+        +getBadgeById(badgeId: string): IBadge | null
+        +getAllBadges(): IBadge[]
+        +getAllCollectedBadges(): IBadge[]
+        +createBadge(badgeData: IBadge): IBadge
+        +updateBadge(badgeId: string, badgeData: Partial<IBadge>): IBadge | null
+        +deleteBadge(badgeId: string): boolean
+        +collectBadge(badgeId: string): boolean
+        +uncollectBadge(badgeId: string): boolean
+        +emitBadgeCollected(badgeId: string): void
+        +emitBadgeUncollected(badgeId: string): void
+    }
+
+    interface IBadgeService {
+        badges: Map<string, IBadge>
+        collectedBadges: Set<string>
+        NotebookView: NotebookView | null
+        onBadgeCollected(callback: () => void): void
+        onBadgeUncollected(callback: () => void): void
+        getBadgeById(badgeId: string): IBadge | null
+        getAllBadges(): IBadge[]
+        getAllCollectedBadges(): IBadge[]
+        createBadge(badgeData: IBadge): IBadge
+        updateBadge(badgeId: string, badgeData: Partial<IBadge>): IBadge | null
+        deleteBadge(badgeId: string): boolean
+        collectBadge(badgeId: string): boolean
+        uncollectBadge(badgeId: string): boolean
+    }
+
+    class NPCBadge <<Entity>>
+    class NotebookView <<View>>
+    class HeroController <<Controller dependency>>
+    class EventBus <<Event service>>
+    annotation BadgeEvent <<Event>>
+    class NotificationService <<Service dependency>>
+    class BadgeRuntime <<Runtime context>>
+
+    BadgeService --> NPCBadge : gere les badges
+    BadgeService --> NotebookView : affiche le carnet
+    BadgeService --> HeroController : utilise le héros courant
+    BadgeService --> BadgeEvent : émet les événements badge
+    BadgeEvent --> EventBus : transporte l’événement
+    EventBus --> NotificationService : notifie la collecte
+    BadgeService --> BadgeRuntime : reçoit ses dépendances
+    BadgeService ..|> IBadgeService : implémente
+}
+
+package "QuestService" as QuestPackage {
+    class QuestService {
+        {static} -questXpReward: number
+        +quests: Map<string, IQuest>
+        +levelData: LevelData[]
+        +questCompleteToast: QuestCompletedToast | null
+        +endToast: EndToast | null
+        +onQuestCompletionCallbacks: (() => void)[]
+        -runtime: QuestRuntime
+        --
+        +constructor(runtime?: QuestRuntime | null)
+        +QuestCompleteToast: QuestCompletedToast | null
+        +EndToast: EndToast | null
+        +getQuestById(questId: string): IQuest | null
+        +getAllQuests(): IQuest[]
+        +createQuest(questData: IQuest): IQuest
+        +updateQuestCompletionStatus(questId: string, completionStatus: number): IQuest | null
+        +deleteQuest(questId: string): Promise<boolean>
+        +loadLevelDataFromConfig(configPath: string): Promise<any>
+        +LoadLevelDataFromConfig(configPath: string): Promise<any>
+        +showToast(): void
+        +toggleEndToast(): void
+        +emitQuestCompleted(questId: string, xpReward: number): void
+        +emitGameEnded(): void
+        -initializeDefaultQuests(): void
+        -createDefaultQuestForNpc(npc: INpc): NPCDefaultQuest
+        -createBadgeForQuest(defaultQuest: NPCDefaultQuest, npc: INpc): NPCBadge
+        -areAllQuestsCompleted(): boolean
+    }
+
+    interface IQuestService {
+        quests: Map<string, IQuest>
+        levelData: LevelData[]
+        QuestCompleteToast: QuestCompletedToast | null
+        EndToast: EndToast | null
+        getQuestById(questId: string): IQuest | null
+        getAllQuests(): IQuest[]
+        createQuest(questData: IQuest): IQuest
+        updateQuestCompletionStatus(questId: string, completionStatus: number): IQuest | null
+        deleteQuest(questId: string): Promise<boolean>
+        loadLevelDataFromConfig(configPath: string): Promise<any>
+        showToast(): void
+        toggleEndToast(): void
+    }
+
+    class NPCDefaultQuest <<Entity>>
+    class NPCBadge <<Entity>>
+    class Npc <<Entity>>
+    class LevelData <<Entity>>
+    class QuestCompletedToast <<View>>
+    class EndToast <<View>>
+    class NpcController <<Controller dependency>>
+    class ExperienceController <<Controller dependency>>
+    class MapController <<Controller dependency>>
+    class EventBus <<Event service>>
+    annotation QuestEvent <<Event>>
+    class NotificationService <<Service dependency>>
+    class QuestRuntime <<Runtime context>>
+
+    QuestService --> NPCDefaultQuest : cree les quetes
+    QuestService --> NPCBadge : cree les recompenses
+    QuestService --> Npc : associe les quetes
+    QuestService --> LevelData : charge les niveaux
+    QuestService --> QuestCompletedToast : notification historique
+    QuestService --> EndToast : notification historique
+    QuestService --> NpcController : ecoute les PNJ
+    QuestService --> ExperienceController : attribue l’experience
+    QuestService --> MapController : actualise les marqueurs
+    QuestService --> QuestEvent : émet les événements quête
+    QuestEvent --> EventBus : transporte l’événement
+    EventBus --> NotificationService : notifie la progression
+    QuestService --> QuestRuntime : reçoit ses dépendances
+    QuestService ..|> IQuestService : implémente
+}
+
+package "NotificationService" as NotificationPackage {
+    class NotificationService {
+        -questCompletedToast: QuestCompletedToast
+        -endToast: EndToast
+        -notebookView: NotebookView
+        --
+        +constructor(app: HTMLElement, eventBus: EventBus, questService: QuestService, experienceController: ExperienceController, badgeService: BadgeService, heroController: IHeroController)
+        -handleNotification(event: AppEvent<NOTIFICATION_SHOW>): void
+    }
+
+    class QuestCompletedToast <<View>>
+    class EndToast <<View>>
+    class NotebookView <<View>>
+    class QuestService <<Service dependency>>
+    class BadgeService <<Service dependency>>
+    class ExperienceController <<Controller dependency>>
+    class HeroController <<Controller dependency>>
+    class EventBus <<Event service>>
+    annotation NotificationEvent <<Event>>
+
+    NotificationService --> QuestCompletedToast : affiche les quetes
+    NotificationService --> EndToast : affiche la fin
+    NotificationService --> NotebookView : affiche les badges
+    NotificationService --> QuestService : reçoit les notifications
+    NotificationService --> BadgeService : reçoit les badges
+    NotificationService --> ExperienceController : lit la progression
+    NotificationService --> HeroController : transmet le héros
+    EventBus --> NotificationEvent : transmet les notifications
+    NotificationEvent --> NotificationService : déclenche la réaction
+}
+
+package "VideoPreloadService" as VideoPackage {
+    class VideoPreloadService {
+        {static} -preloadedUrls: Set<string>
+        {static} -preloadElements: Map<string, HTMLVideoElement>
+        {static} -reportedReadyUrls: Set<string>
+        --
+        {static} +preloadVideos(urls: string[]): void
+    }
+
+    class HTMLVideoElement <<Browser API>>
+    class HeroController <<Controller dependency>>
+    class NpcController <<Controller dependency>>
+
+    VideoPreloadService --> HTMLVideoElement : crée les éléments vidéo
+    HeroController --> VideoPreloadService : précharge les vidéos héros
+    NpcController --> VideoPreloadService : précharge les vidéos PNJ
+}
+
+package "NativeAudioService" as AudioPackage {
+    class NativeAudioService
+
+    note right of NativeAudioService
+        Classe actuellement vide.
+        Aucune méthode ou variable implémentée.
+    end note
+}
+
+note top of BadgePackage
+    Les dépendances sont nommées selon
+    les classes réelles du projet.
+end note
+
+note bottom of QuestPackage
+    QuestService porte encore plusieurs responsabilités :
+    quêtes, récompenses, expérience et notifications historiques.
+end note
+
+note bottom of NotificationPackage
+    NotificationService centralise l’affichage déclenché
+    par les événements de l’application.
+end note
+
+@enduml

@@ -1,49 +1,50 @@
-﻿
-## Objectifs et contraintes
+﻿## Objectifs et contraintes
 
 ### Objectifs
 
-**Maintenabilité et modularité**
-L'objectif principal est de rendre l'application maintenable et évolutive. Concrètement, cela signifie décomposer l'application, actuellement concentrée dans deux fichiers `.html`,  en modules et fichiers distincts, chacun responsable d'un système bien défini.
+#### Reprendre l'existant sans perdre le jeu
 
-**Architecture et testabilité**
-La majorité des classes devront être issues d'interfaces abstraites, afin de faciliter l'injection de nouvelles fonctionnalités et de permettre des tests unitaires fiables. L'objectif est d'atteindre une couverture de tests d'au moins 80 %.
+Le premier objectif était de conserver le contenu et le parcours de la version initiale tout en sortant de l'organisation en deux fichiers HTML autonomes.
 
-**Interface d'administration** *(optionnel, si le temps le permet)*
-Une interface admin permettant d'ajouter ou de retirer des métiers et des dialogues (via modification des fichiers JSON de données). Ce point nécessite une réflexion préalable sur la stratégie CI/CD.
+#### Améliorer la maintenabilité
+
+Les systèmes devaient être séparés en modules et en classes compréhensibles. Une modification du dialogue ne devait plus nécessiter de parcourir un script global contenant également la carte, l'audio et les quêtes.
+
+#### Améliorer la testabilité
+
+Les entités et la logique métier devaient pouvoir être testées sans démarrer toute l'interface. L'objectif de 80 % de couverture a servi de repère, mais n'a pas été atteint dans le temps disponible.
+
+#### Stabiliser les systèmes principaux
+
+La refactorisation devait fiabiliser les dialogues, la sélection du héros, la carte, les quêtes, les badges et le calcul de l'expérience.
+Tout en rendant l'addition de nouvelle donnée plus facile.
 
 ---
 
 ### Contraintes
 
-**Stack technique**
-- Application Vite, écrite en TypeScript et compilée en JavaScript
-- Aucun framework — approche web native uniquement
-- Les dépendances externes (OpenStreetMap, API YouTube) doivent être intégrées proprement
+#### Contraintes techniques
 
-**Fonctionnel**
-- Toutes les fonctionnalités actuellement opérationnelles doivent être préservées dans le livrable
+- partir d'une application existante en HTML, CSS et JavaScript ;
+- utiliser Vite et TypeScript pour la nouvelle structure ;
+- ne pas ajouter de framework front-end ;
+- conserver les données dans des fichiers JSON ;
+- continuer à intégrer Leaflet et YouTube dans un environnement navigateur.
 
-**Qualité du code**
-- Code lisible, modulaire, testé et documenté en français
+#### Contraintes fonctionnelles
 
-**Compatibilité et déploiement**
-- Interface responsive, confortable sur mobile et tablette
-- Installable et utilisable hors connexion (PWA)
+- conserver les fonctionnalités du prototype initial ;
+- ne pas modifier le contenu des métiers et des dialogues sans nécessité ;
+- maintenir la compatibilité avec les assets fournis.
 
-**Performance**
-- Application performante et optimisée
-- La documentation doit inclure des exemples concrets d'amélioration des métriques de performance
+#### Contraintes de périmètre
 
-**Éco-conception**
-- Prise en compte des principes d'éco-conception dans l'esprit du RGESN
+- pas de backend ;
+- pas de base de données ;
+- pas de comptes utilisateurs ;
+- pas de gestion complète de la persistance ;
+- interface d'administration seulement envisagée si le temps le permet.
 
-**SEO**
-- Stratégie de référencement claire et cohérente, notamment dans la structure et la sémantique HTML
+#### Contraintes de temps
 
-**Accessibilité**
-- Conformité au RGAA
-
-**Sécurité et légal**
-- Respect des bonnes pratiques de sécurité
-- Présence de mentions légales
+Le travail devait être réalisé sur une période limitée. La conception du système de dialogue a pris plus de temps que prévu, avec plusieurs itérations, ce qui a obligé à prioriser la stabilité et la structure au détriment de certaines fonctionnalités secondaires.

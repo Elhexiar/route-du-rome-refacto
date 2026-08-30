@@ -1,0 +1,354 @@
+@startuml controllersV1
+
+!define THEME_BG #292929
+!define THEME_PANEL #333333
+!define THEME_ACCENT #d37070
+!define THEME_LINE #B7B7B7
+!define THEME_TEXT #F2F2F2
+
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam linetype polyline
+skinparam shadowing false
+skinparam nodesep 35
+skinparam ranksep 35
+skinparam backgroundColor THEME_BG
+skinparam defaultFontName Arial
+skinparam defaultFontColor THEME_TEXT
+skinparam classBackgroundColor THEME_PANEL
+skinparam classBorderColor THEME_ACCENT
+skinparam classFontColor THEME_TEXT
+skinparam packageBackgroundColor THEME_PANEL
+skinparam packageBorderColor THEME_ACCENT
+skinparam packageFontColor THEME_TEXT
+skinparam ArrowColor THEME_ACCENT
+skinparam noteBackgroundColor THEME_BG
+skinparam noteBorderColor THEME_ACCENT
+skinparam noteFontColor THEME_TEXT
+
+title La Route du Rome - Controleurs et dependances
+
+package "HeroController" as HeroPackage {
+    class HeroController {
+        +heroes: IHero[]
+        +currentHero: IHero | null
+        +welcomeHeroSelectionView: WelcomeHeroSelectionView | null
+        +position: { latitude: number; longitude: number }
+        -onHeroesLoadedCallbacks: Array<(heroes: IHero[]) => void>
+        -onHeroesSwitchedCallbacks: Array<(hero: IHero | null) => void>
+        +latitude: number
+        --
+        +constructor(configPath: string = "/config.json")
+        +loadHeroesFromConfig(configPath?: string): Promise<void>
+        +initializeWelcomeHeroSelectionView(appContainer: HTMLElement, dialogueController: IDialogueController): void
+        +switchHero(hero: IHero): void
+        +switchHeroById(heroId: string): boolean
+        +onHeroesLoaded(callback: (heroes: IHero[]) => void): void
+        +onHeroesSwitched(callback: (hero: IHero | null) => void): void
+    }
+
+    interface IHeroController {
+        heroes: IHero[]
+        currentHero: IHero | null
+        position: { latitude: number; longitude: number }
+        switchHero(hero: IHero): void
+        switchHeroById(heroId: string): boolean
+        onHeroesLoaded(callback: Function): void
+        onHeroesSwitched(callback: Function): void
+    }
+
+    class Hero <<Entity>>
+    class Dialogue <<Entity>>
+    class ConfigData <<Entity>>
+    class WelcomeHeroSelectionView <<View>>
+    class VideoPreloadService <<Service>>
+    class DialogueController <<Controller dependency>>
+    annotation HeroesLoadedEvent <<Event>>
+    annotation HeroSwitchedEvent <<Event>>
+
+    HeroController --> Hero : charge les héros\net gère la sélection
+    HeroController --> Dialogue : construit les dialogues\nde présentation
+    HeroController --> ConfigData : lit les données\ndes héros
+    HeroController --> WelcomeHeroSelectionView : initialise l’écran\nde sélection
+    HeroController --> VideoPreloadService : précharge les vidéos\ndes héros
+    HeroController --> HeroesLoadedEvent : signale le chargement\ndes héros
+    HeroesLoadedEvent --> WelcomeHeroSelectionView : déclenche la création\nde la vue
+    HeroController --> HeroSwitchedEvent : signale le héros\nsélectionné
+    HeroSwitchedEvent --> DialogueController : déclenche le dialogue\nde présentation
+    HeroController .up.|> IHeroController : implémente
+}
+
+package "NpcController" as NpcPackage {
+    class NpcController {
+        +npcs: INpc[]
+        -onNpcsLoadedCallbacks: Array<(npcs: INpc[]) => void>
+        --
+        +constructor(configPath: string = "/config.json")
+        -loadNpcsFromConfig(configPath?: string): Promise<void>
+        +LoadNpcsFromConfig(configPath?: string): Promise<void>
+        +addNpc(npc: INpc): void
+        +addNpcsFromJson(data: ConfigData): void
+        +removeNpc(npc: INpc): void
+        +getNpcById(id: string): INpc | undefined
+        +getAllNpcs(): INpc[]
+        +onNpcsLoaded(callback: (npcs: INpc[]) => void): void
+    }
+
+    interface INpcController {
+        npcs: INpc[]
+        addNpc(npc: INpc): void
+        removeNpc(npc: INpc): void
+        getNpcById(id: string): INpc | undefined
+        getAllNpcs(): INpc[]
+        onNpcsLoaded(callback: Function): void
+    }
+
+    class Npc <<Entity>>
+    class Dialogue <<Entity>>
+    class ConfigData <<Entity>>
+    class VideoPreloadService <<Service>>
+    annotation NpcsLoadedEvent <<Event>>
+    class DialogueController <<Controller dependency>>
+    class MapController <<Controller dependency>>
+
+    NpcController --> Npc : charge et gère\nles personnages non-joueurs
+    NpcController --> Dialogue : construit les dialogues\nde présentation
+    NpcController --> ConfigData : lit les données\ndes PNJ
+    NpcController --> VideoPreloadService : précharge les vidéos\ndes PNJ
+    NpcController --> NpcsLoadedEvent : signale le chargement\ndes PNJ
+    NpcsLoadedEvent --> DialogueController : déclenche les branchements\nde dialogue
+    NpcsLoadedEvent --> MapController : déclenche les marqueurs\ndes PNJ
+    NpcController .up.|> INpcController : implémente
+}
+
+package "MapController" as MapPackage {
+    class MapController {
+        +mapView: any
+        -currentHeroMarkerOwner: IHero | null
+        -runtime: MapRuntime
+        --
+        +constructor(app: HTMLElement, runtime?: MapRuntime | null)
+        +initMapView(): void
+        +addNpcMarker(latitude: number, longitude: number, npc: INpc): void
+        +addHeroMarker(latitude: number, longitude: number, hero: IHero): void
+        +removeNpcMarker(npc: INpc): void
+        +removeHeroMarker(hero: IHero): void
+        +getNpcMarker(npc: INpc): any
+        +getHeroMarker(hero: IHero): any
+        +moveNpcMarker(npc: INpc, newLatitude: number, newLongitude: number): void
+        +moveHeroMarker(hero: IHero, newLatitude: number, newLongitude: number): void
+        +toggleMarkerVisibility(visible: boolean, npc?: INpc, hero?: IHero): void
+        +toggleMarkerAccessibility(accessible: boolean, npc?: INpc, hero?: IHero): void
+    }
+
+    interface IMapController {
+        mapView: any
+        initMapView(): void
+        addNpcMarker(latitude: number, longitude: number, npc: INpc): void
+        addHeroMarker(latitude: number, longitude: number, hero: IHero): void
+        removeNpcMarker(npc: INpc): void
+        removeHeroMarker(hero: IHero): void
+        getNpcMarker(npc: INpc): any
+        getHeroMarker(hero: IHero): any
+        moveNpcMarker(npc: INpc, latitude: number, longitude: number): void
+        moveHeroMarker(hero: IHero, latitude: number, longitude: number): void
+        toggleMarkerVisibility(visible: boolean, npc?: INpc, hero?: IHero): void
+        toggleMarkerAccessibility(accessible: boolean, npc?: INpc, hero?: IHero): void
+    }
+
+    class Npc <<Entity>>
+    class Hero <<Entity>>
+    class NpcController <<Controller dependency>>
+    class HeroController <<Controller dependency>>
+    class LeafletMapView <<View>>
+    class Marker <<View>>
+    annotation HeroSwitchedEvent <<Event>>
+    annotation NpcsLoadedEvent <<Event>>
+
+    MapController --> LeafletMapView : coordonne l’affichage\nde la carte
+    MapController --> Marker : crée et déplace\nles marqueurs
+    MapController --> Npc : positionne les marqueurs\ndes PNJ
+    MapController --> Hero : positionne le marqueur\ndu héros
+    NpcController --> NpcsLoadedEvent : signale le chargement\ndes PNJ
+    NpcsLoadedEvent --> MapController : actualise les marqueurs\ndes PNJ
+    HeroController --> HeroSwitchedEvent : signale le héros\nsélectionné
+    HeroSwitchedEvent --> MapController : actualise le marqueur\ndu héros
+    MapController .up.|> IMapController : implémente
+}
+
+package "DialogueController" as DialoguePackage {
+    class DialogueController {
+        +dialogueRegistry: Map<string, IDialogue>
+        +currentActiveDialogue: IDialogue | null | undefined
+        +currentActiveNode: IDialogueNode | null
+        +dialogueView: DialogueView | null
+        -runtime: DialogueRuntime
+        --
+        +constructor(app?: HTMLElement | null, runtime?: DialogueRuntime | null)
+        +completeQuestForSpeaker(npc: INpc): void
+    }
+
+    interface IDialogueController {
+        dialogueRegistry: Map<string, IDialogue>
+        currentActiveDialogue: IDialogue | null | undefined
+        currentActiveNode: IDialogueNode | null | undefined
+        dialogueView: DialogueView | null
+        completeQuestForSpeaker(npc: INpc): void
+    }
+
+    class Dialogue <<Entity>>
+    class DialogueNode <<Entity>>
+    class DialogueView <<View>>
+    class NpcController <<Controller dependency>>
+    class HeroController <<Controller dependency>>
+    class MapController <<Controller dependency>>
+    class ExperienceController <<Controller dependency>>
+    annotation NpcsLoadedEvent <<Event>>
+    annotation HeroSwitchedEvent <<Event>>
+    annotation MapInteractionEvent <<Event>>
+
+    DialogueController --> Dialogue : coordonne le dialogue\nactif
+    DialogueController --> DialogueNode : parcourt les nœuds\nde dialogue
+    DialogueController --> DialogueView : affiche les dialogues\nau joueur
+    NpcsLoadedEvent --> DialogueController : transmet les PNJ\nchargés
+    HeroSwitchedEvent --> DialogueController : transmet le héros\nsélectionné
+    MapController --> MapInteractionEvent : signale une interaction\nde carte
+    MapInteractionEvent --> DialogueController : transmet l’interaction\nau dialogue
+    DialogueController --> ExperienceController : complète les quêtes\nassociées
+    DialogueController .up.|> IDialogueController : implémente
+}
+
+package "ExperienceController" as ExperiencePackage {
+    class ExperienceController {
+        +questService: IQuestService
+        +badgeService: IBadgeService
+        +currentExperience: number
+        +currentLevel: number
+        +currentExperienceLimit: number
+        -levelData: LevelData[]
+        -runtime: ExperienceRuntime
+        +curentExperience: number
+        --
+        +constructor(questService?: IQuestService | null, badgeService?: IBadgeService | null, runtime?: ExperienceRuntime | null)
+        +setLevelData(levels: LevelData[]): void
+        +getCurrentLevelDefinition(): LevelData | undefined
+        -getLevelIndexForExperience(experience: number): number
+        -syncLevelFromExperience(): void
+        +addExperience(amount: number): void
+        +resetProgress(): void
+        +levelUp(): void
+        +checkLevelUp(): boolean
+    }
+
+    interface IExperienceController {
+        questService: IQuestService
+        badgeService: IBadgeService
+        currentExperience: number
+        currentLevel: number
+        currentExperienceLimit: number
+        setLevelData(levels: LevelData[]): void
+        getCurrentLevelDefinition(): LevelData | undefined
+        addExperience(amount: number): void
+        resetProgress(): void
+        levelUp(): void
+        checkLevelUp(): boolean
+    }
+
+    class QuestService <<Service>>
+    class BadgeService <<Service>>
+    class EventBus <<Service>>
+    annotation ExperienceEvent <<Event>>
+    class LevelData <<Entity>>
+
+    ExperienceController --> QuestService : gère les récompenses\ndes quêtes
+    ExperienceController --> BadgeService : coordonne les badges\nobtenus
+    ExperienceController --> LevelData : calcule les niveaux\nselon l’expérience
+    ExperienceController --> ExperienceEvent : émet les changements\nde progression
+    ExperienceEvent --> EventBus : transporte l’événement
+    ExperienceController .up.|> IExperienceController : implémente
+}
+
+package "ConsoleTestController" as ConsolePackage {
+    class ConsoleTestController {
+        -runtime: ConsoleTestRuntime
+        --
+        +constructor(runtime: ConsoleTestRuntime)
+        +showQuestToast(): void
+        +showEndToast(): void
+        +showNotebook(): void
+        +hideNotebook(): void
+        +addExperience(amount: number = 150): void
+        +levelUp(): void
+        +completeQuest(questId?: string): boolean
+        +completeAllQuests(): number
+        +collectBadge(badgeId?: string): boolean
+        +collectAllBadges(): number
+        +resetProgress(): void
+        +showHeroPresentation(heroId?: string): boolean
+        +showNpcDialogue(npcId: string): boolean
+        +resetDialogues(): void
+        +showWelcome(): void
+        +hideWelcome(): void
+        +state(): ConsoleGameState
+        -getHero(heroId?: string): IHero | null
+        -getDialogues(): IDialogue[]
+    }
+
+    class QuestService <<Service>>
+    class BadgeService <<Service>>
+    class ExperienceController <<Controller dependency>>
+    class DialogueController <<Controller dependency>>
+    class HeroController <<Controller dependency>>
+    class NpcController <<Controller dependency>>
+    class Views <<View>>
+
+    ConsoleTestController --> QuestService : force les scénarios\nde quête
+    ConsoleTestController --> BadgeService : force les scénarios\nde badge
+    ConsoleTestController --> ExperienceController : modifie l’expérience\nde test
+    ConsoleTestController --> DialogueController : ouvre et réinitialise\nles dialogues
+    ConsoleTestController --> HeroController : sélectionne un héros\nde test
+    ConsoleTestController --> NpcController : recherche un PNJ\nde test
+    ConsoleTestController --> Views : contrôle les affichages\nde test
+}
+
+package "GameManager" as ManagerPackage {
+    class GameManager <<Console facade>> {
+        {static} -_instance: GameManager | null
+        +_app: HTMLElement | null
+        -_heroController: IHeroController | null
+        -_npcController: INpcController | null
+        -_mapController: IMapController | null
+        -_dialogueController: IDialogueController | null
+        -_experienceController: IExperienceController | null
+        -_headerView: HeaderHeroSelectionView | null
+        -_consoleTestController: ConsoleTestController | null
+        --
+        {static} +instance: GameManager
+        {static} +heroController: IHeroController | null
+        {static} +npcController: INpcController | null
+        {static} +mapController: IMapController | null
+        {static} +dialogueController: IDialogueController | null
+        {static} +experienceController: IExperienceController | null
+        {static} +headerView: HeaderHeroSelectionView | null
+        {static} +consoleTestController: ConsoleTestController | null
+        {static} +app: HTMLElement | null
+        {static} +bind(dependencies: AppDependencies): void
+        {static} +create(appElement?: HTMLElement | null, configPath?: string): GameManager
+        {static} +init(appElement?: HTMLElement | null, configPath?: string): void
+        {static} +resetForTests(): void
+    }
+
+    class ApplicationContainer <<Composition root>>
+    class ConsoleTestController <<Controller dependency>>
+
+    GameManager --> ApplicationContainer : référence les dépendances\ncomposées
+    GameManager --> ConsoleTestController : expose les commandes\nde test
+}
+
+note bottom of ManagerPackage
+    GameManager reste disponible pour les tests
+    manuels dans la console, mais ne compose
+    plus une seconde application.
+end note
+
+@enduml

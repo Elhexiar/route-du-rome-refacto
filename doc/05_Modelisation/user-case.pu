@@ -1,5 +1,20 @@
 @startuml
 
+!define THEME_BG #292929
+!define THEME_PANEL #333333
+!define THEME_ACCENT #d37070
+!define THEME_TEXT #F2F2F2
+
+skinparam backgroundColor THEME_BG
+skinparam defaultFontName Arial
+skinparam defaultFontColor THEME_TEXT
+skinparam usecaseBackgroundColor THEME_PANEL
+skinparam usecaseBorderColor THEME_ACCENT
+skinparam usecaseFontColor THEME_TEXT
+skinparam personBackgroundColor THEME_BG
+skinparam personBorderColor THEME_ACCENT
+skinparam personFontColor THEME_TEXT
+skinparam ArrowColor THEME_ACCENT
 person "Utilisateur" as user
 person "Administrateur" as admin
 

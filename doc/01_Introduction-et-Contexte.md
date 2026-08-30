@@ -1,30 +1,48 @@
-﻿
-## Introduction et contexte
+﻿## Introduction et contexte
 
-### Introduction
+### Le projet
 
-La Route du Rome est une application serious game développée pour France Travail. Elle permet de découvrir de manière interactive et guidée différents métiers du département d'Ille-et-Vilaine (35).
+La Route du Rome est un serious game développé pour France Travail. Il propose de découvrir différents métiers de l'Ille-et-Vilaine à travers une exploration interactive de la carte du département.
 
-L'utilisateur choisit un guide et explore une carte de l'Ille-et-Vilaine, où il rencontre des professionnels de divers secteurs (maritime, restauration, agriculture, etc.). Il peut dialoguer avec ces personnages, approfondir sa connaissance des métiers via des vidéos, et suivre sa progression grâce à une barre d'expérience et des badges.
+Le joueur choisit un héros, rencontre des professionnels, avance dans des dialogues et consulte des vidéos de présentation. Les quêtes, l'expérience, les niveaux et les badges servent à suivre sa progression.
 
-### Contexte
+### La version initiale
 
-L'application actuelle fonctionne dans ses grandes lignes, mais souffre de nombreux bugs et de fonctionnalités défaillantes. Le client est satisfait du contenu, mais il a besoin d'une application maintenable et capable d'évoluer dans le temps.
+Le projet de départ était une application fonctionnelle répartie dans deux fichiers HTML : `index.html` et `jeu.html`. Chaque fichier contenait à la fois :
 
-L'objectif est de livrer la même application, mais dans une version professionnelle : maintenable, évolutive, sécurisée, testable, déployable sur navigateur, mobile et tablette, et installable en tant que PWA.
+- la structure HTML ;
+- les styles CSS ;
+- les données du jeu ;
+- les fonctions JavaScript ;
+- les interactions avec la carte et les vidéos ;
+- une partie de la progression du joueur.
+
+La version initiale avait été produite rapidement, avec beaucoup de logique directement écrite dans les pages. Elle permettait de montrer le concept et le contenu, mais elle n'offrait pas une base confortable pour poursuivre le développement.
+
+### Le travail réalisé
+
+Le travail présenté dans ce dossier correspond à la version refactorisée développée ensuite pendant environ un 2 mois. L'objectif était de reprendre l'application existante sans perdre son contenu, puis de la transformer en projet TypeScript Vite structuré, testable et plus facile à maintenir.
+
+Il ne s'agissait donc pas de créer un nouveau jeu. Il fallait conserver le parcours prévu tout en corrigeant les systèmes qui fonctionnaient mal et en séparant les responsabilités.
 
 ### Périmètre
 
-**Inclus**
-- Refactorisation complète de l'application, actuellement contenue dans deux fichiers `.html`
-- Qualité du code, structure, tests et sécurité
-- Compatibilité mobile, tablette et PWA
-- Amélioration de l'expérience utilisateur, en particulier sur l'accessibilité et la lisibilité
-- Documentation pour faciliter les futures évolutions
+#### Inclus
 
-**Exclus**
-- Aucune nouvelle fonctionnalité
-- Aucun nouveau composant externe (backend, serveur, base de données, API, etc.)
-- Aucune gestion des données utilisateur
-- Aucun framework
-- Aucun travail sur les assets ou le design : la majorité des assets ont été générés par IA et présentent des artefacts visuels gênant la lisibilité ainsi que des problèmes évidents de synchronisation labiale (*lip sync*). Ces problèmes dépassent le périmètre attendu d'un stagiaire en CDA et devront, si possible, être traités ultérieurement par des artistes et/ou des designers.
+- découpage de l'application en modules ;
+- séparation des entités, contrôleurs, services et vues ;
+- refactorisation des dialogues, de la carte, des quêtes, des badges et de l'expérience ;
+- injection explicite des dépendances ;
+- communication par événements ;
+- tests automatisés des principaux systèmes ;
+- documentation des choix et du retour d'expérience.
+
+#### Hors périmètre
+
+- création d'un backend ou d'une base de données ;
+- gestion de comptes ou de données personnelles ;
+- ajout d'un framework front-end ;
+- remplacement complet des assets existants ;
+- correction artistique des vidéos générées, notamment les problèmes de synchronisation labiale ;
+- réalisation complète de l'interface d'administration et du pipeline CI/CD.
+- Strategie de déploiement.

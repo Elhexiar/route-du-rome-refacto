@@ -1,0 +1,458 @@
+@startuml entitiesV1
+
+!define THEME_BG #292929
+!define THEME_PANEL #333333
+!define THEME_ACCENT #d37070
+!define THEME_LINE #B7B7B7
+!define THEME_TEXT #F2F2F2
+
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam linetype polyline
+skinparam shadowing false
+skinparam nodesep 35
+skinparam ranksep 35
+skinparam backgroundColor THEME_BG
+skinparam defaultFontName Arial
+skinparam defaultFontColor THEME_TEXT
+skinparam classBackgroundColor THEME_PANEL
+skinparam classBorderColor THEME_ACCENT
+skinparam classFontColor THEME_TEXT
+skinparam packageBackgroundColor THEME_PANEL
+skinparam packageBorderColor THEME_ACCENT
+skinparam packageFontColor THEME_TEXT
+skinparam ArrowColor THEME_ACCENT
+skinparam noteBackgroundColor THEME_BG
+skinparam noteBorderColor THEME_ACCENT
+skinparam noteFontColor THEME_TEXT
+
+title La Route du Rome - Entites et systeme d’evenements
+
+package "Hero" as HeroPackage {
+    class "Hero" as HeroClass {
+        +id: string
+        +name: string
+        +role: string
+        +description: string
+        +bio: string
+        +presentationDialogue: Dialogue | null | undefined
+        +portrait: string
+        +presentationVideo: string
+        +tags: string[]
+        +dialogues: Dialogue[]
+        +currentActiveDialogue: Dialogue | null | undefined
+        --
+        +constructor(id: string, name: string, role: string, description: string, bio: string, portrait: string, presentationVideo: string, presentationDialogue?: Dialogue | null, dialogues?: Dialogue[], tags?: string[])
+        {static} +fromJson(data: HeroData): Hero
+    }
+
+    interface "IHero" as IHero_Hero {
+        id: string
+        name: string
+        role: string
+        description: string
+        bio: string
+        presentationDialogue: Dialogue | null | undefined
+        portrait: string
+        presentationVideo: string
+        tags: string[]
+        dialogues: Dialogue[]
+    }
+
+    class "Dialogue" as HeroDialogue <<Entity>>
+    class "HeroData" as HeroData_Hero <<DTO>>
+    class "VideoPreloadService" as HeroVideoService <<Service>>
+    class "WelcomeHeroSelectionView" as HeroWelcomeView <<View>>
+    class "IDialogueController" as HeroDialogueContract <<Interface>>
+
+    HeroClass .up.|> IHero_Hero : implémente
+    HeroClass --> HeroDialogue : possède le dialogue\nde présentation
+    HeroClass --> HeroData_Hero : construit depuis les\ndonnées JSON
+    HeroClass --> HeroVideoService : précharge les vidéos\ndu héros
+    HeroClass --> HeroWelcomeView : initialise la vue\nde sélection
+    HeroClass --> HeroDialogueContract : reçoit le contrôleur\nde dialogue
+}
+
+package "Npc" as NpcPackage {
+    class "Npc" as NpcClass {
+        +id: string
+        +name: string
+        +color: string
+        +job: string
+        +jobSector: string
+        +icon: string
+        +portrait: string
+        +latitude: number
+        +longitude: number
+        +relatedQuests: Quest[]
+        +backgroundVideo: string
+        +jobVideoUrl: string
+        +videoTitle: string
+        +presentationDialogue: Dialogue | null
+        +dialogues: Dialogue[]
+        +currentActiveDialogue: Dialogue | null | undefined
+        +done: boolean
+        +accessible: boolean
+        --
+        +constructor(id: string, name: string, color: string, job: string, jobSector: string, icon: string, portrait: string, latitude: number, longitude: number, backgroundVideo: string, jobVideoUrl: string, videoTitle: string, presentationDialogue: Dialogue | null, dialogues: Dialogue[])
+        {static} +fromJson(data: NpcData): Npc
+    }
+
+    interface "INpc" as INpc_Npc {
+        id: string
+        name: string
+        color: string
+        job: string
+        jobSector: string
+        icon: string
+        portrait: string
+        latitude: number
+        longitude: number
+        relatedQuests: Quest[]
+        presentationDialogue: Dialogue | null
+        done: boolean
+        accessible: boolean
+    }
+
+    class "Dialogue" as NpcDialogue <<Entity>>
+    class "Quest" as NpcQuest <<Entity>>
+    class "NpcData" as NpcData_Npc <<DTO>>
+    class "VideoPreloadService" as NpcVideoService <<Service>>
+
+    NpcClass .up.|> INpc_Npc : implémente
+    NpcClass --> NpcDialogue : possède le dialogue\nde présentation
+    NpcClass --> NpcQuest : possède les quêtes\nassociées
+    NpcClass --> NpcData_Npc : construit depuis les\ndonnées JSON
+    NpcClass --> NpcVideoService : précharge les vidéos\ndu PNJ
+}
+
+package "Dialogue" as DialoguePackage {
+    class "Dialogue" as DialogueClass {
+        -_id: string
+        -_owner: IDialogueOwner | undefined
+        -_isCompleted: boolean
+        -_isActive: boolean
+        -_currentLineDepth: number
+        -_currentChoiceDepth: number
+        -_rootNode: DialogueNode | undefined
+        -_currentNode: DialogueNode | undefined
+        +OnDialogueActions: (() => void)[]
+        --
+        +constructor(owner: IDialogueOwner | undefined, id?: string, json?: unknown)
+        +id: string
+        +owner: IDialogueOwner | undefined
+        +isCompleted: boolean
+        +isActive: boolean
+        +currentLineDepth: number
+        +currentChoiceDepth: number
+        +rootNode: DialogueNode | undefined
+        +currentNode: DialogueNode | undefined
+        +ImportDialogueFromJSON(json: unknown): IDialogue | null
+        +AddAction(actionID: string, actionType: "OnStartText" | "OnEndText" | "none", action: () => void): void
+        +CompleteDialogue(): void
+        +Continue(): boolean
+        +Choose(choiceID?: string, choiceIndex?: number): void
+        +Reset(): void
+    }
+
+    interface "IDialogue" as IDialogue_Dialogue {
+        readonly id: string
+        readonly owner: IDialogueOwner | undefined
+        readonly isCompleted: boolean
+        readonly isActive: boolean
+        readonly currentLineDepth: number
+        readonly currentChoiceDepth: number
+        readonly rootNode: DialogueNode | undefined
+        readonly currentNode: DialogueNode | undefined
+        OnDialogueActions: (() => void)[]
+        CompleteDialogue(): void
+        Continue(): boolean
+        Choose(choiceID?: string, choiceIndex?: number): void
+        ImportDialogueFromJSON(json: unknown): IDialogue | null
+        Reset(): void
+    }
+
+    interface "IDialogueOwner" as DialogueOwnerContract {
+        dialogues: Dialogue[]
+        currentActiveDialogue: Dialogue | null | undefined
+    }
+    class "DialogueNode" as DialogueNode_Dialogue <<Entity>>
+    class "Choice" as Choice_Dialogue <<Entity>>
+
+    DialogueClass .up.|> IDialogue_Dialogue : implémente
+    DialogueClass --> DialogueOwnerContract : appartient à un\npropriétaire
+    DialogueClass *-- DialogueNode_Dialogue : possède l’arbre
+    DialogueNode_Dialogue o-- Choice_Dialogue : contient
+}
+
+package "DialogueNode" as NodePackage {
+    class "DialogueNode" as NodeClass {
+        +root: DialogueNode | null
+        +parent: DialogueNode | Choice | null
+        +id: string
+        +text: string
+        +nextNode: DialogueNode | null | undefined
+        +choices: Choice[] | null | undefined
+        +OnStartTextActionID: string[] | undefined
+        +OnStartActions: (() => void)[] | undefined
+        +OnEndTextActionID: string[] | undefined
+        +OnEndActions: (() => void)[] | undefined
+        --
+        +constructor(json: DialogueNodeJSON, root?: DialogueNode | null, parent?: DialogueNode | Choice | null)
+        +next(): DialogueNode | null
+    }
+
+    interface "IDialogueNode" as IDialogueNode_Node {
+        root: DialogueNode | null
+        parent: DialogueNode | Choice | null
+        id: string
+        text: string
+        nextNode: DialogueNode | null | undefined
+        choices: Choice[] | null | undefined
+        OnStartActions: (() => void)[] | undefined
+        OnEndActions: (() => void)[] | undefined
+        next(): DialogueNode | null
+    }
+
+    class "DialogueNodeJSON" as NodeJson_Node <<DTO>>
+    class "Choice" as Choice_Node <<Entity>>
+
+    NodeClass .up.|> IDialogueNode_Node : implémente
+    NodeClass --> NodeJson_Node : construit depuis les\ndonnées JSON
+    NodeClass --> Choice_Node : crée les choix\ndu dialogue
+    NodeClass --> NodeClass : relie le nœud\nsuivant
+}
+
+package "Choice" as ChoicePackage {
+    class "Choice" as ChoiceClass {
+        +root: DialogueNode | null
+        +parent: DialogueNode | Choice | null
+        +id: string
+        +text: string
+        +actionID: string | undefined
+        +actions: (() => void)[] | undefined
+        +findID: string | undefined
+        +next: DialogueNode | null
+        --
+        +constructor(json: ChoiceJSON, parentNode?: DialogueNode | null)
+        +select(): DialogueNode | null
+    }
+
+    interface "IChoice" as IChoice_Choice {
+        root: DialogueNode | null
+        parent: DialogueNode | Choice | null
+        id: string
+        text: string
+        actionID: string | undefined
+        findID: string | undefined
+        next: DialogueNode | null
+        select(): DialogueNode | null
+    }
+
+    class "ChoiceJSON" as ChoiceJson_Choice <<DTO>>
+    class "DialogueNode" as ChoiceNode_Choice <<Entity>>
+
+    ChoiceClass .up.|> IChoice_Choice : implémente
+    ChoiceClass --> ChoiceJson_Choice : construit depuis les\ndonnées JSON
+    ChoiceClass --> ChoiceNode_Choice : mène vers le\nnœud suivant
+}
+
+package "NPCBadge" as BadgePackage {
+    class "NPCBadge" as BadgeClass {
+        +relatedNPC: Npc
+        +id: string
+        +name: string
+        +description: string
+        +icon: string
+        +color: string
+        +collected: boolean
+        +onUnlock: (() => void)[]
+        --
+        +constructor(relatedNPC: Npc, id: string, name: string, description: string, icon: string)
+        +checkUnlockCondition(): boolean
+        +Unlock(): void
+    }
+
+    interface "IBadge" as IBadge_Badge {
+        id: string
+        name: string
+        description: string
+        icon: string
+        color: string
+        collected: boolean
+        onUnlock: (() => void)[]
+        checkUnlockCondition(): boolean
+        Unlock(): void
+    }
+
+    class "Npc" as BadgeNpc <<Entity>>
+    BadgeClass .up.|> IBadge_Badge : implémente
+    BadgeClass --> BadgeNpc : dépend du PNJ\nassocié
+}
+
+package "NPCDefaultQuest" as QuestPackage {
+    class "NPCDefaultQuest" as QuestClass {
+        +relatedNPC: Npc
+        +id: string
+        +name: string
+        +description: string
+        +isCompleted: boolean
+        +OnQuestActions: (() => void)[]
+        +relatedBadge: NPCBadge | null
+        --
+        +constructor(relatedNPC: Npc, id: string, name: string, description: string)
+        +checkCompletionCondition(): boolean
+        +Complete(): void
+        +Reward(): void
+    }
+
+    interface "IQuest" as IQuest_Quest {
+        id: string
+        name: string
+        description: string
+        isCompleted: boolean
+        relatedBadge: NPCBadge | null
+        OnQuestActions: (() => void)[]
+        checkCompletionCondition(): boolean
+        Complete(): void
+        Reward(): void
+    }
+
+    class "Npc" as QuestNpc <<Entity>>
+    class "NPCBadge" as QuestBadge <<Entity>>
+    QuestClass .up.|> IQuest_Quest : implémente
+    QuestClass --> QuestNpc : concerne le PNJ\nassocié
+    QuestClass --> QuestBadge : attribue le badge\nde récompense
+}
+
+package "Configuration" as ConfigPackage {
+    class "ConfigData" as ConfigDataClass {
+        +Npcs: NpcData[]
+        +Heroes: HeroData[]
+        +Levels: LevelData[]
+    }
+
+    class "NpcData" as NpcData_Config {
+        +id: string
+        +name: string
+        +color: string
+        +job: string
+        +jobSector: string
+        +icon: string
+        +portrait: string
+        +latitude: number | undefined
+        +lattitude: number | undefined
+        +longitude: number
+        +relatedQuestsIds: string[]
+        +backgroundVideo: string
+        +jobVideoUrl: string
+        +videoTitle: string
+        +presentationDialogue: DialogueData | null
+    }
+
+    class "HeroData" as HeroData_Config {
+        +id: string
+        +name: string
+        +role: string
+        +description: string
+        +bio: string
+        +presentationDialogue: DialogueData | null | undefined
+        +portrait: string
+        +presentationVideo: string
+        +tags: string[]
+        +dialogues: DialogueData[] | undefined
+    }
+
+    class "DialogueData" as DialogueData_Config {
+        +id: string
+        +ownerId: string
+    }
+
+    class "LevelData" as LevelData_Config {
+        +id: string
+        +name: string
+        +description: string
+        +icon: string
+        +min: number
+        +max: number
+    }
+
+    ConfigDataClass *-- NpcData_Config
+    ConfigDataClass *-- HeroData_Config
+    ConfigDataClass *-- LevelData_Config
+    NpcData_Config o-- DialogueData_Config
+    HeroData_Config o-- DialogueData_Config
+}
+
+package "EventSystem" as EventPackage {
+    class "EventBus" as EventBusClass {
+        -listeners: Map<string, Set<EventListener>>
+        --
+        +on(eventType: string, listener: EventListener): void
+        +once(eventType: string, listener: EventListener): void
+        +off(eventType: string, listener: EventListener): void
+        +emit(event: GameEvent): void
+        +clear(): void
+        +listenerCount(eventType: string): number
+    }
+
+    class "GameEvent" as GameEventClass <<Event payload>> {
+        +type: string
+        +data: Record<string, any> | undefined
+        +timestamp: number | undefined
+    }
+
+    class "AppEvents" as AppEventsClass <<Event registry>> {
+        +QUEST_STARTED: string
+        +QUEST_COMPLETED: string
+        +EXPERIENCE_GAINED: string
+        +LEVEL_UP: string
+        +BADGE_COLLECTED: string
+        +BADGE_UNCOLLECTED: string
+        +HERO_SWITCHED: string
+        +HEROES_LOADED: string
+        +DIALOGUE_STARTED: string
+        +DIALOGUE_ENDED: string
+        +NPCS_LOADED: string
+        +NPC_VISITED: string
+        +NOTIFICATION_SHOW: string
+        +NOTIFICATION_HIDE: string
+        +GAME_STARTED: string
+        +GAME_ENDED: string
+    }
+
+    interface "AppEventPayloads" as Payloads_Event {
+        QUEST_STARTED: { questId: string; npcId: string }
+        QUEST_COMPLETED: { questId: string; xpReward: number }
+        EXPERIENCE_GAINED: { amount: number; totalExperience: number }
+        LEVEL_UP: { newLevel: number; totalExperience: number }
+        BADGE_COLLECTED: { badgeId: string }
+        BADGE_UNCOLLECTED: { badgeId: string }
+        HERO_SWITCHED: { heroId: string; heroName: string }
+        HEROES_LOADED: { count: number }
+        DIALOGUE_STARTED: { speakerId: string; speakerName: string }
+        DIALOGUE_ENDED: { speakerId: string }
+        NPCS_LOADED: { count: number }
+        NPC_VISITED: { npcId: string; npcName: string }
+        NOTIFICATION_SHOW: { type: string; message: string; duration?: number }
+        NOTIFICATION_HIDE: { notificationType?: string }
+        GAME_STARTED: Record<string, never>
+        GAME_ENDED: Record<string, never>
+    }
+
+    EventBusClass --> GameEventClass : transporte chaque\nmessage événementiel
+    EventBusClass --> AppEventsClass : utilise le registre\ndes événements
+    AppEventsClass --> Payloads_Event : définit les données\nassociées
+}
+
+note top of EventPackage
+    Ce package regroupe exclusivement le système
+    de communication par événements.
+end note
+
+note bottom of QuestPackage
+    NPCDefaultQuest déclenche ses actions de complétion.
+    QuestService orchestre ensuite les récompenses.
+end note
+
+@enduml

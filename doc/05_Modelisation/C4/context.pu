@@ -1,6 +1,24 @@
 @startuml
 allow_mixing
 
+!define THEME_BG #292929
+!define THEME_PANEL #333333
+!define THEME_ACCENT #d37070
+!define THEME_TEXT #F2F2F2
+
+skinparam backgroundColor THEME_BG
+skinparam defaultFontName Arial
+skinparam defaultFontColor THEME_TEXT
+skinparam componentBackgroundColor THEME_PANEL
+skinparam componentBorderColor THEME_ACCENT
+skinparam componentFontColor THEME_TEXT
+skinparam packageBackgroundColor THEME_PANEL
+skinparam packageBorderColor THEME_ACCENT
+skinparam packageFontColor THEME_TEXT
+skinparam ArrowColor THEME_ACCENT
+skinparam personBackgroundColor THEME_BG
+skinparam personBorderColor THEME_ACCENT
+skinparam personFontColor THEME_TEXT
 
 
 package "Context" {

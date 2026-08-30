@@ -1,5 +1,17 @@
 @startuml 
 
+!define THEME_BG #292929
+!define THEME_PANEL #333333
+!define THEME_ACCENT #d37070
+!define THEME_TEXT #F2F2F2
+
+skinparam backgroundColor THEME_BG
+skinparam defaultFontName Arial
+skinparam defaultFontColor THEME_TEXT
+skinparam classBackgroundColor THEME_PANEL
+skinparam classBorderColor THEME_ACCENT
+skinparam classFontColor THEME_TEXT
+skinparam ArrowColor THEME_ACCENT
 
 
 

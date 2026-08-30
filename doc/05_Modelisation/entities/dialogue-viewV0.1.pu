@@ -1,11 +1,27 @@
 @startuml DialogueView
 
+!define THEME_BG #292929
+!define THEME_PANEL #333333
+!define THEME_PARTICIPANT #3A3A3A
+!define THEME_ACCENT #d37070
+!define THEME_LINE #B7B7B7
+!define THEME_TEXT #F2F2F2
 
 title DialogueView - architecture et interactions
 
 skinparam componentStyle rectangle
 skinparam shadowing false
 skinparam packageStyle rectangle
+skinparam backgroundColor THEME_BG
+skinparam defaultFontName Arial
+skinparam defaultFontColor THEME_TEXT
+skinparam classBackgroundColor THEME_PANEL
+skinparam classBorderColor THEME_ACCENT
+skinparam classFontColor THEME_TEXT
+skinparam packageBackgroundColor THEME_PANEL
+skinparam packageBorderColor THEME_ACCENT
+skinparam packageFontColor THEME_TEXT
+skinparam ArrowColor THEME_ACCENT
 
 package "UI dialogue" {
     class DialogueView implements IDialogueView {
@@ -114,7 +130,32 @@ GameManager *-- DialogueController
 
 @startuml DialogueView_Continuation
 
+!define THEME_BG #292929
+!define THEME_PANEL #333333
+!define THEME_PARTICIPANT #3A3A3A
+!define THEME_ACCENT #d37070
+!define THEME_LINE #B7B7B7
+!define THEME_TEXT #F2F2F2
+
 title DialogueView - continuation d'une ligne
+
+skinparam shadowing false
+skinparam backgroundColor THEME_BG
+skinparam defaultFontName Arial
+skinparam defaultFontColor THEME_TEXT
+skinparam sequence {
+    ArrowColor THEME_ACCENT
+    ActorBorderColor THEME_ACCENT
+    ActorBackgroundColor THEME_PARTICIPANT
+    ActorFontColor THEME_TEXT
+    LifeLineBorderColor THEME_LINE
+    LifeLineBackgroundColor THEME_PANEL
+    ParticipantBorderColor THEME_ACCENT
+    ParticipantBackgroundColor THEME_PARTICIPANT
+    ParticipantFontColor THEME_TEXT
+    ParticipantFontStyle bold
+    MessageAlign center
+}
 
 actor Joueur
 participant "DialogueView" as View
@@ -144,7 +185,32 @@ end
 
 @startuml DialogueView_Choice
 
+!define THEME_BG #292929
+!define THEME_PANEL #333333
+!define THEME_PARTICIPANT #3A3A3A
+!define THEME_ACCENT #d37070
+!define THEME_LINE #B7B7B7
+!define THEME_TEXT #F2F2F2
+
 title DialogueView - selection d'un choix
+
+skinparam shadowing false
+skinparam backgroundColor THEME_BG
+skinparam defaultFontName Arial
+skinparam defaultFontColor THEME_TEXT
+skinparam sequence {
+    ArrowColor THEME_ACCENT
+    ActorBorderColor THEME_ACCENT
+    ActorBackgroundColor THEME_PARTICIPANT
+    ActorFontColor THEME_TEXT
+    LifeLineBorderColor THEME_LINE
+    LifeLineBackgroundColor THEME_PANEL
+    ParticipantBorderColor THEME_ACCENT
+    ParticipantBackgroundColor THEME_PARTICIPANT
+    ParticipantFontColor THEME_TEXT
+    ParticipantFontStyle bold
+    MessageAlign center
+}
 
 actor Joueur
 participant "choice-button" as Button

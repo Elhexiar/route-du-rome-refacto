@@ -1,0 +1,81 @@
+@startuml dialogueSequence
+
+!define THEME_BG #292929
+!define THEME_PANEL #333333
+!define THEME_PARTICIPANT #3A3A3A
+!define THEME_ACCENT #d37070
+!define THEME_LINE #B7B7B7
+!define THEME_TEXT #F2F2F2
+
+skinparam shadowing false
+skinparam backgroundColor THEME_BG
+skinparam defaultFontName Arial
+skinparam defaultFontColor THEME_TEXT
+skinparam sequence {
+    ArrowColor THEME_ACCENT
+    ActorBorderColor THEME_ACCENT
+    ActorBackgroundColor THEME_PARTICIPANT
+    ActorFontColor THEME_TEXT
+    LifeLineBorderColor THEME_LINE
+    LifeLineBackgroundColor THEME_PANEL
+    ParticipantBorderColor THEME_ACCENT
+    ParticipantBackgroundColor THEME_PARTICIPANT
+    ParticipantFontColor THEME_TEXT
+    ParticipantFontStyle bold
+    ParticipantPadding 18
+    BoxBorderColor THEME_ACCENT
+    BoxBackgroundColor THEME_PANEL
+    BoxFontColor THEME_TEXT
+    GroupBorderColor THEME_ACCENT
+    GroupBackgroundColor THEME_PANEL
+    GroupFontColor THEME_TEXT
+    GroupHeaderFontColor THEME_TEXT
+    DividerBorderColor THEME_ACCENT
+    DividerBackgroundColor THEME_PARTICIPANT
+    DividerFontColor THEME_TEXT
+    MessageAlign center
+}
+
+title La Route du Rome - Continuer un dialogue
+
+actor Utilisateur
+participant "DialogueView" as View
+participant "Dialogue" as Dialogue
+participant "DialogueNode" as Node
+
+Utilisateur -> View : clique dans le dialogue\nou appuie sur Espace
+activate View
+
+View -> View : verifie que le dialogue\nest visible
+
+alt texte en cours d'ecriture
+    View -> View : termine l'animation
+    View --> Utilisateur : affiche le texte complet
+else texte deja affiche
+    View -> Dialogue : Continue()
+    activate Dialogue
+
+    Dialogue -> Node : next()
+    activate Node
+    Node --> Dialogue : nœud suivant
+    deactivate Node
+
+    alt nœud suivant disponible
+        Dialogue --> View : true
+        deactivate Dialogue
+        View -> View : updateDialogue(dialogue)
+        View -> View : affiche le nouveau texte
+        View --> Utilisateur : dialogue suivant visible
+    else aucun nœud suivant
+        Dialogue -> Dialogue : CompleteDialogue()
+        Dialogue -> Dialogue : execute OnDialogueActions
+        Dialogue --> View : true
+        deactivate Dialogue
+        View -> View : cache ou termine le dialogue
+        View --> Utilisateur : dialogue terminé
+    end
+end
+
+deactivate View
+
+@enduml
