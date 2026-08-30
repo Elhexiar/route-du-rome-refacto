@@ -10,6 +10,7 @@ import { NpcController } from "./NpcController.ts";
 import { MapController } from "./MapController.ts";
 import { DialogueController } from "./DialogueController.ts";
 import { ExperienceController } from "./ExperienceController.ts";
+import { ConsoleTestController } from "./ConsoleTestController.ts";
 
 import { HeaderHeroSelectionView } from "#UI/HeaderHeroSelectionView.ts";
 export class GameManager {
@@ -25,6 +26,7 @@ export class GameManager {
   private _dialogueController: IDialogueController | null = null;
   private _experienceController: IExperienceController | null = null;
   private _headerView: HeaderHeroSelectionView | null = null;
+  private _consoleTestController: ConsoleTestController | null = null;
 
   //   private _experienceController: IExperienceController | null = null;
 
@@ -122,6 +124,14 @@ export class GameManager {
 
   public static set headerView(value: HeaderHeroSelectionView | null) {
     GameManager.instance._headerView = value;
+  }
+
+  public static get consoleTestController(): ConsoleTestController | null {
+    return GameManager.instance._consoleTestController;
+  }
+
+  public static set consoleTestController(value: ConsoleTestController | null) {
+    GameManager.instance._consoleTestController = value;
   }
 
   public get app(): HTMLElement | null {
