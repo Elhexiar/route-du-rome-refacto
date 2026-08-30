@@ -1,4 +1,3 @@
-import { GameManager } from "#src/controllers/GameManager.ts";
 import type { INpc } from "#src/interfaces/entities/INpc.ts";
 import type { IHero } from "#src/interfaces/entities/index.ts";
 import type { IHeroController } from "#IControllers/index.ts";
@@ -18,14 +17,12 @@ export class Marker {
     map: any,
     npc?: INpc,
     hero?: IHero,
-    runtime: { heroController?: IHeroController | null } | null = null,
+    runtime: { heroController?: IHeroController | null } = {},
   ) {
     this.npc = npc;
     this.hero = hero;
     this.leaflet = leaflet;
-    this.runtime = runtime ?? {
-      heroController: GameManager.heroController,
-    };
+    this.runtime = runtime;
     this.marker = this.render(leaflet, map, npc, hero);
   }
 

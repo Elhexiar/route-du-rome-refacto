@@ -2,7 +2,6 @@ import type { IMapView } from "#IUI/IMapView";
 import type { INpc } from "#src/interfaces/entities/INpc.ts";
 import type { IHeroController } from "#IControllers/index.ts";
 import { Marker } from "./Marker";
-import { GameManager } from "#src/controllers/GameManager.ts";
 
 export class LeafletMapView implements IMapView {
   private readonly element: HTMLElement;
@@ -12,7 +11,7 @@ export class LeafletMapView implements IMapView {
 
   constructor(
     container: HTMLElement,
-    runtime: { heroController?: IHeroController | null } | null = null,
+    runtime: { heroController?: IHeroController | null },
   ) {
     this.element = document.createElement("section");
     this.element.className = "map-view";
@@ -20,9 +19,7 @@ export class LeafletMapView implements IMapView {
     this.element.style.height = "auto";
     this.element.style.flexGrow = "1";
     container.appendChild(this.element);
-    this.runtime = runtime ?? {
-      heroController: GameManager.heroController,
-    };
+    this.runtime = runtime;
     this.render();
   }
 
