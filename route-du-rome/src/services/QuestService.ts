@@ -33,7 +33,7 @@ export class QuestService implements IQuestService {
 
   constructor() {
     this.initializeDefaultQuests();
-    void this.loadLevelDataFromConfig("/config.json");
+    this.loadLevelDataFromConfig("/config.json").catch(() => undefined);
   }
 
   private initializeDefaultQuests(): void {
@@ -59,6 +59,7 @@ export class QuestService implements IQuestService {
 
     defaultQuest.OnQuestActions.push(() => {
       npc.done = true;
+      GameManager.experienceController?.addExperience(150);
       GameManager.mapController?.mapView?.markers.get(npc)?.UpdateMarker();
 
       if (this.areAllQuestsCompleted()) {
@@ -126,7 +127,20 @@ export class QuestService implements IQuestService {
 
   async loadLevelDataFromConfig(configPath: string): Promise<any> {
     const safeConfigPath = configPath ?? "/config.json";
-    const response = await fetch(safeConfigPath);
+
+    if (typeof fetch !== "function") {
+      return {
+        Levels: [],
+        Heroes: [],
+        Npcs: [],
+      } as ConfigData;
+    }
+
+    const normalizedConfigPath = safeConfigPath.startsWith("http")
+      ? safeConfigPath
+      : safeConfigPath;
+
+    const response = await fetch(normalizedConfigPath);
 
     if (!response.ok) {
       throw new Error(
@@ -136,6 +150,7 @@ export class QuestService implements IQuestService {
 
     const configData: ConfigData = await response.json();
     this.levelData = configData.Levels;
+    GameManager.experienceController?.setLevelData(this.levelData);
 
     const app = GameManager.app;
     if (app) {

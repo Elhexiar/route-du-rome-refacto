@@ -40,12 +40,22 @@ export class HeaderHeroSelectionView {
         )
         .join("") ?? "";
 
+    const experienceController = GameManager.experienceController;
+    const currentLevel = experienceController?.currentLevel ?? 1;
+    const currentLevelDefinition =
+      experienceController?.getCurrentLevelDefinition();
+
     const nbBadgeTotal =
       GameManager.experienceController?.badgeService.getAllBadges().length ?? 0;
 
     const nbBadgeCollected =
       GameManager.experienceController?.badgeService.getAllCollectedBadges()
         .length ?? 0;
+
+    const badgeProgressPercentage =
+      nbBadgeTotal === 0
+        ? 0
+        : Math.min(100, (nbBadgeCollected / nbBadgeTotal) * 100);
 
     this.element.innerHTML = `
             <div class="header header-hero-selection-view__body">
@@ -67,14 +77,12 @@ export class HeaderHeroSelectionView {
                 ${heroesButtons}
               </div>
               <div class="header-hero-selection-view__end">
-                <p>XP</p>
+                <p>Métiers</p>
                 <div class="header-hero-selection-view__xp-bar">
-                  <div class="header-hero-selection-view__xp-bar-fill"></div>
+                  <div class="header-hero-selection-view__xp-bar-fill" style="width: ${badgeProgressPercentage}%"></div>
                 </div>
-                <p>0/150</p>
-                <div class="header-hero-selection-view__level"></div>
-                <p>Métiers : </p>
                 <p>${nbBadgeCollected}/${nbBadgeTotal}</p>
+                <div class="header-hero-selection-view__level">${currentLevelDefinition?.icon ?? "🌱"} Niveau ${currentLevel}</div>
                 <div class="header-hero-selection-view__notebook-button">📓 ${nbBadgeCollected}</div>
                 <div class="header-hero-selection-view__settings-button">⚙️ </div>
               </div>

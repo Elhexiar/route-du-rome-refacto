@@ -20,21 +20,15 @@ export class QuestCompletedToast {
   }
 
   render(): void {
-    let newLevel =
-      GameManager.experienceController?.badgeService.getAllCollectedBadges()
-        .length ?? 0;
-
-    // increment by 2 since the toaster slighltly lags behind the levelup
-    newLevel = newLevel + 2;
-
-    const levelTitle = `Niveau ${newLevel}`;
+    const currentLevel = GameManager.experienceController?.currentLevel ?? 1;
+    const levelTitle = `Niveau ${currentLevel}`;
 
     this.element.innerHTML = `
 
     <div id="levelup-toast">
       <div class="lut-stars">⭐✨⭐</div>
       <div class="lut-title">Niveau supérieur !</div>
-      <div class="lut-sub" id="lut-sub">Tu passes au niveau ${newLevel}</div>
+      <div class="lut-sub" id="lut-sub">Tu es maintenant au niveau ${currentLevel}</div>
       <div class="lut-badge" id="lut-badge">${levelTitle}</div>
     </div>
     `;

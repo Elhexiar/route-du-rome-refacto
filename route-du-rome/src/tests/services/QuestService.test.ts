@@ -60,6 +60,85 @@ describe("QuestService", () => {
     expect(service.levelData[0].id).toBe("level1");
   });
 
+  it("awards experience when a quest is completed so the level system remains authoritative", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          Levels: [
+            {
+              id: "level1",
+              name: "Niveau 1",
+              icon: "🌱",
+              min: 0,
+              max: 150,
+              description: "Test",
+            },
+            {
+              id: "level2",
+              name: "Niveau 2",
+              icon: "🌿",
+              min: 150,
+              max: 300,
+              description: "Test",
+            },
+          ],
+          Heroes: [],
+          Npcs: [],
+        }),
+      }),
+    );
+
+    const experienceController = {
+      currentExperience: 0,
+      currentLevel: 1,
+      currentExperienceLimit: 150,
+      badgeService: {
+        createBadge: vi.fn(),
+        collectBadge: vi.fn(),
+        getAllBadges: vi.fn(() => []),
+        getAllCollectedBadges: vi.fn(() => []),
+      },
+      addExperience: vi.fn(function (this: any, amount: number) {
+        this.currentExperience += amount;
+      }),
+      setLevelData: vi.fn(),
+      getCurrentLevelDefinition: vi.fn(() => ({
+        id: "level1",
+        name: "Niveau 1",
+        icon: "🌱",
+        min: 0,
+        max: 150,
+        description: "Test",
+      })),
+    };
+
+    GameManager.experienceController = experienceController as any;
+    GameManager.npcController = {
+      onNpcsLoaded: (callback: (npcs: any[]) => void) =>
+        callback([
+          {
+            id: "npc-1",
+            name: "Morgane",
+            jobSector: "Maritime",
+            icon: "⚓",
+            done: false,
+          },
+        ]),
+    } as any;
+
+    const service = new QuestService();
+    await service.LoadLevelDataFromConfig("/config.json");
+
+    const quest = service.quests.get("npc-1-default");
+    expect(quest).toBeTruthy();
+
+    quest!.Complete();
+
+    expect(experienceController.addExperience).toHaveBeenCalledWith(150);
+  });
+
   it("delegates the toast actions to the configured toast instances", () => {
     vi.stubGlobal(
       "fetch",
