@@ -83,16 +83,6 @@ export class DialogueController implements IDialogueController {
     });
   }
 
-  importDialogueFromJsonFile(_filePath: string): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
-
-  importDialogueFromJsonNode(_dialogueNodeJSON: any): void {
-    throw new Error("Method not implemented.");
-  }
-
-  ToggleNpcDialogueView(_npcId: string, _node: IDialogueNode): void {}
-
   completeQuestForSpeaker(npc: INpc): void {
     this.runtime.experienceController?.questService.quests
       .get(`${npc.id}-default`)

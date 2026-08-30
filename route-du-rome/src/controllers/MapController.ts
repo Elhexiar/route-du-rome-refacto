@@ -42,10 +42,10 @@ export class MapController implements IMapController {
       this.mapView = { markers: new Map() };
     }
 
-    this.initMapView(this.mapView);
+    this.initMapView();
   }
 
-  initMapView(_mapView: any): void {
+  initMapView(): void {
     this.runtime.npcController?.onNpcsLoaded((npcs) => {
       npcs.forEach((npc) => {
         this.addNpcMarker(npc.latitude, npc.longitude, npc);

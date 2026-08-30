@@ -9,14 +9,6 @@ export class NpcController implements INpcController {
   npcs: INpc[] = [];
   private onNpcsLoadedCallbacks: Array<(npcs: INpc[]) => void> = [];
 
-  get Npcs(): INpc[] {
-    return this.npcs;
-  }
-
-  set Npcs(value: INpc[]) {
-    this.npcs = value;
-  }
-
   constructor(configPath: string = "/config.json") {
     if (typeof window !== "undefined" && typeof document !== "undefined") {
       void this.loadNpcsFromConfig(configPath);

@@ -6,7 +6,7 @@ import { Npc } from "#Entities/Npc.ts";
 describe("NpcController", () => {
   it("adds, finds and removes NPCs from the registry", () => {
     const controller = Object.create(NpcController.prototype) as NpcController;
-    controller.Npcs = [];
+    controller.npcs = [];
     controller["onNpcsLoadedCallbacks"] = [];
 
     const npcA = new Npc(
@@ -53,7 +53,7 @@ describe("NpcController", () => {
 
   it("notifies when NPCs are loaded", () => {
     const controller = Object.create(NpcController.prototype) as NpcController;
-    controller.Npcs = [];
+    controller.npcs = [];
     controller["onNpcsLoadedCallbacks"] = [];
     const onLoaded = vi.fn();
 
@@ -75,9 +75,9 @@ describe("NpcController", () => {
       [],
     );
 
-    controller.Npcs.push(npc);
+    controller.npcs.push(npc);
     controller["onNpcsLoadedCallbacks"].forEach((callback) =>
-      callback(controller.Npcs),
+      callback(controller.npcs),
     );
 
     expect(onLoaded).toHaveBeenCalledWith([npc]);

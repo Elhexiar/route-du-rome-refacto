@@ -3,7 +3,7 @@ import type { IHero, INpc } from "#IEntities/index.ts";
 export interface IMapController {
   mapView: any;
 
-  initMapView(mapView: any): void;
+  initMapView(): void;
 
   addNpcMarker(latitude: number, longitude: number, npc: INpc): void;
 
