@@ -4,6 +4,10 @@ import type { IDialogueController } from "./IDialogueController.ts";
 export interface IHeroController {
   heroes: IHero[];
   readonly currentHero: IHero | null;
+  welcomeHeroSelectionView: {
+    ShowView(): void;
+    HideView(): void;
+  } | null;
 
   position: { latitude: number; longitude: number };
 

@@ -5,6 +5,7 @@ import { QuestService } from "#Services/QuestService.ts";
 import { BadgeService } from "#Services/BadgeService.ts";
 import type { EventBus } from "../events/EventBus";
 import { AppEvents } from "../events/AppEvents";
+import type { IHeroController } from "../interfaces/controllers/IHeroController";
 
 export class ExperienceController implements IExperienceController {
   questService: IQuestService;
@@ -17,9 +18,11 @@ export class ExperienceController implements IExperienceController {
     npcController?: {
       onNpcsLoaded: (callback: (npcs: any[]) => void) => void;
     } | null;
-    heroController?: {
-      onHeroesSwitched: (callback: (hero: any) => void) => void;
-    } | null;
+    heroController?:
+      | ({
+          onHeroesSwitched: (callback: (hero: any) => void) => void;
+        } & IHeroController)
+      | null;
     mapController?: { mapView?: { markers?: Map<any, any> } } | null;
     app?: HTMLElement | null;
     eventBus?: EventBus | null;
@@ -41,9 +44,11 @@ export class ExperienceController implements IExperienceController {
       npcController?: {
         onNpcsLoaded: (callback: (npcs: any[]) => void) => void;
       } | null;
-      heroController?: {
-        onHeroesSwitched: (callback: (hero: any) => void) => void;
-      } | null;
+      heroController?:
+        | ({
+            onHeroesSwitched: (callback: (hero: any) => void) => void;
+          } & IHeroController)
+        | null;
       mapController?: { mapView?: { markers?: Map<any, any> } } | null;
       app?: HTMLElement | null;
       eventBus?: EventBus | null;
@@ -63,7 +68,7 @@ export class ExperienceController implements IExperienceController {
       badgeService ??
       new BadgeService({
         app: this.runtime.app,
-        heroController: this.runtime.heroController as any,
+        heroController: this.runtime.heroController,
         eventBus: this.runtime.eventBus,
       });
     this.syncLevelFromExperience();

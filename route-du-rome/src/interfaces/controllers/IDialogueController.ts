@@ -1,5 +1,7 @@
 import type { IDialogue } from "#IEntities/dialogue/IDialogue";
 import type { IDialogueNode } from "#IEntities/dialogue/IDialogueNode";
+import type { IHero } from "#IEntities/IHero";
+import type { INpc } from "#IEntities/INpc";
 
 export interface IDialogueController {
   importDialogueFromJsonFile(filePath: string): Promise<void>;
@@ -12,4 +14,10 @@ export interface IDialogueController {
   dialogueRegistry: Map<string, IDialogue>;
   currentActiveDialogue: IDialogue | null | undefined;
   currentActiveNode: IDialogueNode | null | undefined;
+  dialogueView: {
+    ResetForNewSpeaker(speaker: INpc | IHero): void;
+    ResetForNewNPC(npc: INpc): void;
+    ShowView(): void;
+    HideView(): void;
+  } | null;
 }

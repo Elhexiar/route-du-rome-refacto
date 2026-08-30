@@ -1,12 +1,12 @@
-import type { BadgeService } from "#src/services/BadgeService.ts";
-import type { QuestService } from "#src/services/QuestService.ts";
+import type { IBadgeService } from "#src/interfaces/services/IBadgeService.ts";
+import type { IQuestService } from "#src/interfaces/services/IQuestService.ts";
 
 export class EndToast {
   private readonly toastElement: HTMLElement;
   private readonly runtime: {
     experienceController?: {
-      badgeService?: BadgeService;
-      questService?: QuestService;
+      badgeService?: Pick<IBadgeService, "getAllBadges">;
+      questService?: Pick<IQuestService, "levelData">;
     } | null;
   };
 
@@ -14,8 +14,8 @@ export class EndToast {
     container: HTMLElement,
     runtime: {
       experienceController?: {
-        badgeService?: BadgeService;
-        questService?: QuestService;
+        badgeService?: Pick<IBadgeService, "getAllBadges">;
+        questService?: Pick<IQuestService, "levelData">;
       } | null;
     },
   ) {
@@ -27,18 +27,17 @@ export class EndToast {
   }
 
   render(): void {
-    const badgeService = this.runtime.experienceController
-      ?.badgeService as BadgeService;
-    const questService = this.runtime.experienceController
-      ?.questService as QuestService;
+    const badgeService = this.runtime.experienceController?.badgeService;
+    const questService = this.runtime.experienceController?.questService;
+    const badges = badgeService?.getAllBadges?.() ?? [];
 
-    const totalXP = badgeService.getAllBadges().length * 150;
+    const totalXP = badges.length * 150;
 
-    const totalJobs = badgeService.getAllBadges().length;
+    const totalJobs = badges.length;
     const finalLevel = totalJobs + 1;
 
     const finalPlayerLevelIcon =
-      questService.levelData[finalLevel - 1]?.icon || "🌱";
+      questService?.levelData[finalLevel - 1]?.icon || "🌱";
 
     this.toastElement.innerHTML = `
         <div id="end-screen">
@@ -90,7 +89,6 @@ export class EndToast {
     const gridElement =
       this.toastElement.querySelector<HTMLElement>("#end-badges-grid");
     if (gridElement) {
-      const badges = badgeService.getAllBadges() ?? [];
       badges.forEach((badge) => {
         const card = document.createElement("div");
         card.className = "end-badge";

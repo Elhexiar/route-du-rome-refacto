@@ -27,6 +27,7 @@ export class QuestService implements IQuestService {
       badgeService?: {
         createBadge: (badge: any) => void;
         collectBadge: (id: string) => void;
+        getAllBadges: () => any[];
       };
       addExperience?: (amount: number) => void;
       setLevelData?: (levels: any[]) => void;
@@ -62,6 +63,7 @@ export class QuestService implements IQuestService {
         badgeService?: {
           createBadge: (badge: any) => void;
           collectBadge: (id: string) => void;
+          getAllBadges: () => any[];
         };
         addExperience?: (amount: number) => void;
         setLevelData?: (levels: any[]) => void;
@@ -202,10 +204,10 @@ export class QuestService implements IQuestService {
     const app = this.runtime.app;
     if (app && !this.runtime.eventBus) {
       this.questCompleteToast = new QuestCompletedToast(app, this.levelData, {
-        experienceController: this.runtime.experienceController as any,
+        experienceController: this.runtime.experienceController,
       });
       this.endToast = new EndToast(app, {
-        experienceController: this.runtime.experienceController as any,
+        experienceController: this.runtime.experienceController,
       });
     }
 

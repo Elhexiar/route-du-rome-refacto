@@ -27,7 +27,7 @@ export class NotificationService {
       { experienceController },
     );
     this.endToast = new EndToast(app, {
-      experienceController: experienceController as any,
+      experienceController,
     });
     this.notebookView = new NotebookView(app, {
       badgeService,

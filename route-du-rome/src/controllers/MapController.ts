@@ -1,6 +1,7 @@
 import type { IMapController } from "#IControllers/index.ts";
 import type { INpc, IHero } from "../interfaces/entities";
 import { LeafletMapView } from "#UI/map/MapView.ts";
+import type { IHeroController } from "../interfaces/controllers/IHeroController";
 
 export class MapController implements IMapController {
   mapView: any;
@@ -9,10 +10,12 @@ export class MapController implements IMapController {
     npcController?: {
       onNpcsLoaded: (callback: (npcs: any[]) => void) => void;
     } | null;
-    heroController?: {
-      onHeroesSwitched: (callback: (hero: any) => void) => void;
-      position?: { latitude: number; longitude: number };
-    } | null;
+    heroController?:
+      | ({
+          onHeroesSwitched: (callback: (hero: any) => void) => void;
+          position?: { latitude: number; longitude: number };
+        } & IHeroController)
+      | null;
   };
 
   constructor(
@@ -21,17 +24,19 @@ export class MapController implements IMapController {
       npcController?: {
         onNpcsLoaded: (callback: (npcs: any[]) => void) => void;
       } | null;
-      heroController?: {
-        onHeroesSwitched: (callback: (hero: any) => void) => void;
-        position?: { latitude: number; longitude: number };
-      } | null;
+      heroController?:
+        | ({
+            onHeroesSwitched: (callback: (hero: any) => void) => void;
+            position?: { latitude: number; longitude: number };
+          } & IHeroController)
+        | null;
     } | null = null,
   ) {
     this.runtime = runtime ?? {};
 
     if (typeof document !== "undefined") {
       this.mapView = new LeafletMapView(_app, {
-        heroController: this.runtime.heroController as any,
+        heroController: this.runtime.heroController,
       });
     } else {
       this.mapView = { markers: new Map() };

@@ -3,6 +3,7 @@ import type { IBadge } from "../entities";
 export interface IBadgeService {
   badges: Map<string, IBadge>;
   collectedBadges: Set<string>;
+  NotebookView: { ShowView(): void; HideView(): void } | null;
 
   onBadgeCollected(callback: () => void): void;
   onBadgeUncollected(callback: () => void): void;

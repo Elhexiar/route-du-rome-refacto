@@ -6,36 +6,14 @@ import type { IQuestService } from "../interfaces/services/IQuestService";
 import type { IBadgeService } from "../interfaces/services/IBadgeService";
 import type { IHero } from "../interfaces/entities/IHero";
 import type { IDialogue } from "../interfaces/entities/dialogue/IDialogue";
-import type { DialogueView } from "../ui/dialogue/DialogueView";
-import type { WelcomeHeroSelectionView } from "../ui/WelcomeHeroSelectionView";
-import type { NotebookView } from "../ui/experience/NotebookView";
-import type { QuestCompletedToast } from "../ui/experience/QuestCompletedToast";
-import type { EndToast } from "../ui/experience/EndToast";
-
-interface ConsoleHeroController extends IHeroController {
-  welcomeHeroSelectionView?: WelcomeHeroSelectionView | null;
-}
-
-interface ConsoleDialogueController extends IDialogueController {
-  dialogueView?: DialogueView | null;
-}
-
-interface ConsoleQuestService extends IQuestService {
-  QuestCompleteToast?: QuestCompletedToast | null;
-  EndToast?: EndToast | null;
-}
-
-interface ConsoleBadgeService extends IBadgeService {
-  NotebookView?: NotebookView | null;
-}
 
 export interface ConsoleTestRuntime {
-  heroController: ConsoleHeroController;
+  heroController: IHeroController;
   npcController: INpcController;
-  dialogueController: ConsoleDialogueController;
+  dialogueController: IDialogueController;
   experienceController: IExperienceController;
-  questService: ConsoleQuestService;
-  badgeService: ConsoleBadgeService;
+  questService: IQuestService;
+  badgeService: IBadgeService;
 }
 
 export class ConsoleTestController {

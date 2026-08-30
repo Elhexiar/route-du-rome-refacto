@@ -19,12 +19,12 @@ if (app) {
   GameManager.experienceController = dependencies.experienceController;
   GameManager.headerView = dependencies.headerView;
   GameManager.consoleTestController = new ConsoleTestController({
-    heroController: dependencies.heroController as any,
+    heroController: dependencies.heroController,
     npcController: dependencies.npcController,
-    dialogueController: dependencies.dialogueController as any,
+    dialogueController: dependencies.dialogueController,
     experienceController: dependencies.experienceController,
-    questService: dependencies.experienceController.questService as any,
-    badgeService: dependencies.experienceController.badgeService as any,
+    questService: dependencies.experienceController.questService,
+    badgeService: dependencies.experienceController.badgeService,
   });
 }
 
