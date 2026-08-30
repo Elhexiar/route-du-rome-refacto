@@ -12,12 +12,7 @@ if (app) {
 
   // Keep the legacy singleton available for browser console inspection.
   GameManager.create(app);
-  GameManager.heroController = dependencies.heroController;
-  GameManager.npcController = dependencies.npcController;
-  GameManager.mapController = dependencies.mapController;
-  GameManager.dialogueController = dependencies.dialogueController;
-  GameManager.experienceController = dependencies.experienceController;
-  GameManager.headerView = dependencies.headerView;
+  GameManager.bind(dependencies);
   GameManager.consoleTestController = new ConsoleTestController({
     heroController: dependencies.heroController,
     npcController: dependencies.npcController,
