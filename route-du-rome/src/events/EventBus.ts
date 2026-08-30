@@ -1,72 +1,63 @@
 /**
- * Simple pub/sub event bus for decoupled communication between services and views.
- * Replaces direct dependencies with event-based communication.
+ * Simple pub/sub message bus for typed application events.
  */
+import type { AppEventPayloads, AppEventType } from "./AppEvents";
 
-export interface GameEvent {
-  type: string;
-  data?: Record<string, any>;
-  timestamp?: number;
-}
+export type AppEvent<T extends AppEventType = AppEventType> = {
+  [EventType in T]: {
+    type: EventType;
+    data: AppEventPayloads[EventType];
+    timestamp?: number;
+  };
+}[T];
 
-export type EventListener = (event: GameEvent) => void;
+export type EventListener<T extends AppEventType = AppEventType> = (
+  event: AppEvent<T>,
+) => void;
+
+export type GameEvent = AppEvent;
 
 export class EventBus {
   private listeners: Map<string, Set<EventListener>> = new Map();
 
-  /**
-   * Subscribe to an event type
-   */
-  on(eventType: string, listener: EventListener): void {
+  on<T extends AppEventType>(eventType: T, listener: EventListener<T>): void {
     if (!this.listeners.has(eventType)) {
       this.listeners.set(eventType, new Set());
     }
-    this.listeners.get(eventType)!.add(listener);
+    this.listeners.get(eventType)!.add(listener as EventListener);
   }
 
-  /**
-   * Subscribe to an event once, then automatically unsubscribe
-   */
-  once(eventType: string, listener: EventListener): void {
-    const wrappedListener: EventListener = (event: GameEvent) => {
+  once<T extends AppEventType>(
+    eventType: T,
+    listener: EventListener<T>,
+  ): void {
+    const wrappedListener: EventListener<T> = (event) => {
       listener(event);
       this.off(eventType, wrappedListener);
     };
     this.on(eventType, wrappedListener);
   }
 
-  /**
-   * Unsubscribe from an event type
-   */
-  off(eventType: string, listener: EventListener): void {
-    this.listeners.get(eventType)?.delete(listener);
+  off<T extends AppEventType>(eventType: T, listener: EventListener<T>): void {
+    this.listeners.get(eventType)?.delete(listener as EventListener);
   }
 
-  /**
-   * Emit an event to all listeners
-   */
-  emit(event: GameEvent): void {
+  emit<T extends AppEventType>(event: AppEvent<T>): void {
     event.timestamp = event.timestamp ?? Date.now();
     this.listeners.get(event.type)?.forEach((listener) => {
       try {
-        listener(event);
+        (listener as EventListener<T>)(event);
       } catch (error) {
         console.error(`Error in listener for event ${event.type}:`, error);
       }
     });
   }
 
-  /**
-   * Clear all listeners (useful for testing)
-   */
   clear(): void {
     this.listeners.clear();
   }
 
-  /**
-   * Get count of listeners for an event type (useful for debugging)
-   */
-  listenerCount(eventType: string): number {
+  listenerCount(eventType: AppEventType): number {
     return this.listeners.get(eventType)?.size ?? 0;
   }
 }

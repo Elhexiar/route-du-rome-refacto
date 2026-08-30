@@ -1,5 +1,5 @@
 import { AppEvents } from "../events/AppEvents";
-import type { EventBus, GameEvent } from "../events/EventBus";
+import type { AppEvent, EventBus } from "../events/EventBus";
 import type { ExperienceController } from "../controllers/ExperienceController";
 import type { QuestService } from "./QuestService";
 import { QuestCompletedToast } from "../ui/experience/QuestCompletedToast";
@@ -46,7 +46,9 @@ export class NotificationService {
     });
   }
 
-  private handleNotification(event: GameEvent): void {
+  private handleNotification(
+    event: AppEvent<typeof AppEvents.NOTIFICATION_SHOW>,
+  ): void {
     if (event.data?.type === "toast-quest") {
       this.questCompletedToast.ShowToast();
     }
