@@ -1,8 +1,9 @@
 import type { IBadgeService } from "#IServices/index";
 import type { IBadge } from "../interfaces/entities";
-import { GameManager } from "#Controllers/GameManager";
 import { NotebookView } from "#UI/experience/NotebookView.ts";
 import type { IHeroController } from "#IControllers/index.ts";
+import type { EventBus } from "../events/EventBus";
+import { AppEvents } from "../events/AppEvents";
 
 export class BadgeService implements IBadgeService {
   badges: Map<string, IBadge>;
@@ -14,6 +15,7 @@ export class BadgeService implements IBadgeService {
   private readonly runtime: {
     app?: HTMLElement | null;
     heroController?: IHeroController | null;
+    eventBus?: EventBus | null;
   };
 
   get NotebookView(): NotebookView | null {
@@ -28,17 +30,15 @@ export class BadgeService implements IBadgeService {
     runtime: {
       app?: HTMLElement | null;
       heroController?: IHeroController | null;
+      eventBus?: EventBus | null;
     } | null = null,
   ) {
     this.badges = new Map<string, IBadge>();
     this.collectedBadges = new Set<string>();
-    this.runtime = runtime ?? {
-      app: GameManager.app,
-      heroController: GameManager.heroController,
-    };
+    this.runtime = runtime ?? {};
 
     const app = this.runtime.app;
-    if (app) {
+    if (app && !this.runtime.eventBus) {
       this.notebookView = new NotebookView(app, {
         badgeService: this,
         heroController: this.runtime.heroController,
@@ -96,7 +96,10 @@ export class BadgeService implements IBadgeService {
     badge.Unlock();
     this.collectedBadges.add(badgeId);
     this.onBadgeCollectedCallbacks.forEach((callback) => callback());
-    this.notebookView?.ShowView();
+    this.emitBadgeCollected(badgeId);
+    if (!this.runtime.eventBus) {
+      this.notebookView?.ShowView();
+    }
 
     return true;
   }
@@ -110,7 +113,31 @@ export class BadgeService implements IBadgeService {
     badge.collected = false;
     this.collectedBadges.delete(badgeId);
     this.onBadgeUncollectedCallbacks.forEach((callback) => callback());
+    this.emitBadgeUncollected(badgeId);
 
     return true;
+  }
+
+  /**
+   * Emit event when a badge is collected.
+   * This is called alongside the existing callback logic.
+   * Future: UI components will listen to events instead of relying on callbacks.
+   */
+  emitBadgeCollected(badgeId: string): void {
+    this.runtime.eventBus?.emit({
+      type: AppEvents.BADGE_COLLECTED,
+      data: { badgeId },
+    });
+  }
+
+  /**
+   * Emit event when a badge is uncollected.
+   * This is called alongside the existing callback logic.
+   */
+  emitBadgeUncollected(badgeId: string): void {
+    this.runtime.eventBus?.emit({
+      type: AppEvents.BADGE_UNCOLLECTED,
+      data: { badgeId },
+    });
   }
 }

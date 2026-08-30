@@ -8,13 +8,15 @@
  *   const container = ApplicationContainer.create(appElement);
  */
 
-import { EventBus } from "#events/EventBus";
-import { NpcController } from "#Controllers/NpcController";
-import { HeroController } from "#Controllers/HeroController";
-import { MapController } from "#Controllers/MapController";
-import { DialogueController } from "#Controllers/DialogueController";
-import { ExperienceController } from "#Controllers/ExperienceController";
-import { HeaderHeroSelectionView } from "#UI/HeaderHeroSelectionView";
+import { EventBus } from "../events/EventBus";
+import { NpcController } from "../controllers/NpcController";
+import { HeroController } from "../controllers/HeroController";
+import { MapController } from "../controllers/MapController";
+import { DialogueController } from "../controllers/DialogueController";
+import { ExperienceController } from "../controllers/ExperienceController";
+import { HeaderHeroSelectionView } from "../ui/HeaderHeroSelectionView";
+import { NotificationService } from "../services/NotificationService";
+import { QuestService } from "../services/QuestService";
 import type { IHeroController } from "#IControllers/IHeroController";
 import type { INpcController } from "#IControllers/INpcController";
 import type { IMapController } from "#IControllers/IMapController";
@@ -28,6 +30,7 @@ export interface AppDependencies {
   mapController: IMapController | null;
   dialogueController: IDialogueController;
   experienceController: IExperienceController;
+  notificationService: NotificationService;
   headerView: HeaderHeroSelectionView;
 }
 
@@ -62,6 +65,7 @@ export class ApplicationContainer {
       heroController,
       mapController,
       app: appElement,
+      eventBus,
     });
 
     // DialogueController now has access to experienceController
@@ -72,6 +76,22 @@ export class ApplicationContainer {
       experienceController,
     });
 
+    // Initialize the welcome hero selection view, it needs to be done after the controllers are created so it can access them
+    heroController.initializeWelcomeHeroSelectionView(
+      appElement,
+      dialogueController,
+    );
+
+    // NotificationService needs access to questService and experienceController
+    const notificationService = new NotificationService(
+      appElement,
+      eventBus,
+      experienceController.questService as QuestService,
+      experienceController,
+      experienceController.badgeService as import("../services/BadgeService").BadgeService,
+      heroController,
+    );
+
     // 3. Create header view
     const headerView = new HeaderHeroSelectionView(appElement, {
       heroController,
@@ -79,11 +99,7 @@ export class ApplicationContainer {
       dialogueController,
     });
 
-    // 4. Wire up event listeners (services listening to events, etc.)
-    // This is where you'd add: eventBus.on(AppEvents.QUEST_COMPLETED, () => ...)
-    // For now, this is empty but the pattern is established
-
-    // 5. Store and return
+    // 4. Store and return
     const dependencies: AppDependencies = {
       eventBus,
       npcController,
@@ -91,6 +107,7 @@ export class ApplicationContainer {
       mapController,
       dialogueController,
       experienceController,
+      notificationService,
       headerView,
     };
 

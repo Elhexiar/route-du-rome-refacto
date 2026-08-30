@@ -4,8 +4,8 @@ import type { ConfigData } from "#Entities/Config.ts";
 import { Hero } from "#Entities/Hero.ts";
 import { Dialogue } from "#Entities/dialogue/Dialogue.ts";
 import { WelcomeHeroSelectionView } from "#UI/WelcomeHeroSelectionView.ts";
-import { GameManager } from "#Controllers/GameManager.ts";
 import { VideoPreloadService } from "#Services/VideoPreloadService.ts";
+import type { IDialogueController } from "#IControllers/IDialogueController";
 
 export class HeroController implements IHeroController {
   heroes: IHero[] = [];
@@ -77,18 +77,30 @@ export class HeroController implements IHeroController {
 
     console.log("Heroes added from JSON:", this.heroes);
 
-    const appContainer =
-      GameManager.app ??
-      (typeof document !== "undefined" ? document.body : null);
+    this.onHeroesLoadedCallbacks.forEach((callback) => callback(this.heroes));
+  }
 
-    if (appContainer) {
+  initializeWelcomeHeroSelectionView(
+    appContainer: HTMLElement,
+    dialogueController: IDialogueController,
+  ): void {
+    const createView = (): void => {
+      if (this.welcomeHeroSelectionView) {
+        return;
+      }
+
       this.welcomeHeroSelectionView = new WelcomeHeroSelectionView(
         appContainer,
-        { heroController: this },
+        { heroController: this, dialogueController },
       );
+    };
+
+    if (this.heroes.length > 0) {
+      createView();
+      return;
     }
 
-    this.onHeroesLoadedCallbacks.forEach((callback) => callback(this.heroes));
+    this.onHeroesLoaded(createView);
   }
 
   switchHero(hero: IHero): void {

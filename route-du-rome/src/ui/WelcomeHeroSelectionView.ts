@@ -83,6 +83,11 @@ export class WelcomeHeroSelectionView {
         const dialogueController = this.runtime
           .dialogueController as DialogueController;
 
+        // Reset the hero's presentation dialogue to start from the beginning
+        if (hero.presentationDialogue) {
+          hero.presentationDialogue.Reset();
+        }
+
         dialogueController.dialogueView?.ResetForNewSpeaker(hero);
         dialogueController.dialogueView?.ShowView();
       }

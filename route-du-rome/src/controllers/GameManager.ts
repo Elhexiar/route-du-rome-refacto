@@ -54,6 +54,11 @@ export class GameManager {
       experienceController: this._experienceController,
     });
 
+    this._heroController.initializeWelcomeHeroSelectionView(
+      this._app as HTMLElement,
+      this._dialogueController,
+    );
+
     this._headerView = new HeaderHeroSelectionView(this._app as HTMLElement, {
       heroController: this._heroController,
       experienceController: this._experienceController,

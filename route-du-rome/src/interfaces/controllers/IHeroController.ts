@@ -1,4 +1,5 @@
 import type { IHero } from "#IEntities/IHero.ts";
+import type { IDialogueController } from "./IDialogueController.ts";
 
 export interface IHeroController {
   heroes: IHero[];
@@ -14,4 +15,9 @@ export interface IHeroController {
 
   onHeroesLoaded(callback: (heroes: IHero[]) => void): void;
   onHeroesSwitched(callback: (hero: IHero | null) => void): void;
+
+  initializeWelcomeHeroSelectionView(
+    appContainer: HTMLElement,
+    dialogueController: IDialogueController,
+  ): void;
 }

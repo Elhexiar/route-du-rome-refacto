@@ -7,6 +7,8 @@ import type { INpc } from "#IEntities/index.ts";
 import type { ConfigData } from "#src/entities/Config.ts";
 import { QuestCompletedToast } from "#src/ui/experience/QuestCompletedToast.ts";
 import { EndToast } from "#src/ui/experience/EndToast.ts";
+import type { EventBus } from "../events/EventBus";
+import { AppEvents } from "../events/AppEvents";
 
 export class QuestService implements IQuestService {
   private static readonly questXpReward = 150;
@@ -29,9 +31,11 @@ export class QuestService implements IQuestService {
       };
       addExperience?: (amount: number) => void;
       setLevelData?: (levels: any[]) => void;
+      currentLevel?: number;
     } | null;
     mapController?: { mapView?: { markers?: Map<any, any> } } | null;
     app?: HTMLElement | null;
+    eventBus?: EventBus | null;
   };
 
   get QuestCompleteToast(): QuestCompletedToast | null {
@@ -62,9 +66,11 @@ export class QuestService implements IQuestService {
         };
         addExperience?: (amount: number) => void;
         setLevelData?: (levels: any[]) => void;
+        currentLevel?: number;
       } | null;
       mapController?: { mapView?: { markers?: Map<any, any> } } | null;
       app?: HTMLElement | null;
+      eventBus?: EventBus | null;
     } | null = null,
   ) {
     this.runtime = runtime ?? {
@@ -72,6 +78,7 @@ export class QuestService implements IQuestService {
       experienceController: GameManager.experienceController,
       mapController: GameManager.mapController,
       app: GameManager.app,
+      eventBus: null,
     };
 
     this.initializeDefaultQuests();
@@ -107,8 +114,11 @@ export class QuestService implements IQuestService {
       this.runtime.mapController?.mapView?.markers?.get(npc)?.UpdateMarker?.();
 
       if (this.areAllQuestsCompleted()) {
+        this.emitQuestCompleted(defaultQuest.id, QuestService.questXpReward);
+        this.emitGameEnded();
         this.toggleEndToast();
       } else {
+        this.emitQuestCompleted(defaultQuest.id, QuestService.questXpReward);
         this.showToast();
       }
     });
@@ -197,7 +207,7 @@ export class QuestService implements IQuestService {
     this.runtime.experienceController?.setLevelData?.(this.levelData);
 
     const app = this.runtime.app ?? GameManager.app;
-    if (app) {
+    if (app && !this.runtime.eventBus) {
       this.questCompleteToast = new QuestCompletedToast(app, this.levelData, {
         experienceController: this.runtime.experienceController as any,
       });
@@ -214,6 +224,18 @@ export class QuestService implements IQuestService {
   }
 
   showToast(): void {
+    this.runtime.eventBus?.emit({
+      type: AppEvents.NOTIFICATION_SHOW,
+      data: {
+        type: "toast-quest",
+        message: "Quete terminee",
+      },
+    });
+
+    if (this.runtime.eventBus) {
+      return;
+    }
+
     if (!this.questCompleteToast) {
       console.error("QuestCompleteToast is not initialized.");
       return;
@@ -227,6 +249,18 @@ export class QuestService implements IQuestService {
   }
 
   toggleEndToast(): void {
+    this.runtime.eventBus?.emit({
+      type: AppEvents.NOTIFICATION_SHOW,
+      data: {
+        type: "toast-end",
+        message: "Jeu termine",
+      },
+    });
+
+    if (this.runtime.eventBus) {
+      return;
+    }
+
     if (!this.endToast) {
       console.error("EndToast is not initialized.");
       return;
@@ -237,5 +271,28 @@ export class QuestService implements IQuestService {
 
   ToggleEndToast(): void {
     this.toggleEndToast();
+  }
+
+  /**
+   * Emit event when a quest is completed.
+   * This is called alongside the existing toast display logic.
+   * Future: UI components will listen to events instead of relying on toasts.
+   */
+  emitQuestCompleted(questId: string, xpReward: number): void {
+    this.runtime.eventBus?.emit({
+      type: AppEvents.QUEST_COMPLETED,
+      data: { questId, xpReward },
+    });
+  }
+
+  /**
+   * Emit event when the game ends (all quests completed).
+   * This is called alongside the existing end toast logic.
+   */
+  emitGameEnded(): void {
+    this.runtime.eventBus?.emit({
+      type: AppEvents.GAME_ENDED,
+      data: {},
+    });
   }
 }

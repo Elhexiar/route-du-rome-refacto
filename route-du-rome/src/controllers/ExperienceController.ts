@@ -3,6 +3,8 @@ import type { LevelData } from "#src/entities/Config.ts";
 import type { IQuestService, IBadgeService } from "../interfaces/services";
 import { QuestService } from "#Services/QuestService.ts";
 import { BadgeService } from "#Services/BadgeService.ts";
+import type { EventBus } from "../events/EventBus";
+import { AppEvents } from "../events/AppEvents";
 
 export class ExperienceController implements IExperienceController {
   questService: IQuestService;
@@ -20,6 +22,7 @@ export class ExperienceController implements IExperienceController {
     } | null;
     mapController?: { mapView?: { markers?: Map<any, any> } } | null;
     app?: HTMLElement | null;
+    eventBus?: EventBus | null;
   };
 
   get curentExperience(): number {
@@ -43,6 +46,7 @@ export class ExperienceController implements IExperienceController {
       } | null;
       mapController?: { mapView?: { markers?: Map<any, any> } } | null;
       app?: HTMLElement | null;
+      eventBus?: EventBus | null;
     } | null = null,
   ) {
     this.runtime = runtime ?? {};
@@ -53,12 +57,14 @@ export class ExperienceController implements IExperienceController {
         experienceController: this,
         mapController: this.runtime.mapController,
         app: this.runtime.app,
+        eventBus: this.runtime.eventBus,
       });
     this.badgeService =
       badgeService ??
       new BadgeService({
         app: this.runtime.app,
         heroController: this.runtime.heroController as any,
+        eventBus: this.runtime.eventBus,
       });
     this.syncLevelFromExperience();
   }
@@ -112,8 +118,27 @@ export class ExperienceController implements IExperienceController {
       return;
     }
 
+    const previousLevel = this.currentLevel;
     this.currentExperience += amount;
     this.syncLevelFromExperience();
+
+    this.runtime.eventBus?.emit({
+      type: AppEvents.EXPERIENCE_GAINED,
+      data: {
+        amount,
+        totalExperience: this.currentExperience,
+      },
+    });
+
+    if (this.currentLevel > previousLevel) {
+      this.runtime.eventBus?.emit({
+        type: AppEvents.LEVEL_UP,
+        data: {
+          newLevel: this.currentLevel,
+          totalExperience: this.currentExperience,
+        },
+      });
+    }
   }
 
   levelUp(): void {
