@@ -1,6 +1,5 @@
 import type { IQuestService } from "#IServices/index";
 import type { IQuest } from "#src/interfaces/entities/IQuest.ts";
-import { GameManager } from "#Controllers/GameManager.ts";
 import { NPCDefaultQuest } from "#Entities/Quest.ts";
 import { NPCBadge } from "#Entities/NPCBadge.ts";
 import type { INpc } from "#IEntities/index.ts";
@@ -73,13 +72,7 @@ export class QuestService implements IQuestService {
       eventBus?: EventBus | null;
     } | null = null,
   ) {
-    this.runtime = runtime ?? {
-      npcController: GameManager.npcController,
-      experienceController: GameManager.experienceController,
-      mapController: GameManager.mapController,
-      app: GameManager.app,
-      eventBus: null,
-    };
+    this.runtime = runtime ?? {};
 
     this.initializeDefaultQuests();
     this.loadLevelDataFromConfig("/config.json").catch(() => undefined);
@@ -206,7 +199,7 @@ export class QuestService implements IQuestService {
     this.levelData = configData.Levels;
     this.runtime.experienceController?.setLevelData?.(this.levelData);
 
-    const app = this.runtime.app ?? GameManager.app;
+    const app = this.runtime.app;
     if (app && !this.runtime.eventBus) {
       this.questCompleteToast = new QuestCompletedToast(app, this.levelData, {
         experienceController: this.runtime.experienceController as any,

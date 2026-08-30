@@ -1,4 +1,3 @@
-import { GameManager } from "#Controllers/GameManager";
 import type { BadgeService } from "#src/services/BadgeService.ts";
 import type { DialogueController, HeroController } from "../controllers";
 import type {
@@ -27,11 +26,7 @@ export class HeaderHeroSelectionView {
     this.element = document.createElement("section");
     this.element.className = "header-hero-selection-view";
     container.prepend(this.element);
-    this.runtime = runtime ?? {
-      heroController: GameManager.heroController,
-      experienceController: GameManager.experienceController,
-      dialogueController: GameManager.dialogueController,
-    };
+    this.runtime = runtime ?? {};
     this.render();
 
     // Re-render when heroes are loaded asynchronously

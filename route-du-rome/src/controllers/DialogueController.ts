@@ -1,7 +1,6 @@
 import type { IDialogueController } from "#IControllers/IDialogueController";
 import type { IExperienceController } from "#IControllers/index.ts";
 import { DialogueView } from "#src/ui/dialogue/DialogueView.ts";
-import { GameManager } from "./GameManager.ts";
 import type { IDialogue, IDialogueNode } from "../interfaces/entities";
 
 export class DialogueController implements IDialogueController {
@@ -45,12 +44,7 @@ export class DialogueController implements IDialogueController {
     this.dialogueRegistry = new Map<string, IDialogue>();
     this.currentActiveDialogue = null;
     this.currentActiveNode = null;
-    this.runtime = runtime ?? {
-      npcController: GameManager.npcController,
-      heroController: GameManager.heroController,
-      mapController: GameManager.mapController,
-      experienceController: GameManager.experienceController,
-    };
+    this.runtime = runtime ?? {};
 
     this.dialogueView = app
       ? new DialogueView(app as HTMLElement, {

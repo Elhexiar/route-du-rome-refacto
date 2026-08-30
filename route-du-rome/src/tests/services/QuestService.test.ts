@@ -1,12 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { GameManager } from "#Controllers/GameManager.ts";
 import { NPCDefaultQuest } from "#Entities/Quest.ts";
 import { QuestService } from "#Services/QuestService.ts";
 
 describe("QuestService", () => {
   afterEach(() => {
-    GameManager.resetForTests();
     vi.unstubAllGlobals();
   });
 
@@ -19,9 +17,6 @@ describe("QuestService", () => {
       done: false,
     } as any;
 
-    GameManager.npcController = {
-      onNpcsLoaded: (callback: (npcs: any[]) => void) => callback([npc]),
-    } as any;
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue({
@@ -43,7 +38,11 @@ describe("QuestService", () => {
       }),
     );
 
-    const service = new QuestService();
+    const service = new QuestService({
+      npcController: {
+        onNpcsLoaded: (callback: (npcs: any[]) => void) => callback([npc]),
+      },
+    });
     await service.LoadLevelDataFromConfig("/config.json");
 
     expect(service.quests.has("npc-1-default")).toBe(true);
@@ -114,21 +113,21 @@ describe("QuestService", () => {
       })),
     };
 
-    GameManager.experienceController = experienceController as any;
-    GameManager.npcController = {
-      onNpcsLoaded: (callback: (npcs: any[]) => void) =>
-        callback([
-          {
-            id: "npc-1",
-            name: "Morgane",
-            jobSector: "Maritime",
-            icon: "⚓",
-            done: false,
-          },
-        ]),
-    } as any;
-
-    const service = new QuestService();
+    const service = new QuestService({
+      experienceController: experienceController as any,
+      npcController: {
+        onNpcsLoaded: (callback: (npcs: any[]) => void) =>
+          callback([
+            {
+              id: "npc-1",
+              name: "Morgane",
+              jobSector: "Maritime",
+              icon: "⚓",
+              done: false,
+            },
+          ]),
+      },
+    });
     await service.LoadLevelDataFromConfig("/config.json");
 
     const quest = service.quests.get("npc-1-default");

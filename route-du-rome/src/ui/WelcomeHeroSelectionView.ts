@@ -1,4 +1,3 @@
-import { GameManager } from "#Controllers/GameManager";
 import type { DialogueController } from "#Controllers/DialogueController";
 import type {
   IHeroController,
@@ -25,10 +24,7 @@ export class WelcomeHeroSelectionView {
     this.element = document.createElement("section");
     this.element.className = "welcome-hero-selection-view";
     container.appendChild(this.element);
-    this.runtime = runtime ?? {
-      heroController: GameManager.heroController,
-      dialogueController: GameManager.dialogueController,
-    };
+    this.runtime = runtime ?? {};
 
     this.render();
     this.tutorialView = new TutorialView(this.element);

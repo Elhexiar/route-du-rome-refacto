@@ -1,7 +1,6 @@
 import type { IMapController } from "#IControllers/index.ts";
 import type { INpc, IHero } from "../interfaces/entities";
 import { LeafletMapView } from "#UI/map/MapView.ts";
-import { GameManager } from "./GameManager";
 
 export class MapController implements IMapController {
   mapView: any;
@@ -28,10 +27,7 @@ export class MapController implements IMapController {
       } | null;
     } | null = null,
   ) {
-    this.runtime = runtime ?? {
-      npcController: GameManager.npcController,
-      heroController: GameManager.heroController,
-    };
+    this.runtime = runtime ?? {};
 
     if (typeof document !== "undefined") {
       this.mapView = new LeafletMapView(_app, {
