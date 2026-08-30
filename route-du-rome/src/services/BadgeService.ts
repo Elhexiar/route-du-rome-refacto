@@ -2,6 +2,7 @@ import type { IBadgeService } from "#IServices/index";
 import type { IBadge } from "../interfaces/entities";
 import { GameManager } from "#Controllers/GameManager";
 import { NotebookView } from "#UI/experience/NotebookView.ts";
+import type { IHeroController } from "#IControllers/index.ts";
 
 export class BadgeService implements IBadgeService {
   badges: Map<string, IBadge>;
@@ -10,6 +11,10 @@ export class BadgeService implements IBadgeService {
   onBadgeUncollectedCallbacks: (() => void)[] = [];
 
   notebookView: NotebookView | null = null;
+  private readonly runtime: {
+    app?: HTMLElement | null;
+    heroController?: IHeroController | null;
+  };
 
   get NotebookView(): NotebookView | null {
     return this.notebookView;
@@ -19,13 +24,25 @@ export class BadgeService implements IBadgeService {
     this.notebookView = value;
   }
 
-  constructor() {
+  constructor(
+    runtime: {
+      app?: HTMLElement | null;
+      heroController?: IHeroController | null;
+    } | null = null,
+  ) {
     this.badges = new Map<string, IBadge>();
     this.collectedBadges = new Set<string>();
+    this.runtime = runtime ?? {
+      app: GameManager.app,
+      heroController: GameManager.heroController,
+    };
 
-    const app = GameManager.app;
+    const app = this.runtime.app;
     if (app) {
-      this.notebookView = new NotebookView(app);
+      this.notebookView = new NotebookView(app, {
+        badgeService: this,
+        heroController: this.runtime.heroController,
+      });
     }
   }
 

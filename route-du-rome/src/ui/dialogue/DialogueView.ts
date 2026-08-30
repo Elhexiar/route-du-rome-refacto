@@ -5,6 +5,10 @@ import type { IDialogue } from "#IEntities/dialogue/IDialogue";
 import type { IDialogueView } from "#IUI/IDialogueView";
 import type { IChoice } from "#src/interfaces/entities/dialogue/IDialogueNode.ts";
 import { GameManager } from "#Controllers/GameManager";
+import type {
+  IExperienceController,
+  IDialogueController,
+} from "#IControllers/index.ts";
 import { DialogueBackgroundVideoController } from "./DialogueBackgroundVideoController.ts";
 import {
   initializeDialogueLayout,
@@ -30,11 +34,25 @@ export class DialogueView implements IDialogueView {
   private readonly element: HTMLElement;
   private readonly typingAnimator = new DialogueTypingAnimator(24);
   private readonly backgroundVideoController: DialogueBackgroundVideoController;
+  private readonly runtime: {
+    experienceController?: IExperienceController | null;
+    dialogueController?: IDialogueController | null;
+  };
 
-  constructor(container: HTMLElement) {
+  constructor(
+    container: HTMLElement,
+    runtime: {
+      experienceController?: IExperienceController | null;
+      dialogueController?: IDialogueController | null;
+    } | null = null,
+  ) {
     this.element = document.createElement("section");
     this.element.className = "dialogue-view";
     container.appendChild(this.element);
+    this.runtime = runtime ?? {
+      experienceController: GameManager.experienceController,
+      dialogueController: GameManager.dialogueController,
+    };
 
     const layoutRefs = initializeDialogueLayout(this.element);
     this.textElement = layoutRefs.textElement;
@@ -94,7 +112,7 @@ export class DialogueView implements IDialogueView {
         this.jobPresentationView.onClosed(() => {
           const currentSpeaker = this.speaker;
           if (currentSpeaker && "id" in currentSpeaker) {
-            GameManager.experienceController?.questService.quests
+            this.runtime.experienceController?.questService.quests
               .get(`${currentSpeaker.id}-default`)
               ?.Complete();
           }
@@ -102,12 +120,12 @@ export class DialogueView implements IDialogueView {
       }
     }
 
-    if (GameManager.dialogueController) {
+    if (this.runtime.dialogueController) {
       console.log(
         "Mise à jour du dialogue actif dans le DialogueController :",
         this.speaker.name,
       );
-      GameManager.dialogueController.currentActiveDialogue = this.dialogue;
+      this.runtime.dialogueController.currentActiveDialogue = this.dialogue;
     }
     this.render();
   }
@@ -131,12 +149,12 @@ export class DialogueView implements IDialogueView {
 
   // TODO: inverse the logic here, have the dialogue controller hook on a callback from the view, instead of the view notifying the controller
   notifyController() {
-    if (GameManager.dialogueController) {
+    if (this.runtime.dialogueController) {
       console.log(
         "Mise à jour du dialogue actif dans le DialogueController :",
         this.speaker?.name,
       );
-      GameManager.dialogueController.currentActiveDialogue = this.dialogue;
+      this.runtime.dialogueController.currentActiveDialogue = this.dialogue;
     }
   }
 

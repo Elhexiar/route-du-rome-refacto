@@ -39,4 +39,15 @@ describe("GameManager", () => {
 
     expect(GameManager.app).toBe(app);
   });
+
+  it("creates an explicit runtime instance without relying on the singleton bootstrap alone", () => {
+    GameManager.resetForTests();
+    const app = { id: "runtime-app" } as HTMLElement;
+
+    const manager = GameManager.create(app, "/config.json");
+
+    expect(manager).toBeInstanceOf(GameManager);
+    expect(manager.app).toBe(app);
+    expect(GameManager.instance).toBe(manager);
+  });
 });

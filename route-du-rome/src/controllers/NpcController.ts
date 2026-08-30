@@ -18,7 +18,9 @@ export class NpcController implements INpcController {
   }
 
   constructor(configPath: string = "/config.json") {
-    void this.loadNpcsFromConfig(configPath);
+    if (typeof window !== "undefined" && typeof document !== "undefined") {
+      void this.loadNpcsFromConfig(configPath);
+    }
   }
 
   private async loadNpcsFromConfig(configPath?: string): Promise<void> {

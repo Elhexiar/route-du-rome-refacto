@@ -1,37 +1,60 @@
 import { GameManager } from "#Controllers/GameManager";
 import type { BadgeService } from "#src/services/BadgeService.ts";
 import type { DialogueController, HeroController } from "../controllers";
+import type {
+  IHeroController,
+  IExperienceController,
+  IDialogueController,
+} from "#IControllers/index.ts";
+import type { IHero } from "#IEntities/index.ts";
 
 export class HeaderHeroSelectionView {
   private readonly element: HTMLElement;
+  private readonly runtime: {
+    heroController?: IHeroController | null;
+    experienceController?: IExperienceController | null;
+    dialogueController?: IDialogueController | null;
+  };
 
-  constructor(container: HTMLElement) {
+  constructor(
+    container: HTMLElement,
+    runtime: {
+      heroController?: IHeroController | null;
+      experienceController?: IExperienceController | null;
+      dialogueController?: IDialogueController | null;
+    } | null = null,
+  ) {
     this.element = document.createElement("section");
     this.element.className = "header-hero-selection-view";
     container.prepend(this.element);
+    this.runtime = runtime ?? {
+      heroController: GameManager.heroController,
+      experienceController: GameManager.experienceController,
+      dialogueController: GameManager.dialogueController,
+    };
     this.render();
 
     // Re-render when heroes are loaded asynchronously
-    GameManager.heroController?.onHeroesLoaded(() => this.render());
+    this.runtime.heroController?.onHeroesLoaded(() => this.render());
 
     // Re-render when the hero is switched
-    GameManager.heroController?.onHeroesSwitched(() => this.render());
+    this.runtime.heroController?.onHeroesSwitched(() => this.render());
 
     // Re-render when a badge is collected or uncollected
-    GameManager.experienceController?.badgeService.onBadgeCollected(() =>
+    this.runtime.experienceController?.badgeService.onBadgeCollected(() =>
       this.render(),
     );
-    GameManager.experienceController?.badgeService.onBadgeUncollected(() =>
+    this.runtime.experienceController?.badgeService.onBadgeUncollected(() =>
       this.render(),
     );
   }
 
   render(): void {
-    const currentHeroId = GameManager.heroController?.currentHero?.id;
+    const currentHeroId = this.runtime.heroController?.currentHero?.id;
     const heroesButtons =
-      GameManager.heroController?.heroes
+      this.runtime.heroController?.heroes
         .map(
-          (hero) => `
+          (hero: IHero) => `
         <div class="header-hero-selection-view__hero-button ${hero.id === currentHeroId ? "active" : "inactive"}" data-hero-id="${hero.id}">
           <img src="${hero.portrait}" alt="${hero.name}" class="header-hero-selection-view__hero-portrait" />
           <span>${hero.name}</span>
@@ -40,16 +63,17 @@ export class HeaderHeroSelectionView {
         )
         .join("") ?? "";
 
-    const experienceController = GameManager.experienceController;
+    const experienceController = this.runtime.experienceController;
     const currentLevel = experienceController?.currentLevel ?? 1;
     const currentLevelDefinition =
       experienceController?.getCurrentLevelDefinition();
 
     const totalBadges =
-      GameManager.experienceController?.badgeService.getAllBadges().length ?? 0;
+      this.runtime.experienceController?.badgeService.getAllBadges().length ??
+      0;
 
     const collectedBadges =
-      GameManager.experienceController?.badgeService.getAllCollectedBadges()
+      this.runtime.experienceController?.badgeService.getAllCollectedBadges()
         .length ?? 0;
 
     const badgeProgressPercentage =
@@ -97,7 +121,7 @@ export class HeaderHeroSelectionView {
       button.addEventListener("click", () => {
         const heroId = (button as HTMLElement).dataset.heroId;
         if (heroId) {
-          GameManager.heroController?.SwitchHeroById(heroId);
+          this.runtime.heroController?.SwitchHeroById(heroId);
         }
       });
     });
@@ -106,9 +130,9 @@ export class HeaderHeroSelectionView {
       ".header-hero-selection-view__backstart-button",
     );
     backStartButton?.addEventListener("click", () => {
-      const heroController = GameManager.heroController as HeroController;
-      const dialogueController =
-        GameManager.dialogueController as DialogueController;
+      const heroController = this.runtime.heroController as HeroController;
+      const dialogueController = this.runtime
+        .dialogueController as DialogueController;
       dialogueController.dialogueView?.HideView();
       heroController.welcomeHeroSelectionView?.ShowView();
     });
@@ -117,7 +141,7 @@ export class HeaderHeroSelectionView {
       ".header-hero-selection-view__notebook-button",
     );
     notebookButton?.addEventListener("click", () => {
-      const badgeService = GameManager.experienceController
+      const badgeService = this.runtime.experienceController
         ?.badgeService as BadgeService;
       badgeService.NotebookView?.ShowView();
     });

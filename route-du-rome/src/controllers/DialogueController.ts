@@ -1,4 +1,5 @@
 import type { IDialogueController } from "#IControllers/IDialogueController";
+import type { IExperienceController } from "#IControllers/index.ts";
 import { DialogueView } from "#src/ui/dialogue/DialogueView.ts";
 import { GameManager } from "./GameManager.ts";
 import type { IDialogue, IDialogueNode } from "../interfaces/entities";
@@ -10,22 +11,62 @@ export class DialogueController implements IDialogueController {
 
   dialogueView: DialogueView | null = null;
 
-  constructor(app: HTMLElement | null = null) {
+  // cache the runtime controllers to avoid repeated access to GameManager
+  private readonly runtime: {
+    npcController?: {
+      onNpcsLoaded: (callback: (npcs: any[]) => void) => void;
+    } | null;
+    heroController?: {
+      onHeroesSwitched: (callback: (hero: any) => void) => void;
+    } | null;
+    mapController?: {
+      mapView?: { onNpcMarkerClick: (npc: any, callback: () => void) => void };
+    } | null;
+    experienceController?: IExperienceController | null;
+  };
+
+  constructor(
+    app: HTMLElement | null = null,
+    runtime: {
+      npcController?: {
+        onNpcsLoaded: (callback: (npcs: any[]) => void) => void;
+      } | null;
+      heroController?: {
+        onHeroesSwitched: (callback: (hero: any) => void) => void;
+      } | null;
+      mapController?: {
+        mapView?: {
+          onNpcMarkerClick: (npc: any, callback: () => void) => void;
+        };
+      } | null;
+      experienceController?: IExperienceController | null;
+    } | null = null,
+  ) {
     this.dialogueRegistry = new Map<string, IDialogue>();
     this.currentActiveDialogue = null;
     this.currentActiveNode = null;
+    this.runtime = runtime ?? {
+      npcController: GameManager.npcController,
+      heroController: GameManager.heroController,
+      mapController: GameManager.mapController,
+      experienceController: GameManager.experienceController,
+    };
 
-    this.dialogueView = app ? new DialogueView(app as HTMLElement) : null;
+    this.dialogueView = app
+      ? new DialogueView(app as HTMLElement, {
+          experienceController: this.runtime.experienceController,
+          dialogueController: this,
+        })
+      : null;
 
-    GameManager.npcController?.onNpcsLoaded((npcs) => {
+    this.runtime.npcController?.onNpcsLoaded((npcs) => {
       npcs.forEach((npc) => {
         // add an action to the dialogue to hide the view when the dialogue ends
         npc.presentationDialogue?.OnDialogueActions?.push(() => {
           this.dialogueView?.jobPresentationView?.ShowView();
         });
 
-        //
-        GameManager.mapController?.mapView?.onNpcMarkerClick(npc, () => {
+        this.runtime.mapController?.mapView?.onNpcMarkerClick(npc, () => {
           if (npc.presentationDialogue?.isCompleted) {
             console.log(`Dialogue for NPC ${npc.name} is already completed.`);
             return;
@@ -37,7 +78,7 @@ export class DialogueController implements IDialogueController {
       });
     });
 
-    GameManager.heroController?.onHeroesSwitched((hero) => {
+    this.runtime.heroController?.onHeroesSwitched((hero) => {
       if (!hero?.presentationDialogue) {
         return;
       }

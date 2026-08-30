@@ -1,18 +1,28 @@
 import type { IMapView } from "#IUI/IMapView";
 import type { INpc } from "#src/interfaces/entities/INpc.ts";
+import type { IHeroController } from "#IControllers/index.ts";
 import { Marker } from "./Marker";
 import { GameManager } from "#src/controllers/GameManager.ts";
 
 export class LeafletMapView implements IMapView {
   private readonly element: HTMLElement;
+  private readonly runtime: {
+    heroController?: IHeroController | null;
+  };
 
-  constructor(container: HTMLElement) {
+  constructor(
+    container: HTMLElement,
+    runtime: { heroController?: IHeroController | null } | null = null,
+  ) {
     this.element = document.createElement("section");
     this.element.className = "map-view";
     this.element.style.width = "100%";
     this.element.style.height = "auto";
     this.element.style.flexGrow = "1";
     container.appendChild(this.element);
+    this.runtime = runtime ?? {
+      heroController: GameManager.heroController,
+    };
     this.render();
   }
 
@@ -107,7 +117,7 @@ export class LeafletMapView implements IMapView {
         if (markerEl) return;
       }
 
-      const hero = GameManager.heroController?.currentHero;
+      const hero = this.runtime.heroController?.currentHero;
       if (!hero) return;
 
       this.moveHeroMarker(hero, e.latlng.lat, e.latlng.lng);
@@ -127,7 +137,13 @@ export class LeafletMapView implements IMapView {
       return;
     }
 
-    const marker = new Marker(this.leaflet, this.map, npc);
+    const marker = new Marker(
+      this.leaflet,
+      this.map,
+      npc,
+      undefined,
+      this.runtime,
+    );
     this.markers.set(npc, marker);
 
     return marker;
@@ -166,7 +182,13 @@ export class LeafletMapView implements IMapView {
       this.markers.delete(hero);
     }
 
-    const marker = new Marker(this.leaflet, this.map, undefined, hero);
+    const marker = new Marker(
+      this.leaflet,
+      this.map,
+      undefined,
+      hero,
+      this.runtime,
+    );
     marker.setLatLng([_lat, _lng]);
     this.markers.set(hero, marker);
     return marker;
@@ -180,8 +202,8 @@ export class LeafletMapView implements IMapView {
     }
 
     marker.setLatLng([_newLat, _newLng]);
-    if (GameManager.heroController?.position) {
-      GameManager.heroController.position = {
+    if (this.runtime.heroController?.position) {
+      this.runtime.heroController.position = {
         latitude: _newLat,
         longitude: _newLng,
       };

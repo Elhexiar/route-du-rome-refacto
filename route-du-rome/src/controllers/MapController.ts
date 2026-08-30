@@ -6,9 +6,40 @@ import { GameManager } from "./GameManager";
 export class MapController implements IMapController {
   mapView: any;
   private currentHeroMarkerOwner: IHero | null = null;
+  private readonly runtime: {
+    npcController?: {
+      onNpcsLoaded: (callback: (npcs: any[]) => void) => void;
+    } | null;
+    heroController?: {
+      onHeroesSwitched: (callback: (hero: any) => void) => void;
+      position?: { latitude: number; longitude: number };
+    } | null;
+  };
 
-  constructor(_app: HTMLElement) {
-    this.mapView = new LeafletMapView(_app);
+  constructor(
+    _app: HTMLElement,
+    runtime: {
+      npcController?: {
+        onNpcsLoaded: (callback: (npcs: any[]) => void) => void;
+      } | null;
+      heroController?: {
+        onHeroesSwitched: (callback: (hero: any) => void) => void;
+        position?: { latitude: number; longitude: number };
+      } | null;
+    } | null = null,
+  ) {
+    this.runtime = runtime ?? {
+      npcController: GameManager.npcController,
+      heroController: GameManager.heroController,
+    };
+
+    if (typeof document !== "undefined") {
+      this.mapView = new LeafletMapView(_app, {
+        heroController: this.runtime.heroController as any,
+      });
+    } else {
+      this.mapView = { markers: new Map() };
+    }
 
     this.InitMapView(this.mapView);
   }
@@ -18,15 +49,15 @@ export class MapController implements IMapController {
   }
 
   InitMapView(_mapView: any): void {
-    GameManager.npcController?.onNpcsLoaded((npcs) => {
+    this.runtime.npcController?.onNpcsLoaded((npcs) => {
       npcs.forEach((npc) => {
         this.addNpcMarker(npc.latitude, npc.longitude, npc);
       });
     });
 
-    GameManager.heroController?.onHeroesSwitched((hero) => {
+    this.runtime.heroController?.onHeroesSwitched((hero) => {
       if (hero) {
-        const position = GameManager.heroController?.position;
+        const position = this.runtime.heroController?.position;
         const lat = position?.latitude ?? 0;
         const lng = position?.longitude ?? 0;
 

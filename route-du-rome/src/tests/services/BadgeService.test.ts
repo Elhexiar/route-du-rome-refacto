@@ -75,4 +75,22 @@ describe("BadgeService", () => {
     expect(service.deleteBadge("badge-3")).toBe(true);
     expect(service.getBadgeById("badge-3")).toBeNull();
   });
+
+  it("accepts an explicit runtime context instead of relying on singleton globals", () => {
+    const runtime = { app: null };
+
+    const service = new BadgeService(runtime);
+    const badge = new NPCBadge(
+      { id: "npc-4", color: "#ABCDEF" } as any,
+      "badge-4",
+      "Badge Runtime",
+      "Badge with explicit runtime",
+      "⭐",
+    );
+
+    service.createBadge(badge);
+    expect(service.getBadgeById("badge-4")).toBe(badge);
+    expect(service.collectBadge("badge-4")).toBe(true);
+    expect(badge.collected).toBe(true);
+  });
 });

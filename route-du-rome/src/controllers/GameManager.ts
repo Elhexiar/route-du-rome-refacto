@@ -11,8 +11,6 @@ import { MapController } from "./MapController.ts";
 import { DialogueController } from "./DialogueController.ts";
 import { ExperienceController } from "./ExperienceController.ts";
 
-import { QuestService } from "#Services/QuestService.ts";
-import { BadgeService } from "#Services/BadgeService.ts";
 import { HeaderHeroSelectionView } from "#UI/HeaderHeroSelectionView.ts";
 export class GameManager {
   private static _instance: GameManager | null = null;
@@ -40,13 +38,27 @@ export class GameManager {
     if (this._app) {
       this._mapController = new MapController(this._app);
     }
-    this._dialogueController = new DialogueController(this._app);
-    this._experienceController = new ExperienceController(
-      new QuestService(),
-      new BadgeService(),
-    );
 
-    this._headerView = new HeaderHeroSelectionView(this._app as HTMLElement);
+    // Initialize ExperienceController before DialogueController so it can wire dependencies
+    this._experienceController = new ExperienceController(null, null, {
+      npcController: this._npcController,
+      heroController: this._heroController,
+      mapController: this._mapController,
+      app: this._app,
+    });
+
+    this._dialogueController = new DialogueController(this._app, {
+      npcController: this._npcController,
+      heroController: this._heroController,
+      mapController: this._mapController,
+      experienceController: this._experienceController,
+    });
+
+    this._headerView = new HeaderHeroSelectionView(this._app as HTMLElement, {
+      heroController: this._heroController,
+      experienceController: this._experienceController,
+      dialogueController: this._dialogueController,
+    });
 
     // this._experienceController = new ExperienceController();
   }
@@ -107,6 +119,10 @@ export class GameManager {
     GameManager.instance._headerView = value;
   }
 
+  public get app(): HTMLElement | null {
+    return this._app;
+  }
+
   public static get app(): HTMLElement | null {
     return GameManager.instance._app;
   }
@@ -115,13 +131,28 @@ export class GameManager {
     GameManager._instance = null;
   }
 
+  public static create(
+    appElement: HTMLElement | null = null,
+    configPath: string = "/config.json",
+  ): GameManager {
+    const manager = GameManager.instance;
+    manager._app = appElement;
+    manager.configPath = configPath;
+    return manager;
+  }
+
   public static init(
     appElement: HTMLElement | null = null,
     configPath: string = "/config.json",
   ): void {
-    const manager = GameManager.instance;
-    manager._app = appElement;
-    manager.configPath = configPath;
+    const manager = GameManager.create(appElement, configPath);
+
+    const canBootstrapBrowserRuntime =
+      typeof window !== "undefined" && typeof document !== "undefined";
+
+    if (!canBootstrapBrowserRuntime) {
+      return;
+    }
 
     if (!manager._heroController || !manager._npcController) {
       manager.initializeControllers();

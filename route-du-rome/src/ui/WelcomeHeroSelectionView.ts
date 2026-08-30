@@ -1,16 +1,34 @@
 import { GameManager } from "#Controllers/GameManager";
 import type { DialogueController } from "#Controllers/DialogueController";
+import type {
+  IHeroController,
+  IDialogueController,
+} from "#IControllers/index.ts";
 import { TutorialView } from "./TutorialView";
 
 export class WelcomeHeroSelectionView {
   private readonly element: HTMLElement;
+  private readonly runtime: {
+    heroController?: IHeroController | null;
+    dialogueController?: IDialogueController | null;
+  };
 
   tutorialView: TutorialView | null = null;
 
-  constructor(container: HTMLElement) {
+  constructor(
+    container: HTMLElement,
+    runtime: {
+      heroController?: IHeroController | null;
+      dialogueController?: IDialogueController | null;
+    } | null = null,
+  ) {
     this.element = document.createElement("section");
     this.element.className = "welcome-hero-selection-view";
     container.appendChild(this.element);
+    this.runtime = runtime ?? {
+      heroController: GameManager.heroController,
+      dialogueController: GameManager.dialogueController,
+    };
 
     this.render();
     this.tutorialView = new TutorialView(this.element);
@@ -18,7 +36,7 @@ export class WelcomeHeroSelectionView {
 
   render(): void {
     const heroCards =
-      GameManager.heroController?.heroes
+      this.runtime.heroController?.heroes
         .map(
           (hero) => `
             <div class="hero-card" data-hero-id="${hero.id}">
@@ -56,14 +74,14 @@ export class WelcomeHeroSelectionView {
   }
 
   ClickCard(heroId: string): void {
-    const heroController = GameManager.heroController;
+    const heroController = this.runtime.heroController;
     if (heroController) {
       const hero = heroController.heroes.find((h) => h.id === heroId);
       if (hero) {
         heroController.SwitchHero(hero);
         this.HideView();
-        const dialogueController =
-          GameManager.dialogueController as DialogueController;
+        const dialogueController = this.runtime
+          .dialogueController as DialogueController;
 
         dialogueController.dialogueView?.ResetForNewSpeaker(hero);
         dialogueController.dialogueView?.ShowView();

@@ -139,6 +139,72 @@ describe("QuestService", () => {
     expect(experienceController.addExperience).toHaveBeenCalledWith(150);
   });
 
+  it("accepts an explicit runtime context instead of relying on singleton globals", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          Levels: [
+            {
+              id: "level1",
+              name: "Niveau 1",
+              icon: "🌱",
+              min: 0,
+              max: 150,
+              description: "Test",
+            },
+          ],
+          Heroes: [],
+          Npcs: [],
+        }),
+      }),
+    );
+
+    const experienceController = {
+      currentExperience: 0,
+      currentLevel: 1,
+      currentExperienceLimit: 150,
+      badgeService: {
+        createBadge: vi.fn(),
+        collectBadge: vi.fn(),
+      },
+      addExperience: vi.fn(),
+      setLevelData: vi.fn(),
+    };
+
+    const runtime = {
+      npcController: {
+        onNpcsLoaded: (callback: (npcs: any[]) => void) =>
+          callback([
+            {
+              id: "npc-runtime",
+              name: "Nora",
+              jobSector: "Culture",
+              icon: "🌾",
+              done: false,
+            },
+          ]),
+      },
+      experienceController,
+      mapController: {
+        mapView: {
+          markers: new Map(),
+        },
+      },
+    } as any;
+
+    const service = new QuestService(runtime);
+    await service.LoadLevelDataFromConfig("/config.json");
+
+    expect(service.quests.has("npc-runtime-default")).toBe(true);
+    expect(experienceController.addExperience).not.toHaveBeenCalled();
+
+    service.quests.get("npc-runtime-default")!.Complete();
+
+    expect(experienceController.addExperience).toHaveBeenCalledWith(150);
+  });
+
   it("delegates the toast actions to the configured toast instances", () => {
     vi.stubGlobal(
       "fetch",

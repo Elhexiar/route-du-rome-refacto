@@ -1,23 +1,37 @@
 import { GameManager } from "#Controllers/GameManager";
+import type { IBadgeService } from "#src/interfaces/services";
+import type { IHeroController } from "#IControllers/index.ts";
 
 export class NotebookView {
   private readonly element: HTMLElement;
+  private readonly runtime: {
+    badgeService?: IBadgeService | null;
+    heroController?: IHeroController | null;
+  };
 
-  constructor(container: HTMLElement) {
+  constructor(
+    container: HTMLElement,
+    runtime: {
+      badgeService?: IBadgeService | null;
+      heroController?: IHeroController | null;
+    } | null = null,
+  ) {
     this.element = document.createElement("section");
     this.element.className = "notebook-view";
     container.appendChild(this.element);
+    this.runtime = runtime ?? {
+      badgeService: GameManager.experienceController?.badgeService,
+      heroController: GameManager.heroController,
+    };
     this.render();
   }
 
   render(): void {
-    const badges =
-      GameManager.experienceController?.badgeService.getAllBadges() ?? [];
+    const badges = this.runtime.badgeService?.getAllBadges() ?? [];
     const completedBadges =
-      GameManager.experienceController?.badgeService.getAllCollectedBadges() ??
-      [];
+      this.runtime.badgeService?.getAllCollectedBadges() ?? [];
     const collectedBadgeIds = Array.from(
-      GameManager.experienceController?.badgeService.collectedBadges ?? [],
+      this.runtime.badgeService?.collectedBadges ?? [],
     );
 
     // used to highlight the latest collected badge
@@ -74,13 +88,13 @@ export class NotebookView {
                 <div class="notebook-view__body">
                     <div class="notebook-view__body__header">
                         <div class="notebook-view__body__header__start">
-                          <img class="notebook-view__body__header__start__portrait" src="${GameManager.heroController?.currentHero?.portrait ?? "chemin/vers/portrait.jpg"}" alt="Portrait du joueur" />
+                          <img class="notebook-view__body__header__start__portrait" src="${this.runtime.heroController?.currentHero?.portrait ?? "chemin/vers/portrait.jpg"}" alt="Portrait du joueur" />
                           <div class="notebook-view__body__header__start__player-info">
                             <div class="notebook-view__body__header__start__player-info__name">
-                                ${GameManager.heroController?.currentHero?.name ?? "Nom du joueur"}
+                                ${this.runtime.heroController?.currentHero?.name ?? "Nom du joueur"}
                             </div>
                             <div class="notebook-view__body__header__start__player-info__job">
-                                ${GameManager.heroController?.currentHero?.role ?? "Métier du joueur"}
+                                ${this.runtime.heroController?.currentHero?.role ?? "Métier du joueur"}
                             </div>
                           </div>
                         </div>

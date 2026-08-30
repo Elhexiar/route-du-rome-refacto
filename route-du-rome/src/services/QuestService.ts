@@ -17,6 +17,23 @@ export class QuestService implements IQuestService {
   endToast: EndToast | null = null;
   onQuestCompletionCallbacks: (() => void)[] = [];
 
+  // cache the runtime controllers to avoid repeated access to GameManager
+  private readonly runtime: {
+    npcController?: {
+      onNpcsLoaded: (callback: (npcs: any[]) => void) => void;
+    } | null;
+    experienceController?: {
+      badgeService?: {
+        createBadge: (badge: any) => void;
+        collectBadge: (id: string) => void;
+      };
+      addExperience?: (amount: number) => void;
+      setLevelData?: (levels: any[]) => void;
+    } | null;
+    mapController?: { mapView?: { markers?: Map<any, any> } } | null;
+    app?: HTMLElement | null;
+  };
+
   get QuestCompleteToast(): QuestCompletedToast | null {
     return this.questCompleteToast;
   }
@@ -33,20 +50,43 @@ export class QuestService implements IQuestService {
     this.endToast = value;
   }
 
-  constructor() {
+  constructor(
+    runtime: {
+      npcController?: {
+        onNpcsLoaded: (callback: (npcs: any[]) => void) => void;
+      } | null;
+      experienceController?: {
+        badgeService?: {
+          createBadge: (badge: any) => void;
+          collectBadge: (id: string) => void;
+        };
+        addExperience?: (amount: number) => void;
+        setLevelData?: (levels: any[]) => void;
+      } | null;
+      mapController?: { mapView?: { markers?: Map<any, any> } } | null;
+      app?: HTMLElement | null;
+    } | null = null,
+  ) {
+    this.runtime = runtime ?? {
+      npcController: GameManager.npcController,
+      experienceController: GameManager.experienceController,
+      mapController: GameManager.mapController,
+      app: GameManager.app,
+    };
+
     this.initializeDefaultQuests();
     this.loadLevelDataFromConfig("/config.json").catch(() => undefined);
   }
 
   private initializeDefaultQuests(): void {
-    GameManager.npcController?.onNpcsLoaded((npcs) => {
+    this.runtime.npcController?.onNpcsLoaded((npcs) => {
       npcs.forEach((npc) => {
         const defaultQuest = this.createDefaultQuestForNpc(npc);
         this.quests.set(defaultQuest.id, defaultQuest);
 
         const badge = this.createBadgeForQuest(defaultQuest, npc);
         defaultQuest.relatedBadge = badge;
-        GameManager.experienceController?.badgeService.createBadge(badge);
+        this.runtime.experienceController?.badgeService?.createBadge(badge);
       });
     });
   }
@@ -61,10 +101,10 @@ export class QuestService implements IQuestService {
 
     defaultQuest.OnQuestActions.push(() => {
       npc.done = true;
-      GameManager.experienceController?.addExperience(
+      this.runtime.experienceController?.addExperience?.(
         QuestService.questXpReward,
       );
-      GameManager.mapController?.mapView?.markers.get(npc)?.UpdateMarker();
+      this.runtime.mapController?.mapView?.markers?.get(npc)?.UpdateMarker?.();
 
       if (this.areAllQuestsCompleted()) {
         this.toggleEndToast();
@@ -89,7 +129,7 @@ export class QuestService implements IQuestService {
     );
 
     defaultQuest.OnQuestActions.push(() => {
-      GameManager.experienceController?.badgeService.collectBadge(badge.id);
+      this.runtime.experienceController?.badgeService?.collectBadge(badge.id);
     });
 
     return badge;
@@ -154,12 +194,16 @@ export class QuestService implements IQuestService {
 
     const configData: ConfigData = await response.json();
     this.levelData = configData.Levels;
-    GameManager.experienceController?.setLevelData(this.levelData);
+    this.runtime.experienceController?.setLevelData?.(this.levelData);
 
-    const app = GameManager.app;
+    const app = this.runtime.app ?? GameManager.app;
     if (app) {
-      this.questCompleteToast = new QuestCompletedToast(app, this.levelData);
-      this.endToast = new EndToast(app);
+      this.questCompleteToast = new QuestCompletedToast(app, this.levelData, {
+        experienceController: this.runtime.experienceController as any,
+      });
+      this.endToast = new EndToast(app, {
+        experienceController: this.runtime.experienceController as any,
+      });
     }
 
     return configData;

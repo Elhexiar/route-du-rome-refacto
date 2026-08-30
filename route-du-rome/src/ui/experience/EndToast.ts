@@ -4,18 +4,35 @@ import type { QuestService } from "#src/services/QuestService.ts";
 
 export class EndToast {
   private readonly toastElement: HTMLElement;
+  private readonly runtime: {
+    experienceController?: {
+      badgeService?: BadgeService;
+      questService?: QuestService;
+    } | null;
+  };
 
-  constructor(container: HTMLElement) {
+  constructor(
+    container: HTMLElement,
+    runtime: {
+      experienceController?: {
+        badgeService?: BadgeService;
+        questService?: QuestService;
+      } | null;
+    } | null = null,
+  ) {
     this.toastElement = document.createElement("div");
     this.toastElement.id = "end-overlay";
     container.appendChild(this.toastElement);
+    this.runtime =
+      runtime ??
+      ({ experienceController: GameManager.experienceController } as any);
     this.render();
   }
 
   render(): void {
-    const badgeService = GameManager.experienceController
+    const badgeService = this.runtime.experienceController
       ?.badgeService as BadgeService;
-    const questService = GameManager.experienceController
+    const questService = this.runtime.experienceController
       ?.questService as QuestService;
 
     const totalXP = badgeService.getAllBadges().length * 150;

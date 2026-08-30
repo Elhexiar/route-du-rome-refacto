@@ -62,4 +62,38 @@ describe("MapController", () => {
     expect(calls).toContain("hero-moved");
     expect(calls).toContain("hero-removed");
   });
+
+  it("accepts an explicit runtime context instead of relying on singleton globals", () => {
+    const npcHandler = vi.fn();
+    const heroHandler = vi.fn();
+    const runtime = {
+      npcController: {
+        onNpcsLoaded: (callback: (npcs: any[]) => void) => {
+          callback([]);
+        },
+      },
+      heroController: {
+        onHeroesSwitched: (callback: (hero: any) => void) => {
+          heroHandler(callback);
+        },
+        position: { latitude: 48.2, longitude: -1.2 },
+      },
+    } as any;
+
+    const appElement =
+      typeof document !== "undefined"
+        ? document.createElement("div")
+        : ({ id: "mock-app" } as any);
+
+    const controller = new MapController(appElement, runtime);
+
+    expect(typeof controller["runtime"]?.npcController?.onNpcsLoaded).toBe(
+      "function",
+    );
+    expect(typeof controller["runtime"]?.heroController?.onHeroesSwitched).toBe(
+      "function",
+    );
+    expect(npcHandler).not.toHaveBeenCalled();
+    expect(heroHandler).toHaveBeenCalledTimes(1);
+  });
 });

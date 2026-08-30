@@ -3,9 +3,21 @@ import type { ConfigData } from "#src/entities/Config.ts";
 
 export class QuestCompletedToast {
   private readonly element: HTMLElement;
+  private readonly runtime: {
+    experienceController?: { currentLevel?: number } | null;
+  };
 
-  constructor(root: HTMLElement, _levelData: ConfigData["Levels"]) {
+  constructor(
+    root: HTMLElement,
+    _levelData: ConfigData["Levels"],
+    runtime: {
+      experienceController?: { currentLevel?: number } | null;
+    } | null = null,
+  ) {
     this.element = root;
+    this.runtime = runtime ?? {
+      experienceController: GameManager.experienceController,
+    };
 
     this.element = document.createElement("div");
     this.element.className = "quest-completed-toast";
@@ -16,7 +28,7 @@ export class QuestCompletedToast {
   }
 
   render(): void {
-    const currentLevel = GameManager.experienceController?.currentLevel ?? 1;
+    const currentLevel = this.runtime.experienceController?.currentLevel ?? 1;
     const levelTitle = `Niveau ${currentLevel}`;
 
     this.element.innerHTML = `

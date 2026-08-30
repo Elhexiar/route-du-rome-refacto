@@ -1,6 +1,8 @@
 import type { IExperienceController } from "#IControllers/IExperienceController.ts";
 import type { LevelData } from "#src/entities/Config.ts";
 import type { IQuestService, IBadgeService } from "../interfaces/services";
+import { QuestService } from "#Services/QuestService.ts";
+import { BadgeService } from "#Services/BadgeService.ts";
 
 export class ExperienceController implements IExperienceController {
   questService: IQuestService;
@@ -9,6 +11,16 @@ export class ExperienceController implements IExperienceController {
   currentLevel = 1;
   currentExperienceLimit = 150;
   private levelData: LevelData[] = [];
+  private readonly runtime: {
+    npcController?: {
+      onNpcsLoaded: (callback: (npcs: any[]) => void) => void;
+    } | null;
+    heroController?: {
+      onHeroesSwitched: (callback: (hero: any) => void) => void;
+    } | null;
+    mapController?: { mapView?: { markers?: Map<any, any> } } | null;
+    app?: HTMLElement | null;
+  };
 
   get curentExperience(): number {
     return this.currentExperience;
@@ -19,9 +31,35 @@ export class ExperienceController implements IExperienceController {
     this.syncLevelFromExperience();
   }
 
-  constructor(questService: IQuestService, badgeService: IBadgeService) {
-    this.questService = questService;
-    this.badgeService = badgeService;
+  constructor(
+    questService?: IQuestService | null,
+    badgeService?: IBadgeService | null,
+    runtime: {
+      npcController?: {
+        onNpcsLoaded: (callback: (npcs: any[]) => void) => void;
+      } | null;
+      heroController?: {
+        onHeroesSwitched: (callback: (hero: any) => void) => void;
+      } | null;
+      mapController?: { mapView?: { markers?: Map<any, any> } } | null;
+      app?: HTMLElement | null;
+    } | null = null,
+  ) {
+    this.runtime = runtime ?? {};
+    this.questService =
+      questService ??
+      new QuestService({
+        npcController: this.runtime.npcController,
+        experienceController: this,
+        mapController: this.runtime.mapController,
+        app: this.runtime.app,
+      });
+    this.badgeService =
+      badgeService ??
+      new BadgeService({
+        app: this.runtime.app,
+        heroController: this.runtime.heroController as any,
+      });
     this.syncLevelFromExperience();
   }
 

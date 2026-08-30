@@ -30,7 +30,10 @@ export class HeroController implements IHeroController {
 
   constructor(configPath: string = "/config.json") {
     this.currentHero = null;
-    this.loadHeroesFromConfig(configPath);
+
+    if (typeof window !== "undefined" && typeof document !== "undefined") {
+      void this.loadHeroesFromConfig(configPath);
+    }
   }
 
   async loadHeroesFromConfig(configPath?: string): Promise<void> {
@@ -81,6 +84,7 @@ export class HeroController implements IHeroController {
     if (appContainer) {
       this.welcomeHeroSelectionView = new WelcomeHeroSelectionView(
         appContainer,
+        { heroController: this },
       );
     }
 

@@ -1,16 +1,31 @@
 import { GameManager } from "#src/controllers/GameManager.ts";
-import type { IHero } from "#src/interfaces/entities/index.ts";
 import type { INpc } from "#src/interfaces/entities/INpc.ts";
+import type { IHero } from "#src/interfaces/entities/index.ts";
+import type { IHeroController } from "#IControllers/index.ts";
 
 export class Marker {
   private readonly marker: any;
+  private readonly leaflet: any;
+  private readonly runtime: {
+    heroController?: IHeroController | null;
+  };
 
   npc?: INpc;
   hero?: IHero;
 
-  constructor(leaflet: any, map: any, npc?: INpc, hero?: IHero) {
+  constructor(
+    leaflet: any,
+    map: any,
+    npc?: INpc,
+    hero?: IHero,
+    runtime: { heroController?: IHeroController | null } | null = null,
+  ) {
     this.npc = npc;
     this.hero = hero;
+    this.leaflet = leaflet;
+    this.runtime = runtime ?? {
+      heroController: GameManager.heroController,
+    };
     this.marker = this.render(leaflet, map, npc, hero);
   }
 
@@ -55,7 +70,7 @@ export class Marker {
       });
 
       console.log(icon);
-      const initialPosition = GameManager.heroController?.position;
+      const initialPosition = this.runtime.heroController?.position;
 
       const m = leaflet
         .marker(
@@ -139,8 +154,6 @@ export class Marker {
       return;
     }
 
-    this.marker.setIcon(
-      this.createNpcIcon(GameManager.mapController?.mapView?.leaflet, this.npc),
-    );
+    this.marker.setIcon(this.createNpcIcon(this.leaflet, this.npc));
   }
 }
