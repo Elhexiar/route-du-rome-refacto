@@ -1,4 +1,3 @@
-import { GameManager } from "#Controllers/GameManager.ts";
 import type { BadgeService } from "#src/services/BadgeService.ts";
 import type { QuestService } from "#src/services/QuestService.ts";
 
@@ -18,14 +17,12 @@ export class EndToast {
         badgeService?: BadgeService;
         questService?: QuestService;
       } | null;
-    } | null = null,
+    },
   ) {
     this.toastElement = document.createElement("div");
     this.toastElement.id = "end-overlay";
     container.appendChild(this.toastElement);
-    this.runtime =
-      runtime ??
-      ({ experienceController: GameManager.experienceController } as any);
+    this.runtime = runtime;
     this.render();
   }
 

@@ -4,7 +4,6 @@ import type { INpc } from "#IEntities/INpc";
 import type { IDialogue } from "#IEntities/dialogue/IDialogue";
 import type { IDialogueView } from "#IUI/IDialogueView";
 import type { IChoice } from "#src/interfaces/entities/dialogue/IDialogueNode.ts";
-import { GameManager } from "#Controllers/GameManager";
 import type {
   IExperienceController,
   IDialogueController,
@@ -44,15 +43,12 @@ export class DialogueView implements IDialogueView {
     runtime: {
       experienceController?: IExperienceController | null;
       dialogueController?: IDialogueController | null;
-    } | null = null,
+    },
   ) {
     this.element = document.createElement("section");
     this.element.className = "dialogue-view";
     container.appendChild(this.element);
-    this.runtime = runtime ?? {
-      experienceController: GameManager.experienceController,
-      dialogueController: GameManager.dialogueController,
-    };
+    this.runtime = runtime;
 
     const layoutRefs = initializeDialogueLayout(this.element);
     this.textElement = layoutRefs.textElement;

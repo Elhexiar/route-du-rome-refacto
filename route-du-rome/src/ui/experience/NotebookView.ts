@@ -1,4 +1,3 @@
-import { GameManager } from "#Controllers/GameManager";
 import type { IBadgeService } from "#src/interfaces/services";
 import type { IHeroController } from "#IControllers/index.ts";
 
@@ -14,15 +13,12 @@ export class NotebookView {
     runtime: {
       badgeService?: IBadgeService | null;
       heroController?: IHeroController | null;
-    } | null = null,
+    },
   ) {
     this.element = document.createElement("section");
     this.element.className = "notebook-view";
     container.appendChild(this.element);
-    this.runtime = runtime ?? {
-      badgeService: GameManager.experienceController?.badgeService,
-      heroController: GameManager.heroController,
-    };
+    this.runtime = runtime;
     this.render();
   }
 

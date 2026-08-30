@@ -1,4 +1,3 @@
-import { GameManager } from "#src/controllers/index.ts";
 import type { ConfigData } from "#src/entities/Config.ts";
 
 export class QuestCompletedToast {
@@ -12,12 +11,10 @@ export class QuestCompletedToast {
     _levelData: ConfigData["Levels"],
     runtime: {
       experienceController?: { currentLevel?: number } | null;
-    } | null = null,
+    },
   ) {
     this.element = root;
-    this.runtime = runtime ?? {
-      experienceController: GameManager.experienceController,
-    };
+    this.runtime = runtime;
 
     this.element = document.createElement("div");
     this.element.className = "quest-completed-toast";
