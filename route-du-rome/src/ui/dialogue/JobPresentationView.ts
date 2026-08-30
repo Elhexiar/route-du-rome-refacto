@@ -55,7 +55,7 @@ export class JobPresentationView {
             <iframe
               id="vyt"
               frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allow="fullscreen; picture-in-picture"
               allowfullscreen
               referrerpolicy="strict-origin-when-cross-origin"
               style="

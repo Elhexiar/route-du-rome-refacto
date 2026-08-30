@@ -146,6 +146,12 @@ export class ExperienceController implements IExperienceController {
     }
   }
 
+  resetProgress(): void {
+    this.currentExperience = 0;
+    this.currentLevel = 1;
+    this.currentExperienceLimit = this.levelData[0]?.max ?? 150;
+  }
+
   levelUp(): void {
     if (this.levelData.length === 0) {
       this.currentLevel += 1;

@@ -13,6 +13,7 @@ export interface IExperienceController {
   setLevelData(levels: LevelData[]): void;
   getCurrentLevelDefinition(): LevelData | undefined;
   addExperience(amount: number): void;
+  resetProgress(): void;
   levelUp(): void;
   checkLevelUp(): boolean;
 }

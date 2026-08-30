@@ -117,10 +117,6 @@ export class DialogueView implements IDialogueView {
     }
 
     if (this.runtime.dialogueController) {
-      console.log(
-        "Mise à jour du dialogue actif dans le DialogueController :",
-        this.speaker.name,
-      );
       this.runtime.dialogueController.currentActiveDialogue = this.dialogue;
     }
     this.render();

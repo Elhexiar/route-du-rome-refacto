@@ -100,9 +100,14 @@ export class ConsoleTestController {
     this.runtime.questService.getAllQuests().forEach((quest) => {
       quest.isCompleted = false;
     });
+    this.runtime.npcController.npcs.forEach((npc) => {
+      npc.done = false;
+    });
     this.runtime.badgeService.getAllCollectedBadges().forEach((badge) => {
       this.runtime.badgeService.uncollectBadge(badge.id);
     });
+    this.runtime.experienceController.resetProgress();
+    this.resetDialogues();
   }
 
   showHeroPresentation(heroId?: string): boolean {
