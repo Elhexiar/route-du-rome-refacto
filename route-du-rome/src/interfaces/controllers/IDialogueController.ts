@@ -14,6 +14,7 @@ export interface IDialogueController {
   dialogueRegistry: Map<string, IDialogue>;
   currentActiveDialogue: IDialogue | null | undefined;
   currentActiveNode: IDialogueNode | null | undefined;
+  completeQuestForSpeaker(npc: INpc): void;
   dialogueView: {
     ResetForNewSpeaker(speaker: INpc | IHero): void;
     ResetForNewNPC(npc: INpc): void;

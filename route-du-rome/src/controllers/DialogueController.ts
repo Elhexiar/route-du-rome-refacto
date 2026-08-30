@@ -1,7 +1,7 @@
 import type { IDialogueController } from "#IControllers/IDialogueController";
 import type { IExperienceController } from "#IControllers/index.ts";
 import { DialogueView } from "#src/ui/dialogue/DialogueView.ts";
-import type { IDialogue, IDialogueNode } from "../interfaces/entities";
+import type { IDialogue, IDialogueNode, INpc } from "../interfaces/entities";
 
 export class DialogueController implements IDialogueController {
   dialogueRegistry: Map<string, IDialogue>;
@@ -100,4 +100,10 @@ export class DialogueController implements IDialogueController {
   }
 
   ToggleNpcDialogueView(_npcId: string, _node: IDialogueNode): void {}
+
+  completeQuestForSpeaker(npc: INpc): void {
+    this.runtime.experienceController?.questService.quests
+      .get(`${npc.id}-default`)
+      ?.Complete();
+  }
 }

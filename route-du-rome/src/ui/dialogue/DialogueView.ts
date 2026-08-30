@@ -104,13 +104,12 @@ export class DialogueView implements IDialogueView {
           speaker,
         );
 
-        // TODO : HORRIBLE way to handle quest completion, but it works for now. We should refactor this later.
         this.jobPresentationView.onClosed(() => {
           const currentSpeaker = this.speaker;
-          if (currentSpeaker && "id" in currentSpeaker) {
-            this.runtime.experienceController?.questService.quests
-              .get(`${currentSpeaker.id}-default`)
-              ?.Complete();
+          if (currentSpeaker && "job" in currentSpeaker) {
+            this.runtime.dialogueController?.completeQuestForSpeaker(
+              currentSpeaker,
+            );
           }
         });
       }
