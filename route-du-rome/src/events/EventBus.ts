@@ -27,10 +27,7 @@ export class EventBus {
     this.listeners.get(eventType)!.add(listener as EventListener);
   }
 
-  once<T extends AppEventType>(
-    eventType: T,
-    listener: EventListener<T>,
-  ): void {
+  once<T extends AppEventType>(eventType: T, listener: EventListener<T>): void {
     const wrappedListener: EventListener<T> = (event) => {
       listener(event);
       this.off(eventType, wrappedListener);

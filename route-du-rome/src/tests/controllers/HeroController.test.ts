@@ -33,8 +33,8 @@ describe("HeroController", () => {
     const onSwitch = vi.fn();
 
     controller.onHeroesSwitched(onSwitch);
-    controller.SwitchHero(controller.heroes[0]);
-    controller.SwitchHeroById("hero-2");
+    controller.switchHero(controller.heroes[0]);
+    controller.switchHeroById("hero-2");
 
     expect((controller.currentHero as Hero | null)?.id).toBe("hero-2");
     expect(onSwitch).toHaveBeenCalledTimes(2);

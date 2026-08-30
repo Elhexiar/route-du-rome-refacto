@@ -50,11 +50,11 @@ describe("MapController", () => {
       [],
     );
 
-    controller.AddNpcMarker(48.6, -1.6, npc);
-    controller.AddHeroMarker(48.4, -1.5, hero);
-    controller.MoveNpcMarker(npc, 48.7, -1.7);
-    controller.MoveHeroMarker(hero, 48.9, -1.9);
-    controller.RemoveHeroMarker(hero);
+    controller.addNpcMarker(48.6, -1.6, npc);
+    controller.addHeroMarker(48.4, -1.5, hero);
+    controller.moveNpcMarker(npc, 48.7, -1.7);
+    controller.moveHeroMarker(hero, 48.9, -1.9);
+    controller.removeHeroMarker(hero);
 
     expect(calls).toContain("npc-added");
     expect(calls).toContain("hero-added");

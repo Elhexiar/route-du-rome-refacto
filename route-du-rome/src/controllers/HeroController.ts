@@ -110,10 +110,6 @@ export class HeroController implements IHeroController {
     );
   }
 
-  SwitchHero(hero: IHero): void {
-    this.switchHero(hero);
-  }
-
   switchHeroById(heroId: string): boolean {
     const hero = this.heroes.find((h) => h.id === heroId);
     if (hero) {
@@ -125,10 +121,6 @@ export class HeroController implements IHeroController {
     }
 
     return false;
-  }
-
-  SwitchHeroById(heroId: string): boolean {
-    return this.switchHeroById(heroId);
   }
 
   onHeroesLoaded(callback: (heroes: IHero[]) => void): void {

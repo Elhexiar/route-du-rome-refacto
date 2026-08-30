@@ -52,10 +52,6 @@ export class NpcController implements INpcController {
     this.npcs.push(npc);
   }
 
-  AddNpc(npc: INpc): void {
-    this.addNpc(npc);
-  }
-
   addNpcsFromJson(data: ConfigData): void {
     data.Npcs.forEach((npcData: NpcData) => {
       const npc: INpc = Npc.fromJson(npcData);
@@ -74,10 +70,6 @@ export class NpcController implements INpcController {
     console.log("NPCs added from JSON:", this.npcs);
   }
 
-  AddNpcsFromJSON(data: ConfigData): void {
-    this.addNpcsFromJson(data);
-  }
-
   removeNpc(npc: INpc): void {
     const index = this.npcs.findIndex((n) => n.id === npc.id);
     if (index !== -1) {
@@ -85,24 +77,12 @@ export class NpcController implements INpcController {
     }
   }
 
-  RemoveNpc(npc: INpc): void {
-    this.removeNpc(npc);
-  }
-
   getNpcById(id: string): INpc | undefined {
     return this.npcs.find((npc) => npc.id === id);
   }
 
-  GetNpcById(id: string): INpc | undefined {
-    return this.getNpcById(id);
-  }
-
   getAllNpcs(): INpc[] {
     return this.npcs;
-  }
-
-  GetAllNpcs(): INpc[] {
-    return this.getAllNpcs();
   }
 
   onNpcsLoaded(callback: (npcs: INpc[]) => void): void {

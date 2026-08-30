@@ -239,10 +239,6 @@ export class QuestService implements IQuestService {
     this.questCompleteToast.ShowToast();
   }
 
-  ShowToast(): void {
-    this.showToast();
-  }
-
   toggleEndToast(): void {
     this.runtime.eventBus?.emit({
       type: AppEvents.NOTIFICATION_SHOW,
@@ -262,10 +258,6 @@ export class QuestService implements IQuestService {
     }
 
     this.endToast.ToggleToast();
-  }
-
-  ToggleEndToast(): void {
-    this.toggleEndToast();
   }
 
   /**

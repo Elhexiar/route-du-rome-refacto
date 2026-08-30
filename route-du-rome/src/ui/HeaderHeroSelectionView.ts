@@ -116,7 +116,7 @@ export class HeaderHeroSelectionView {
       button.addEventListener("click", () => {
         const heroId = (button as HTMLElement).dataset.heroId;
         if (heroId) {
-          this.runtime.heroController?.SwitchHeroById(heroId);
+          this.runtime.heroController?.switchHeroById(heroId);
         }
       });
     });

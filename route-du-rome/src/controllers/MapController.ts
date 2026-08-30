@@ -42,14 +42,10 @@ export class MapController implements IMapController {
       this.mapView = { markers: new Map() };
     }
 
-    this.InitMapView(this.mapView);
+    this.initMapView(this.mapView);
   }
 
-  initMapView(mapView: any): void {
-    this.InitMapView(mapView);
-  }
-
-  InitMapView(_mapView: any): void {
+  initMapView(_mapView: any): void {
     this.runtime.npcController?.onNpcsLoaded((npcs) => {
       npcs.forEach((npc) => {
         this.addNpcMarker(npc.latitude, npc.longitude, npc);
@@ -76,23 +72,12 @@ export class MapController implements IMapController {
     this.mapView.addNPCMarker(latitude, longitude, npc);
   }
 
-  AddNpcMarker(latitude: number, longitude: number, npc: INpc): void {
-    this.addNpcMarker(latitude, longitude, npc);
-  }
-
   addHeroMarker(latitude: number, longitude: number, hero: IHero): void {
     this.mapView.addHeroMarker(latitude, longitude, hero);
   }
 
-  AddHeroMarker(latitude: number, longitude: number, hero: IHero): void {
-    this.addHeroMarker(latitude, longitude, hero);
-  }
   removeNpcMarker(npc: INpc): void {
     this.mapView.removeNPCMarker?.(npc);
-  }
-
-  RemoveNpcMarker(npc: INpc): void {
-    this.removeNpcMarker(npc);
   }
 
   removeHeroMarker(hero: IHero): void {
@@ -103,41 +88,22 @@ export class MapController implements IMapController {
     }
   }
 
-  RemoveHeroMarker(hero: IHero): void {
-    this.removeHeroMarker(hero);
-  }
-
   getNpcMarker(npc: INpc) {
     return this.mapView.getNPCMarker?.(npc);
-  }
-
-  GetNpcMarker(npc: INpc) {
-    return this.getNpcMarker(npc);
   }
 
   getHeroMarker(hero: IHero) {
     return this.mapView.getHeroMarker?.(hero);
   }
 
-  GetHeroMarker(hero: IHero) {
-    return this.getHeroMarker(hero);
-  }
-
   moveNpcMarker(npc: INpc, newLatitude: number, newLongitude: number): void {
     this.mapView.moveNPCMarker(npc, newLatitude, newLongitude);
-  }
-
-  MoveNpcMarker(npc: INpc, newLatitude: number, newLongitude: number): void {
-    this.moveNpcMarker(npc, newLatitude, newLongitude);
   }
 
   moveHeroMarker(hero: IHero, newLatitude: number, newLongitude: number): void {
     this.mapView.moveHeroMarker(hero, newLatitude, newLongitude);
   }
 
-  MoveHeroMarker(hero: IHero, newLatitude: number, newLongitude: number): void {
-    this.moveHeroMarker(hero, newLatitude, newLongitude);
-  }
   toggleMarkerVisibility(visible: boolean, npc?: INpc, hero?: IHero): void {
     const marker = npc
       ? this.mapView?.markers.get(npc)
@@ -156,10 +122,6 @@ export class MapController implements IMapController {
     }
   }
 
-  ToggleMarkerVisibility(visible: boolean, npc?: INpc, hero?: IHero): void {
-    this.toggleMarkerVisibility(visible, npc, hero);
-  }
-
   toggleMarkerAccessibility(
     accessible: boolean,
     npc?: INpc,
@@ -168,11 +130,4 @@ export class MapController implements IMapController {
     this.toggleMarkerVisibility(accessible, npc, hero);
   }
 
-  ToggleMarkerAccessibility(
-    accessible: boolean,
-    npc?: INpc,
-    hero?: IHero,
-  ): void {
-    this.toggleMarkerAccessibility(accessible, npc, hero);
-  }
 }

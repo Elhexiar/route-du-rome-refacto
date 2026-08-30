@@ -233,8 +233,8 @@ describe("QuestService", () => {
     service.QuestCompleteToast = { ShowToast: showToast } as any;
     service.EndToast = { ToggleToast: toggleToast } as any;
 
-    service.ShowToast();
-    service.ToggleEndToast();
+    service.showToast();
+    service.toggleEndToast();
 
     expect(showToast).toHaveBeenCalledTimes(1);
     expect(toggleToast).toHaveBeenCalledTimes(1);

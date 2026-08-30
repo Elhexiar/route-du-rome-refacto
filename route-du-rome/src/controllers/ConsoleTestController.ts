@@ -119,7 +119,7 @@ export class ConsoleTestController {
       return false;
     }
 
-    this.runtime.heroController.SwitchHero(hero);
+    this.runtime.heroController.switchHero(hero);
     dialogue.Reset();
     dialogueView.ResetForNewSpeaker(hero);
     dialogueView.ShowView();

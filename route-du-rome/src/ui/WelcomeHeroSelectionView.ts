@@ -74,7 +74,7 @@ export class WelcomeHeroSelectionView {
     if (heroController) {
       const hero = heroController.heroes.find((h) => h.id === heroId);
       if (hero) {
-        heroController.SwitchHero(hero);
+        heroController.switchHero(hero);
         this.HideView();
         const dialogueController = this.runtime
           .dialogueController as DialogueController;

@@ -42,13 +42,13 @@ describe("NpcController", () => {
       [],
     );
 
-    controller.AddNpc(npcA);
-    controller.AddNpc(npcB);
-    controller.RemoveNpc(npcA);
+    controller.addNpc(npcA);
+    controller.addNpc(npcB);
+    controller.removeNpc(npcA);
 
-    expect(controller.GetAllNpcs()).toHaveLength(1);
-    expect(controller.GetNpcById("npc-2")).toBe(npcB);
-    expect(controller.GetNpcById("npc-1")).toBeUndefined();
+    expect(controller.getAllNpcs()).toHaveLength(1);
+    expect(controller.getNpcById("npc-2")).toBe(npcB);
+    expect(controller.getNpcById("npc-1")).toBeUndefined();
   });
 
   it("notifies when NPCs are loaded", () => {
