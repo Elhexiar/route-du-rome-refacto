@@ -22,13 +22,21 @@ export class JobPresentationView {
   }
 
   render(): void {
-    // if already open, keep it open after re-rendering
     const wasOpen = this.element
       .querySelector<HTMLElement>("#voverlay")
       ?.classList.contains("open");
 
-    // reset reply on new render
     this.reply = "";
+
+    const choiceA =
+      this.npc.presentationDialogue?.rootNode?.nextNode?.choices?.[0]?.text ??
+      "Question disponible";
+    const choiceB =
+      this.npc.presentationDialogue?.rootNode?.nextNode?.choices?.[1]?.text ??
+      "Question disponible";
+    const choiceC =
+      this.npc.presentationDialogue?.rootNode?.nextNode?.choices?.[2]?.text ??
+      "Question disponible";
 
     this.element.innerHTML = `
     <div id="voverlay">
@@ -47,15 +55,9 @@ export class JobPresentationView {
             <iframe
               id="vyt"
               frameborder="0"
-              allow="
-                accelerometer;
-                autoplay;
-                clipboard-write;
-                encrypted-media;
-                gyroscope;
-                picture-in-picture;
-              "
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowfullscreen
+              referrerpolicy="strict-origin-when-cross-origin"
               style="
                 display: none;
                 position: absolute;
@@ -93,14 +95,14 @@ export class JobPresentationView {
             <div class="vchoices" id="vcs">
               <div class="vc" id="vc0">
               <span class="vcl">1</span>
-              ${this.npc.presentationDialogue?.rootNode?.nextNode?.choices?.[0].text}</div>
+              ${choiceA}</div>
               <div class="vc" id="vc1">
                 <span class="vcl">2</span>
-                ${this.npc.presentationDialogue?.rootNode?.nextNode?.choices?.[1].text}
+                ${choiceB}
               </div>
               <div class="vc" id="vc2">
                 <span class="vcl">3</span>
-                ${this.npc.presentationDialogue?.rootNode?.nextNode?.choices?.[2].text}
+                ${choiceC}
               </div>
             </div>
             <div class="vdlg-reply show" id="vdr">
@@ -142,13 +144,16 @@ export class JobPresentationView {
     const choices = this.element.querySelectorAll<HTMLElement>(".vc");
     choices.forEach((choice, index) => {
       choice.addEventListener("click", () => {
-        this.reply =
+        const replyTarget =
           this.npc.presentationDialogue?.rootNode?.nextNode?.choices?.[index]
-            .next?.text ?? null;
+            ?.next?.text ?? "";
 
-        // Update the reply instead of re-rendering the entire view to avoid losing the open state
-        this.element.querySelector<HTMLElement>("#vdr")!.textContent =
-          this.reply ?? "";
+        this.reply = replyTarget || null;
+
+        const replyElement = this.element.querySelector<HTMLElement>("#vdr");
+        if (replyElement) {
+          replyElement.textContent = this.reply ?? "";
+        }
       });
     });
 

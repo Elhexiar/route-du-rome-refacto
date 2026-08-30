@@ -9,7 +9,15 @@ export class BadgeService implements IBadgeService {
   onBadgeCollectedCallbacks: (() => void)[] = [];
   onBadgeUncollectedCallbacks: (() => void)[] = [];
 
-  NotebookView: NotebookView | null = null;
+  notebookView: NotebookView | null = null;
+
+  get NotebookView(): NotebookView | null {
+    return this.notebookView;
+  }
+
+  set NotebookView(value: NotebookView | null) {
+    this.notebookView = value;
+  }
 
   constructor() {
     this.badges = new Map<string, IBadge>();
@@ -17,39 +25,47 @@ export class BadgeService implements IBadgeService {
 
     const app = GameManager.app;
     if (app) {
-      this.NotebookView = new NotebookView(app);
+      this.notebookView = new NotebookView(app);
     }
   }
+
   onBadgeCollected(callback: () => void): void {
     this.onBadgeCollectedCallbacks.push(callback);
   }
+
   onBadgeUncollected(callback: () => void): void {
     this.onBadgeUncollectedCallbacks.push(callback);
   }
 
   getBadgeById(badgeId: string): IBadge | null {
-    return this.badges.get(badgeId) || null;
+    return this.badges.get(badgeId) ?? null;
   }
+
   getAllBadges(): IBadge[] {
     return Array.from(this.badges.values());
   }
+
   getAllCollectedBadges(): IBadge[] {
     return Array.from(this.badges.values()).filter(
       (badge): badge is IBadge => badge.collected,
     );
   }
+
   createBadge(badgeData: IBadge): IBadge {
     this.badges.set(badgeData.id, badgeData);
     return badgeData;
   }
+
   updateBadge(badgeId: string, badgeData: Partial<IBadge>): IBadge | null {
     const badge = this.getBadgeById(badgeId);
     if (!badge) {
       return null;
     }
+
     Object.assign(badge, badgeData);
     return badge;
   }
+
   deleteBadge(badgeId: string): boolean {
     return this.badges.delete(badgeId);
   }
@@ -59,15 +75,15 @@ export class BadgeService implements IBadgeService {
     if (!badge || badge.collected) {
       return false;
     }
+
     badge.Unlock();
     this.collectedBadges.add(badgeId);
-
     this.onBadgeCollectedCallbacks.forEach((callback) => callback());
-
-    this.NotebookView?.ShowView();
+    this.notebookView?.ShowView();
 
     return true;
   }
+
   uncollectBadge(badgeId: string): boolean {
     const badge = this.getBadgeById(badgeId);
     if (!badge?.collected) {
@@ -77,6 +93,7 @@ export class BadgeService implements IBadgeService {
     badge.collected = false;
     this.collectedBadges.delete(badgeId);
     this.onBadgeUncollectedCallbacks.forEach((callback) => callback());
+
     return true;
   }
 }

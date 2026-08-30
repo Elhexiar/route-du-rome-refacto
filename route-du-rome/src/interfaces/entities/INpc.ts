@@ -10,7 +10,7 @@ export interface INpc extends IDialogueOwner {
   jobSector: string;
   color: string;
   portrait: string;
-  lattitude: number;
+  latitude: number;
   longitude: number;
   relatedQuests: IQuest[];
   backgroundVideo: string;

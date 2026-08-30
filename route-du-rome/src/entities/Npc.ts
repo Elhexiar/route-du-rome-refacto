@@ -11,7 +11,8 @@ export type NpcData = {
   jobSector: string;
   icon: string;
   portrait: string;
-  lattitude: number;
+  latitude?: number;
+  lattitude?: number;
   longitude: number;
   relatedQuestsIds: string[];
   backgroundVideo: string;
@@ -28,7 +29,7 @@ export type NpcData = {
  * @param jobSector : string : Secteur du métier du PNJ
  * @param icon : string : URL de l'icône du PNJ
  * @param portrait : string : URL de l'image du portrait du PNJ
- * @param lattitude : number : Latitude de la position du PNJ
+ * @param latitude : number : Latitude de la position du PNJ
  * @param longitude : number : Longitude de la position du PNJ
  * @param jobVideoUrl : string : URL de la vidéo métier du PNJ
  * @param presentationDialogue : IDialogue | null : Dialogue de présentation du PNJ
@@ -51,7 +52,7 @@ export class Npc implements INpc {
   jobSector: string;
   icon: string;
   portrait: string;
-  lattitude: number;
+  latitude: number;
   longitude: number;
   relatedQuests: IQuest[] = [];
   backgroundVideo: string;
@@ -71,7 +72,7 @@ export class Npc implements INpc {
     jobSector: string,
     icon: string,
     portrait: string,
-    lattitude: number,
+    latitude: number,
     longitude: number,
     backgroundVideo: string,
     jobVideoUrl: string,
@@ -86,7 +87,7 @@ export class Npc implements INpc {
     this.jobSector = jobSector;
     this.icon = icon;
     this.portrait = portrait;
-    this.lattitude = lattitude;
+    this.latitude = latitude;
     this.longitude = longitude;
     this.backgroundVideo = backgroundVideo;
     this.jobVideoUrl = jobVideoUrl;
@@ -94,5 +95,26 @@ export class Npc implements INpc {
     this.presentationDialogue = presentationDialogue ?? null;
     this.dialogues = dialogues;
     this.currentActiveDialogue = null;
+  }
+
+  static fromJson(data: NpcData): Npc {
+    const latitude = data.latitude ?? data.lattitude ?? 0;
+
+    return new Npc(
+      data.id,
+      data.name,
+      data.color,
+      data.job,
+      data.jobSector,
+      data.icon,
+      data.portrait,
+      latitude,
+      data.longitude,
+      data.backgroundVideo,
+      data.jobVideoUrl,
+      data.videoTitle,
+      null,
+      [],
+    );
   }
 }

@@ -4,6 +4,7 @@ export interface IExperienceController {
   questService: IQuestService;
   badgeService: IBadgeService;
 
+  currentExperience: number;
   curentExperience: number;
   currentLevel: number;
   currentExperienceLimit: number;

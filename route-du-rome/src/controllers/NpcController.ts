@@ -6,14 +6,22 @@ import { Dialogue } from "#src/entities/dialogue/Dialogue.ts";
 import { VideoPreloadService } from "#Services/VideoPreloadService.ts";
 
 export class NpcController implements INpcController {
-  Npcs: INpc[] = [];
+  npcs: INpc[] = [];
   private onNpcsLoadedCallbacks: Array<(npcs: INpc[]) => void> = [];
 
-  constructor(configPath: string = "/config.json") {
-    void this.LoadNpcsFromConfig(configPath);
+  get Npcs(): INpc[] {
+    return this.npcs;
   }
 
-  private async LoadNpcsFromConfig(configPath?: string): Promise<void> {
+  set Npcs(value: INpc[]) {
+    this.npcs = value;
+  }
+
+  constructor(configPath: string = "/config.json") {
+    void this.loadNpcsFromConfig(configPath);
+  }
+
+  private async loadNpcsFromConfig(configPath?: string): Promise<void> {
     const safeConfigPath = configPath ?? "/config.json";
 
     const response = await fetch(safeConfigPath);
@@ -30,60 +38,69 @@ export class NpcController implements INpcController {
       configData.Npcs.map((npcData) => npcData.backgroundVideo),
     );
 
-    this.AddNpcsFromJSON(configData);
-    this.onNpcsLoadedCallbacks.forEach((callback) => callback(this.Npcs));
+    this.addNpcsFromJson(configData);
+    this.onNpcsLoadedCallbacks.forEach((callback) => callback(this.npcs));
+  }
+
+  async LoadNpcsFromConfig(configPath?: string): Promise<void> {
+    return this.loadNpcsFromConfig(configPath);
+  }
+
+  addNpc(npc: INpc): void {
+    this.npcs.push(npc);
   }
 
   AddNpc(npc: INpc): void {
-    this.Npcs.push(npc);
+    this.addNpc(npc);
   }
 
-  AddNpcsFromJSON(data: ConfigData): void {
+  addNpcsFromJson(data: ConfigData): void {
     data.Npcs.forEach((npcData: NpcData) => {
-      const npc: INpc = new Npc(
-        npcData.id,
-        npcData.name,
-        npcData.color,
-        npcData.job,
-        npcData.jobSector,
-        npcData.icon,
-        npcData.portrait,
-        npcData.lattitude,
-        npcData.longitude,
-        npcData.backgroundVideo,
-        npcData.jobVideoUrl,
-        npcData.videoTitle,
-        null, // presentationDialogue will be set later
-        [],
-      );
+      const npc: INpc = Npc.fromJson(npcData);
 
-      // building the presentation dialogue for the NPC if it exists
       if (npcData.presentationDialogue) {
         const parsedDialogue = new Dialogue(
           npc,
-          npc.name + "-presentation-dialogue",
+          `${npc.name}-presentation-dialogue`,
           npcData.presentationDialogue,
         );
         npc.presentationDialogue = parsedDialogue;
       }
 
-      this.AddNpc(npc);
+      this.addNpc(npc);
     });
-    console.log("NPCs added from JSON:", this.Npcs);
+    console.log("NPCs added from JSON:", this.npcs);
   }
 
-  RemoveNpc(npc: INpc): void {
-    const index = this.Npcs.findIndex((n) => n.id === npc.id);
+  AddNpcsFromJSON(data: ConfigData): void {
+    this.addNpcsFromJson(data);
+  }
+
+  removeNpc(npc: INpc): void {
+    const index = this.npcs.findIndex((n) => n.id === npc.id);
     if (index !== -1) {
-      this.Npcs.splice(index, 1);
+      this.npcs.splice(index, 1);
     }
   }
 
-  GetNpcById(id: string): INpc | undefined {
-    return this.Npcs.find((npc) => npc.id === id);
+  RemoveNpc(npc: INpc): void {
+    this.removeNpc(npc);
   }
+
+  getNpcById(id: string): INpc | undefined {
+    return this.npcs.find((npc) => npc.id === id);
+  }
+
+  GetNpcById(id: string): INpc | undefined {
+    return this.getNpcById(id);
+  }
+
+  getAllNpcs(): INpc[] {
+    return this.npcs;
+  }
+
   GetAllNpcs(): INpc[] {
-    return this.Npcs;
+    return this.getAllNpcs();
   }
 
   onNpcsLoaded(callback: (npcs: INpc[]) => void): void {

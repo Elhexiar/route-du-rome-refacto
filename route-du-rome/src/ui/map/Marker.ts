@@ -24,7 +24,7 @@ export class Marker {
       const icon = this.createNpcIcon(leaflet, npc);
 
       const m = leaflet
-        .marker([npc.lattitude, npc.longitude], { icon })
+        .marker([npc.latitude, npc.longitude], { icon })
         .addTo(map);
 
       // prevent marker clicks from propagating to the map
@@ -59,7 +59,7 @@ export class Marker {
 
       const m = leaflet
         .marker(
-          [initialPosition?.lattitude ?? 0, initialPosition?.longitude ?? 0],
+          [initialPosition?.latitude ?? 0, initialPosition?.longitude ?? 0],
           { icon },
         )
         .addTo(map);

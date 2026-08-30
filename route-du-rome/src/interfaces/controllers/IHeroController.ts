@@ -4,10 +4,14 @@ export interface IHeroController {
   heroes: IHero[];
   readonly currentHero: IHero | null;
 
-  position: { lattitude: number; longitude: number };
+  position: { latitude: number; longitude: number };
 
+  switchHero(hero: IHero): void;
   SwitchHero(hero: IHero): void;
+
+  switchHeroById(heroId: string): boolean;
   SwitchHeroById(heroId: string): boolean;
+
   onHeroesLoaded(callback: (heroes: IHero[]) => void): void;
   onHeroesSwitched(callback: (hero: IHero | null) => void): void;
 }

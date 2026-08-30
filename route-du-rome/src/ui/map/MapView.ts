@@ -116,7 +116,7 @@ export class LeafletMapView implements IMapView {
     // console.log("Map initialized");
     // GameManager.npcController?.onNpcsLoaded((npcs) => {
     //   npcs.forEach((npc) => {
-    //     this.addNPCMarker(npc.lattitude, npc.longitude, npc);
+    //     this.addNPCMarker(npc.latitude, npc.longitude, npc);
     //   });
     // });
   }
@@ -182,7 +182,7 @@ export class LeafletMapView implements IMapView {
     marker.setLatLng([_newLat, _newLng]);
     if (GameManager.heroController?.position) {
       GameManager.heroController.position = {
-        lattitude: _newLat,
+        latitude: _newLat,
         longitude: _newLng,
       };
     }

@@ -6,93 +6,125 @@ import { NPCBadge } from "#Entities/NPCBadge.ts";
 import type { INpc } from "#IEntities/index.ts";
 import type { ConfigData } from "#src/entities/Config.ts";
 import { QuestCompletedToast } from "#src/ui/experience/QuestCompletedToast.ts";
-import type { BadgeService } from "./BadgeService";
 import { EndToast } from "#src/ui/experience/EndToast.ts";
 
 export class QuestService implements IQuestService {
   quests: Map<string, IQuest> = new Map<string, IQuest>();
-
   levelData: ConfigData["Levels"] = [];
+  questCompleteToast: QuestCompletedToast | null = null;
+  endToast: EndToast | null = null;
+  onQuestCompletionCallbacks: (() => void)[] = [];
 
-  QuestCompleteToast: QuestCompletedToast | null = null;
-
-  EndToast: EndToast | null = null;
-
-  getQuestById(questId: string): IQuest | null {
-    throw new Error("Method not implemented.");
-  }
-  getAllQuests(): IQuest[] {
-    throw new Error("Method not implemented.");
-  }
-  createQuest(questData: IQuest): IQuest {
-    throw new Error("Method not implemented.");
-  }
-  updateQuestCompletionStatus(
-    questId: string,
-    completionStatus: number,
-  ): IQuest | null {
-    throw new Error("Method not implemented.");
-  }
-  deleteQuest(questId: string): Promise<boolean> {
-    throw new Error("Method not implemented.");
+  get QuestCompleteToast(): QuestCompletedToast | null {
+    return this.questCompleteToast;
   }
 
-  OnQuestCompletionCallbacks: (() => void)[] = [];
+  set QuestCompleteToast(value: QuestCompletedToast | null) {
+    this.questCompleteToast = value;
+  }
+
+  get EndToast(): EndToast | null {
+    return this.endToast;
+  }
+
+  set EndToast(value: EndToast | null) {
+    this.endToast = value;
+  }
 
   constructor() {
-    // Initialize the default quest for each npc
+    this.initializeDefaultQuests();
+    void this.loadLevelDataFromConfig("/config.json");
+  }
+
+  private initializeDefaultQuests(): void {
     GameManager.npcController?.onNpcsLoaded((npcs) => {
       npcs.forEach((npc) => {
-        const defaultQuest = new NPCDefaultQuest(
-          npc,
-          npc.id + "-default",
-          `Default Quest for ${npc.name}`,
-          "This is a default quest.",
-        );
-
-        defaultQuest.OnQuestActions.push(() => {
-          npc.done = true;
-          GameManager.mapController?.mapView?.markers.get(npc)?.UpdateMarker();
-
-          const asFinishedAllQuests = Array.from(this.quests.values()).every(
-            (quest) => quest.isCompleted,
-          );
-          if (asFinishedAllQuests) {
-            this.ToggleEndToast();
-          } else {
-            this.ShowToast();
-          }
-        });
-
+        const defaultQuest = this.createDefaultQuestForNpc(npc);
         this.quests.set(defaultQuest.id, defaultQuest);
 
-        console.log(
-          `Default quest created for NPC ${npc.name}: ${defaultQuest.name}`,
-        );
-
-        // create a badge for the quest and associate it with the quest
-        const badge = new NPCBadge(
-          npc,
-          defaultQuest.id + "-badge",
-          npc.jobSector,
-          npc.name,
-          npc.icon,
-        );
-
-        defaultQuest.OnQuestActions.push(() => {
-          GameManager.experienceController?.badgeService.collectBadge(badge.id);
-        });
-
+        const badge = this.createBadgeForQuest(defaultQuest, npc);
         defaultQuest.relatedBadge = badge;
         GameManager.experienceController?.badgeService.createBadge(badge);
       });
     });
-
-    // get level data from config.json
-    void this.LoadLevelDataFromConfig("/config.json");
   }
 
-  async LoadLevelDataFromConfig(configPath: string): Promise<any> {
+  private createDefaultQuestForNpc(npc: INpc): NPCDefaultQuest {
+    const defaultQuest = new NPCDefaultQuest(
+      npc,
+      `${npc.id}-default`,
+      `Default Quest for ${npc.name}`,
+      "This is a default quest.",
+    );
+
+    defaultQuest.OnQuestActions.push(() => {
+      npc.done = true;
+      GameManager.mapController?.mapView?.markers.get(npc)?.UpdateMarker();
+
+      if (this.areAllQuestsCompleted()) {
+        this.toggleEndToast();
+      } else {
+        this.showToast();
+      }
+    });
+
+    return defaultQuest;
+  }
+
+  private createBadgeForQuest(
+    defaultQuest: NPCDefaultQuest,
+    npc: INpc,
+  ): NPCBadge {
+    const badge = new NPCBadge(
+      npc,
+      `${defaultQuest.id}-badge`,
+      npc.jobSector,
+      npc.name,
+      npc.icon,
+    );
+
+    defaultQuest.OnQuestActions.push(() => {
+      GameManager.experienceController?.badgeService.collectBadge(badge.id);
+    });
+
+    return badge;
+  }
+
+  private areAllQuestsCompleted(): boolean {
+    return Array.from(this.quests.values()).every((quest) => quest.isCompleted);
+  }
+
+  getQuestById(questId: string): IQuest | null {
+    return this.quests.get(questId) ?? null;
+  }
+
+  getAllQuests(): IQuest[] {
+    return Array.from(this.quests.values());
+  }
+
+  createQuest(questData: IQuest): IQuest {
+    this.quests.set(questData.id, questData);
+    return questData;
+  }
+
+  updateQuestCompletionStatus(
+    questId: string,
+    completionStatus: number,
+  ): IQuest | null {
+    const quest = this.quests.get(questId);
+    if (!quest) {
+      return null;
+    }
+
+    quest.isCompleted = completionStatus > 0;
+    return quest;
+  }
+
+  deleteQuest(questId: string): Promise<boolean> {
+    return Promise.resolve(this.quests.delete(questId));
+  }
+
+  async loadLevelDataFromConfig(configPath: string): Promise<any> {
     const safeConfigPath = configPath ?? "/config.json";
     const response = await fetch(safeConfigPath);
 
@@ -103,32 +135,44 @@ export class QuestService implements IQuestService {
     }
 
     const configData: ConfigData = await response.json();
-
     this.levelData = configData.Levels;
 
     const app = GameManager.app;
     if (app) {
-      this.QuestCompleteToast = new QuestCompletedToast(app, this.levelData);
-      this.EndToast = new EndToast(app);
+      this.questCompleteToast = new QuestCompletedToast(app, this.levelData);
+      this.endToast = new EndToast(app);
     }
 
     return configData;
   }
 
-  ShowToast() {
-    if (!this.QuestCompleteToast) {
+  async LoadLevelDataFromConfig(configPath: string): Promise<any> {
+    return this.loadLevelDataFromConfig(configPath);
+  }
+
+  showToast(): void {
+    if (!this.questCompleteToast) {
       console.error("QuestCompleteToast is not initialized.");
       return;
     }
 
-    this.QuestCompleteToast.ShowToast();
+    this.questCompleteToast.ShowToast();
   }
 
-  ToggleEndToast() {
-    if (!this.EndToast) {
+  ShowToast(): void {
+    this.showToast();
+  }
+
+  toggleEndToast(): void {
+    if (!this.endToast) {
       console.error("EndToast is not initialized.");
       return;
     }
-    this.EndToast.ToggleToast();
+
+    this.endToast.ToggleToast();
+  }
+
+  ToggleEndToast(): void {
+    this.toggleEndToast();
   }
 }

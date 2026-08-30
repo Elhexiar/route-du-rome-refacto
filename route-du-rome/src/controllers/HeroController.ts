@@ -15,10 +15,18 @@ export class HeroController implements IHeroController {
 
   private onHeroesLoadedCallbacks: Array<(heroes: IHero[]) => void> = [];
   private onHeroesSwitchedCallbacks: Array<(hero: IHero | null) => void> = [];
-  position: { lattitude: number; longitude: number } = {
-    lattitude: 48.4,
+  position: { latitude: number; longitude: number } = {
+    latitude: 48.4,
     longitude: -1.5,
   };
+
+  get latitude(): number {
+    return this.position.latitude;
+  }
+
+  set latitude(value: number) {
+    this.position.latitude = value;
+  }
 
   constructor(configPath: string = "/config.json") {
     this.currentHero = null;
@@ -42,30 +50,17 @@ export class HeroController implements IHeroController {
     );
 
     configData.Heroes.forEach((heroData) => {
-      const hero = new Hero(
-        heroData.id,
-        heroData.name,
-        heroData.role,
-        heroData.description,
-        heroData.bio,
-        heroData.portrait,
-        heroData.presentationVideo,
-        null,
-        [],
-        heroData.tags,
-      );
+      const hero = Hero.fromJson(heroData);
 
       if (heroData.presentationDialogue) {
         const parsedDialogue = new Dialogue(
           hero,
-          hero.name + "-presentation-dialogue",
+          `${hero.name}-presentation-dialogue`,
           heroData.presentationDialogue,
         );
         hero.presentationDialogue = parsedDialogue;
       }
 
-      // heroes are special and there dialogue should not be able to complete
-      // so we add an action at the end of the dialogue that reinitializes the dialogue to the root node
       if (hero.presentationDialogue) {
         hero.presentationDialogue.OnDialogueActions.push(() => {
           if (hero.presentationDialogue) {
@@ -86,13 +81,18 @@ export class HeroController implements IHeroController {
     this.onHeroesLoadedCallbacks.forEach((callback) => callback(this.heroes));
   }
 
-  SwitchHero(hero: IHero): void {
+  switchHero(hero: IHero): void {
     this.currentHero = hero;
     this.onHeroesSwitchedCallbacks.forEach((callback) =>
       callback(this.currentHero),
     );
   }
-  SwitchHeroById(heroId: string): boolean {
+
+  SwitchHero(hero: IHero): void {
+    this.switchHero(hero);
+  }
+
+  switchHeroById(heroId: string): boolean {
     const hero = this.heroes.find((h) => h.id === heroId);
     if (hero) {
       this.currentHero = hero;
@@ -103,6 +103,10 @@ export class HeroController implements IHeroController {
     }
 
     return false;
+  }
+
+  SwitchHeroById(heroId: string): boolean {
+    return this.switchHeroById(heroId);
   }
 
   onHeroesLoaded(callback: (heroes: IHero[]) => void): void {

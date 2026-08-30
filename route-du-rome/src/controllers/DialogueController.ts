@@ -48,11 +48,20 @@ export class DialogueController implements IDialogueController {
     });
   }
 
-  ImportDialogueFromJSONFile(_filePath: string): Promise<void> {
+  importDialogueFromJsonFile(_filePath: string): Promise<void> {
     throw new Error("Method not implemented.");
   }
-  ImportDialogueFromJSONNode(_dialogueNodeJSON: any): void {
+
+  ImportDialogueFromJSONFile(_filePath: string): Promise<void> {
+    return this.importDialogueFromJsonFile(_filePath);
+  }
+
+  importDialogueFromJsonNode(_dialogueNodeJSON: any): void {
     throw new Error("Method not implemented.");
+  }
+
+  ImportDialogueFromJSONNode(_dialogueNodeJSON: any): void {
+    this.importDialogueFromJsonNode(_dialogueNodeJSON);
   }
 
   ToggleNpcDialogueView(_npcId: string, _node: IDialogueNode): void {}

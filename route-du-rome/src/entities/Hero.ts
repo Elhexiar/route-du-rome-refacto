@@ -28,7 +28,6 @@ export type HeroData = {
  */
 
 export class Hero implements IHero {
-  // Hero properties
   id: string;
   name: string;
   role: string;
@@ -39,7 +38,6 @@ export class Hero implements IHero {
   presentationVideo: string;
   tags: string[];
 
-  // Dialogue Owner properties
   dialogues: IDialogue[] = [];
   currentActiveDialogue: IDialogue | null | undefined = null;
 
@@ -63,13 +61,29 @@ export class Hero implements IHero {
     this.portrait = portrait;
     this.presentationVideo = presentationVideo;
     this.tags = tags;
-
     this.currentActiveDialogue = null;
-
     this.dialogues = dialogues ?? [];
+
     if (presentationDialogue) {
-      ((this.presentationDialogue = presentationDialogue),
-        this.dialogues.unshift(presentationDialogue));
+      this.presentationDialogue = presentationDialogue;
+      this.dialogues.unshift(presentationDialogue);
     }
+  }
+
+  static fromJson(data: HeroData): Hero {
+    const hero = new Hero(
+      data.id,
+      data.name,
+      data.role,
+      data.description,
+      data.bio,
+      data.portrait,
+      data.presentationVideo,
+      null,
+      [],
+      data.tags,
+    );
+
+    return hero;
   }
 }

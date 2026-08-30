@@ -4,6 +4,50 @@ import { Npc } from "#Entities/Npc.ts";
 import { Dialogue } from "#src/entities/dialogue/Dialogue.ts";
 
 describe("Npc JSON DTO to runtime entity", () => {
+  it("creates a runtime NPC from the canonical latitude field", () => {
+    const npc = Npc.fromJson({
+      id: "maritime",
+      name: "Morgane",
+      color: "#406BDE",
+      job: "Officière de pêche · Saint-Malo",
+      jobSector: "Maritime",
+      icon: "⚓",
+      portrait: "/portraits/MorganePP.png",
+      latitude: 48.649,
+      longitude: -2.025,
+      backgroundVideo: "/videos/Morgane1.mp4",
+      jobVideoUrl: "https://www.youtube.com/embed/hlov7EFUT7E",
+      videoTitle: "Les métiers de la mer en Bretagne",
+      presentationDialogue: null,
+      relatedQuestsIds: [],
+    });
+
+    expect(npc.latitude).toBe(48.649);
+    expect(npc.longitude).toBe(-2.025);
+  });
+
+  it("accepts the legacy lattitude field from the existing config payload", () => {
+    const npc = Npc.fromJson({
+      id: "maritime",
+      name: "Morgane",
+      color: "#406BDE",
+      job: "Officière de pêche · Saint-Malo",
+      jobSector: "Maritime",
+      icon: "⚓",
+      portrait: "/portraits/MorganePP.png",
+      lattitude: 48.649,
+      longitude: -2.025,
+      backgroundVideo: "/videos/Morgane1.mp4",
+      jobVideoUrl: "https://www.youtube.com/embed/hlov7EFUT7E",
+      videoTitle: "Les métiers de la mer en Bretagne",
+      presentationDialogue: null,
+      relatedQuestsIds: [],
+    });
+
+    expect(npc.latitude).toBe(48.649);
+    expect(npc.longitude).toBe(-2.025);
+  });
+
   it("creates a runtime NPC from a config JSON payload and binds its presentation dialogue", () => {
     const npcJson = {
       id: "maritime",
@@ -13,7 +57,7 @@ describe("Npc JSON DTO to runtime entity", () => {
       jobSector: "Maritime",
       icon: "⚓",
       portrait: "/portraits/MorganePP.png",
-      lattitude: 48.649,
+      latitude: 48.649,
       longitude: -2.025,
       backgroundVideo: "/videos/Morgane1.mp4",
       jobVideoUrl: "https://www.youtube.com/embed/hlov7EFUT7E",
@@ -36,7 +80,7 @@ describe("Npc JSON DTO to runtime entity", () => {
       npcJson.jobSector,
       npcJson.icon,
       npcJson.portrait,
-      npcJson.lattitude,
+      npcJson.latitude,
       npcJson.longitude,
       npcJson.backgroundVideo,
       npcJson.jobVideoUrl,
@@ -57,7 +101,7 @@ describe("Npc JSON DTO to runtime entity", () => {
     expect(npc.name).toBe("Morgane");
     expect(npc.jobSector).toBe("Maritime");
     expect(npc.icon).toBe("⚓");
-    expect(npc.lattitude).toBe(48.649);
+    expect(npc.latitude).toBe(48.649);
     expect(npc.longitude).toBe(-2.025);
     expect(npc.presentationDialogue).toBe(presentationDialogue);
     expect(npc.dialogues[0]).toBe(presentationDialogue);

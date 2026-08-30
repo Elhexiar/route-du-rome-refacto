@@ -11,4 +11,8 @@ export interface IQuestService {
     completionStatus: number,
   ): IQuest | null;
   deleteQuest(questId: string): Promise<boolean>;
+
+  loadLevelDataFromConfig(configPath: string): Promise<any>;
+  showToast(): void;
+  toggleEndToast(): void;
 }
