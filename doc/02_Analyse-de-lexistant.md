@@ -33,3 +33,7 @@ Le HTML, le CSS, les données et la logique métier étaient réunis dans les m�
 #### Dépendances cachées
 
 Dans la version refactorisée en cours de développement, `GameManager` avait progressivement pris le rôle d'un objet central contenant presque tous les contrôleurs. Plusieurs classes pouvaient donc fonctionner uniquement parce qu'elles retrouvaient leurs dépendances dans cet objet global.
+
+---
+
+[← Page précédente : Introduction et contexte](01_Introduction-et-Contexte.md) | [Page suivante : Objectifs et contraintes →](03_Objectif-et-contraintes.md)

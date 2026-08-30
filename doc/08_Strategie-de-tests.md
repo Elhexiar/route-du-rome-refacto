@@ -68,3 +68,7 @@ La priorité a été de disposer d'une base fiable et exécutable. Le seuil de 8
 ### Scénario de dialogue
 
 Le déroulement d'une continuation de dialogue est représenté dans le [diagramme de séquence du dialogue](05_Modelisation/entities/dialogue-sequence.pu) ou sa [version SVG](05_Modelisation/entities/dialogueSequence.svg). Il complète les tests unitaires en décrivant le passage entre l'utilisateur, la vue, l'entité `Dialogue` et le nœud courant.
+
+---
+
+[← Page précédente : Choix techniques](07_Choix-techniques.md) | [Page suivante : Qualité →](09_Qualite.md)

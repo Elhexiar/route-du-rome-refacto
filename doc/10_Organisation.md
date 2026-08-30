@@ -63,3 +63,7 @@ Cette réorientation était nécessaire pour éviter de construire l'interface s
 ### Bilan
 
 L'organisation n'a pas respecté le calendrier prévu, mais le travail a abouti à une base plus propre que celle identifiée au départ. La refactorisation a permis de clarifier les responsabilités, de rendre les dépendances injectables et de conserver `GameManager` uniquement comme outil de console.
+
+---
+
+[← Page précédente : Qualité](09_Qualite.md) | [Page suivante : Annexe →](11_Annexe.md)

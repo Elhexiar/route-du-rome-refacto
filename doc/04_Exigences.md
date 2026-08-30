@@ -39,3 +39,7 @@ Les cases cochées décrivent les éléments effectivement présents dans la ver
 ### Modélisation fonctionnelle
 
 Les interactions attendues entre les utilisateurs et l'application sont présentées dans le [diagramme de cas d'utilisation](05_Modelisation/user-case.pu) ou sa [version SVG](05_Modelisation/user-case.svg).
+
+---
+
+[← Page précédente : Objectifs et contraintes](03_Objectif-et-contraintes.md) | [Page suivante : Architecture cible →](06_Architecture-cible.md)

@@ -66,3 +66,7 @@ L'application ne gère pas de compte utilisateur, de données personnelles, de f
 Les contenus affichés depuis les données sont traités avec attention, notamment dans les dialogues où le texte utilisateur ne doit pas être injecté directement comme du HTML. Les dépendances externes, les vidéos et les iframes restent des points à contrôler.
 
 Les avertissements liés aux cookies, à la politique CSP et aux permissions d'iframe proviennent principalement du lecteur YouTube intégré. Les permissions inutiles de l'iframe ont été retirées, mais les messages générés à l'intérieur d'un contenu tiers ne sont pas entièrement contrôlables depuis l'application.
+
+---
+
+[← Page précédente : Stratégie de tests](08_Strategie-de-tests.md) | [Page suivante : Organisation →](10_Organisation.md)

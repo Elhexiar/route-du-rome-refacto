@@ -46,3 +46,7 @@ Il ne s'agissait donc pas de créer un nouveau jeu. Il fallait conserver le parc
 - correction artistique des vidéos générées, notamment les problèmes de synchronisation labiale ;
 - réalisation complète de l'interface d'administration et du pipeline CI/CD.
 - Strategie de déploiement.
+
+---
+
+[Page suivante : Analyse de l'existant →](02_Analyse-de-lexistant.md)

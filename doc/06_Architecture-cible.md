@@ -104,3 +104,7 @@ Les différents niveaux de représentation sont disponibles dans le dossier de m
 - [diagramme des entités](05_Modelisation/entities/entitiesV1.0.pu) ([SVG](05_Modelisation/entities/entitiesV1.svg)) : objets métier, contrats et données ;
 - [diagramme des contrôleurs](05_Modelisation/controllers/controllersV1.0.pu) ([SVG](05_Modelisation/controllers/controllersV1.svg)) : responsabilités et dépendances des contrôleurs ;
 - [diagramme des services](05_Modelisation/service/servicesV1.0.pu) ([SVG](05_Modelisation/service/servicesV1.svg)) : services, événements et dépendances.
+
+---
+
+[← Page précédente : Exigences](04_Exigences.md) | [Page suivante : Choix techniques →](07_Choix-techniques.md)

@@ -48,3 +48,7 @@ Tout en rendant l'addition de nouvelle donnée plus facile.
 #### Contraintes de temps
 
 Le travail devait être réalisé sur une période limitée. La conception du système de dialogue a pris plus de temps que prévu, avec plusieurs itérations, ce qui a obligé à prioriser la stabilité et la structure au détriment de certaines fonctionnalités secondaires.
+
+---
+
+[← Page précédente : Analyse de l'existant](02_Analyse-de-lexistant.md) | [Page suivante : Exigences →](04_Exigences.md)

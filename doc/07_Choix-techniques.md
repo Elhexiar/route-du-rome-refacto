@@ -77,3 +77,7 @@ La stack reste volontairement légère : TypeScript, Vite, Vitest, HTML, CSS, Ja
 Le changement principal vient moins des outils que de leur organisation. Le code est passé d'un prototype composé de deux pages autonomes à une application modulaire, assemblée explicitement et testée par parties.
 
 Les choix d'organisation sont détaillés dans le [diagramme des contrôleurs](05_Modelisation/controllers/controllersV1.0.pu) ou sa [version SVG](05_Modelisation/controllers/controllersV1.svg), le [diagramme des services](05_Modelisation/service/servicesV1.0.pu) ou sa [version SVG](05_Modelisation/service/servicesV1.svg), et le [diagramme des entités](05_Modelisation/entities/entitiesV1.0.pu) ou sa [version SVG](05_Modelisation/entities/entitiesV1.svg). La communication par événements est également visible dans le [diagramme de vue d'ensemble](05_Modelisation/C4/component.pu) ou sa [version SVG](05_Modelisation/C4/projectOverview.svg).
+
+---
+
+[← Page précédente : Architecture cible](06_Architecture-cible.md) | [Page suivante : Stratégie de tests →](08_Strategie-de-tests.md)
